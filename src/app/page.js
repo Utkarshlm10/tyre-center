@@ -40,18 +40,18 @@ function AnimatedPrice({ price }) {
 }
 
 const BRANDS = [
-  { name: "KIA", id: "Kia", image: "kia.jpg" },
-  { name: "MARUTI SUZUKI", id: "Maruti Suzuki", image: "maruti-suzuki.jpg" },
-  { name: "HYUNDAI", id: "Hyundai", image: "hyundai.jpg" },
-  { name: "HONDA", id: "Honda", image: "honda.jpg" },
-  { name: "VOLKSWAGEN", id: "Volkswagen", image: "volkswagen.jpg" },
-  { name: "JEEP", id: "Jeep", image: "jeep.jpg" },
-  { name: "TATA MOTORS", id: "Tata Motors", image: "tata-motors.jpg" },
-  { name: "AUDI", id: "Audi", image: "audi-logo-with-black-background.jpeg" },
-  { name: "BMW", id: "BMW", image: "bmw-logo-with-black-background.jpeg" },
-  { name: "MERCEDES", id: "Mercedes", image: "mercedes.jpg" },
-  { name: "MAHINDRA", id: "Mahindra", image: "mahindra.jpeg" },
-  { name: "SKODA", id: "Skoda", image: "skoda logo.jpg" }
+  { name: "KIA", id: "Kia", image: "kia.png" },
+  { name: "MARUTI SUZUKI", id: "Maruti Suzuki", image: "suzuki.png" },
+  { name: "HYUNDAI", id: "Hyundai", image: "hyundai.png" },
+  { name: "HONDA", id: "Honda", image: "honda.png" },
+  { name: "VOLKSWAGEN", id: "Volkswagen", image: "volkswagen.png" },
+  { name: "JEEP", id: "Jeep", image: "jeep.png" },
+  { name: "TATA MOTORS", id: "Tata Motors", image: "tata.png" },
+  { name: "AUDI", id: "Audi", image: "audi.png" },
+  { name: "BMW", id: "BMW", image: "bmw.png" },
+  { name: "MERCEDES", id: "Mercedes", image: "mercedes.png" },
+  { name: "MAHINDRA", id: "Mahindra", image: "mahindra.png" },
+  { name: "SKODA", id: "Skoda", image: "skoda.png" }
 ];
 
 export default function Home() {
