@@ -320,7 +320,7 @@ export default function Home() {
 
   return (
     <div className="flex h-screen w-full overflow-hidden text-[#0f172a] bg-[#f0f4f8] font-sans">
-      <aside className="hidden xl:flex flex-col h-screen py-8 px-4 w-[240px] 2xl:w-[260px] z-50 bg-[#00254d] text-slate-300 border-r-0 fixed left-0 top-0">
+      <aside className="hidden xl:flex flex-col h-screen py-8 px-4 w-[240px] 2xl:w-[260px] z-50 bg-[linear-gradient(180deg,#062f5b_0%,#031f3d_100%)] shadow-[inset_-1px_0_0_rgba(255,255,255,0.04)] text-slate-300 border-r-0 fixed left-0 top-0">
         <div className="mb-10 px-4">
           <div className="text-lg font-black text-white tracking-[-0.02em] uppercase cursor-pointer" onClick={() => setStep(1)}>
             Tyre Center
@@ -328,37 +328,37 @@ export default function Home() {
           <div className="text-[10px] uppercase tracking-[0.2em] text-blue-200/40 font-bold mt-1.5">Bilaspur Atelier</div>
         </div>
         <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
-        <nav className="flex-1 space-y-1 mt-2">
-          <a onClick={() => setStep(1)} className={`group flex items-center gap-3.5 py-3 px-4 cursor-pointer transition-all duration-300 active:scale-[0.97] rounded-lg mx-1 ${step === 1 ? 'bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-sm' : 'text-white/50 hover:text-white/90 hover:bg-white/[0.06]'}`} href="#">
-            <span className={`material-symbols-outlined text-[1.2rem] transition-all duration-300 ${step === 1 ? 'text-blue-300' : 'opacity-60 group-hover:opacity-90'}`}>directions_car</span>
-            <span className="text-[12px] font-bold tracking-[0.15em] uppercase">Select Vehicle</span>
+        <nav className="flex-1 space-y-2 mt-2">
+          <a onClick={() => setStep(1)} className={`group flex items-center gap-3.5 py-3 px-4 cursor-pointer transition-all duration-300 ease-out active:scale-[0.97] rounded-lg mx-1 ${step === 1 ? 'bg-[linear-gradient(90deg,rgba(255,255,255,0.12),rgba(255,255,255,0.05))] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]' : 'text-white/60 hover:text-white hover:bg-white/[0.05] hover:-translate-y-[1px]'}`} href="#">
+            <span className={`material-symbols-outlined text-[20px] transition-colors duration-300 ease-out ${step === 1 ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>directions_car</span>
+            <span className="text-[12px] font-semibold tracking-[0.1em] uppercase">Select Vehicle</span>
             {step === 1 && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.6)]" />}
           </a>
-          <a onClick={() => selectedBrand && setStep(2)} className={`group flex items-center gap-3.5 py-3 px-4 cursor-pointer transition-all duration-300 active:scale-[0.97] rounded-lg mx-1 ${step === 2 ? 'bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-sm' : 'text-white/50 hover:text-white/90 hover:bg-white/[0.06]'}`} href="#">
-            <span className={`material-symbols-outlined text-[1.2rem] transition-all duration-300 ${step === 2 ? 'text-blue-300' : 'opacity-60 group-hover:opacity-90'}`}>straighten</span>
-            <span className="text-[12px] font-bold tracking-[0.15em] uppercase">Model & Size</span>
+          <a onClick={() => selectedBrand && setStep(2)} className={`group flex items-center gap-3.5 py-3 px-4 cursor-pointer transition-all duration-300 ease-out active:scale-[0.97] rounded-lg mx-1 ${step === 2 ? 'bg-[linear-gradient(90deg,rgba(255,255,255,0.12),rgba(255,255,255,0.05))] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]' : 'text-white/60 hover:text-white hover:bg-white/[0.05] hover:-translate-y-[1px]'}`} href="#">
+            <span className={`material-symbols-outlined text-[20px] transition-colors duration-300 ease-out ${step === 2 ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>straighten</span>
+            <span className="text-[12px] font-semibold tracking-[0.1em] uppercase">Model & Size</span>
             {step === 2 && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.6)]" />}
           </a>
-          <a onClick={() => selectedModel && selectedSize && setStep(3)} className={`group flex items-center gap-3.5 py-3 px-4 cursor-pointer transition-all duration-300 active:scale-[0.97] rounded-lg mx-1 ${step === 3 ? 'bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-sm' : 'text-white/50 hover:text-white/90 hover:bg-white/[0.06]'}`} href="#">
-            <span className={`material-symbols-outlined text-[1.2rem] transition-all duration-300 ${step === 3 ? 'text-blue-300' : 'opacity-60 group-hover:opacity-90'}`}>tire_repair</span>
-            <span className="text-[12px] font-bold tracking-[0.15em] uppercase flex-1">View Tyres</span>
+          <a onClick={() => selectedModel && selectedSize && setStep(3)} className={`group flex items-center gap-3.5 py-3 px-4 cursor-pointer transition-all duration-300 ease-out active:scale-[0.97] rounded-lg mx-1 ${step === 3 ? 'bg-[linear-gradient(90deg,rgba(255,255,255,0.12),rgba(255,255,255,0.05))] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]' : 'text-white/60 hover:text-white hover:bg-white/[0.05] hover:-translate-y-[1px]'}`} href="#">
+            <span className={`material-symbols-outlined text-[20px] transition-colors duration-300 ease-out ${step === 3 ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>tire_repair</span>
+            <span className="text-[12px] font-semibold tracking-[0.1em] uppercase flex-1">View Tyres</span>
             {step === 3 && (
-              <span className="relative flex h-2 w-2 ml-auto">
+              <span className="relative flex h-1.5 w-1.5 ml-auto">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.6)]"></span>
               </span>
             )}
           </a>
         </nav>
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-4 mt-4" />
+        <div className="w-full border-t border-white/[0.08] mb-4 mt-6" />
         <div className="space-y-1 px-1">
-          <a className="flex items-center gap-3.5 py-2.5 px-4 text-white/30 hover:text-white/70 transition-all duration-200 rounded-lg hover:bg-white/[0.04]" href="#">
-            <span className="material-symbols-outlined text-[1.1rem]">settings</span>
-            <span className="text-[10px] uppercase tracking-[0.15em] font-bold">Settings</span>
+          <a className="flex items-center gap-3.5 py-2.5 px-4 text-white/40 hover:text-white/80 transition-all duration-300 ease-out rounded-lg hover:bg-white/[0.03] active:scale-[0.97]" href="#">
+            <span className="material-symbols-outlined text-[18px]">settings</span>
+            <span className="text-[9px] uppercase tracking-[0.1em] font-semibold">Settings</span>
           </a>
-          <a className="flex items-center gap-3.5 py-2.5 px-4 text-white/30 hover:text-white/70 transition-all duration-200 rounded-lg hover:bg-white/[0.04]" href="#">
-            <span className="material-symbols-outlined text-[1.1rem]">help</span>
-            <span className="text-[10px] uppercase tracking-[0.15em] font-bold">Help</span>
+          <a className="flex items-center gap-3.5 py-2.5 px-4 text-white/40 hover:text-white/80 transition-all duration-300 ease-out rounded-lg hover:bg-white/[0.03] active:scale-[0.97]" href="#">
+            <span className="material-symbols-outlined text-[18px]">help</span>
+            <span className="text-[9px] uppercase tracking-[0.1em] font-semibold">Help</span>
           </a>
         </div>
       </aside>
