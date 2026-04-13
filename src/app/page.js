@@ -321,11 +321,25 @@ export default function Home() {
   return (
     <div className="flex h-screen w-full overflow-hidden text-[#0f172a] bg-[#f0f4f8] font-sans">
       <aside className="hidden xl:flex flex-col h-screen py-8 px-4 w-[240px] 2xl:w-[260px] z-50 bg-[linear-gradient(180deg,#062f5b_0%,#031f3d_100%)] shadow-[inset_-1px_0_0_rgba(255,255,255,0.04)] text-slate-300 border-r-0 fixed left-0 top-0">
-        <div className="mb-10 px-4">
-          <div className="text-lg font-black text-white tracking-[-0.02em] uppercase cursor-pointer" onClick={() => setStep(1)}>
-            Tyre Center
+        <div className="mb-8 px-4 flex flex-col items-center text-center cursor-pointer group" onClick={() => setStep(1)}>
+
+          {/* Logo */}
+          <img
+            src="/logo.png"
+            alt="Tyre Centre"
+            className="h-16 w-16 object-contain mb-3 drop-shadow-md rounded-full transition-transform duration-200 group-active:scale-95"
+          />
+
+          {/* Title */}
+          <div className="text-lg font-black text-white tracking-[-0.02em] uppercase leading-none">
+            Tyre Centre
           </div>
-          <div className="text-[10px] uppercase tracking-[0.2em] text-blue-200/40 font-bold mt-1.5">Bilaspur Atelier</div>
+
+          {/* Subtitle */}
+          <div className="text-[10px] uppercase tracking-[0.2em] text-blue-200/60 font-bold mt-1">
+            Bilaspur Atelier
+          </div>
+
         </div>
         <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
         <nav className="flex-1 space-y-2 mt-2">
@@ -365,9 +379,12 @@ export default function Home() {
 
       {/* ── MOBILE / TABLET TOP NAV (below xl) ── */}
       <nav className="xl:hidden fixed top-0 left-0 right-0 w-full bg-[#00254d]/95 backdrop-blur-xl text-white flex items-center justify-between px-4 sm:px-6 md:px-8 py-3 z-50 shadow-[0_4px_20px_rgba(0,37,77,0.25)] border-b border-white/[0.08]">
-        <div className="flex flex-col">
-          <div className="text-base sm:text-lg font-black tracking-[-0.02em] uppercase cursor-pointer leading-tight" onClick={() => setStep(1)}>Tyre Center</div>
-          <div className="text-[8px] uppercase tracking-[0.2em] text-blue-200/40 font-bold mt-0.5">Bilaspur Atelier</div>
+        <div className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform" onClick={() => setStep(1)}>
+          <img src="/logo.png" alt="Tyre Centre" className="h-8 w-8 object-contain rounded-full shadow-sm bg-white" />
+          <div className="flex flex-col">
+            <div className="text-base sm:text-lg font-black tracking-[-0.02em] uppercase leading-tight">Tyre Centre</div>
+            <div className="text-[8px] uppercase tracking-[0.2em] text-blue-200/50 font-bold mt-0.5">Bilaspur Atelier</div>
+          </div>
         </div>
         <div className="flex items-center gap-1.5 sm:gap-2">
           <button onClick={() => setStep(1)} className={`py-1.5 px-3 sm:px-4 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-200 ${step === 1 ? 'bg-blue-500/90 text-white shadow-[0_2px_12px_rgba(59,130,246,0.4)]' : 'bg-white/[0.08] text-white/50 hover:bg-white/[0.14] hover:text-white/90'}`}>Vehicle</button>
