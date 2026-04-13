@@ -8,8 +8,18 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Tyre Center Bilaspur by Rajesh Pamnani and Sons",
-  description: "Premium Tyre Kiosk",
+  title: 'Tyre Centre | Bilaspur Atelier',
+  description: 'Premium tyre configurator',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Tyre Centre',
+  },
+  icons: {
+    apple: '/logo.png',
+  },
+  themeColor: '#00254d',
 };
 
 export default function RootLayout({ children }) {
@@ -21,12 +31,6 @@ export default function RootLayout({ children }) {
     >
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#00254d" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Tyre Center" />
-        <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
       <body className="h-full bg-surface text-on-surface overflow-hidden m-0 p-0">
         <AppProvider>
