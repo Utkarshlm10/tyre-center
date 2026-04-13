@@ -443,9 +443,6 @@ export default function Home() {
                     Select Manufacturer
                   </h1>
                   <div className="w-10 sm:w-14 h-[2px] bg-[#00254d]/20 mx-auto my-3 sm:my-4 rounded-full" />
-                  <p className="text-slate-400 text-xs sm:text-sm md:text-base xl:text-lg font-medium tracking-wide max-w-xl">
-                    Choose your vehicle brand to explore precision-matched tyre options
-                  </p>
                 </div>
 
                 {/* Manufacturer panel */}
