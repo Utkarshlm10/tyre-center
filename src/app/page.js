@@ -822,16 +822,37 @@ export default function Home() {
                     animate={{ y: 0, opacity: 1, scale: 1 }}
                     exit={{ y: 80, opacity: 0, scale: 0.95 }}
                     transition={{ type: 'spring', damping: 24, stiffness: 260 }}
-                    className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] bg-white/80 backdrop-blur-xl text-[#0f172a] shadow-[0_12px_48px_rgba(0,37,77,0.18)] border border-white/60 rounded-2xl p-3 pl-5 flex items-center gap-4 w-max max-w-[95vw]"
+                    className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-[70] bg-white/95 sm:bg-white/80 backdrop-blur-xl text-[#0f172a] shadow-[0_12px_48px_rgba(0,37,77,0.18)] border border-white/60 rounded-2xl p-3 sm:p-3 sm:pl-5 flex flex-col sm:flex-row items-center gap-3 w-[calc(100vw-1rem)] max-w-[720px] md:max-w-fit"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-[#00254d]/10 hidden sm:flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-[#00254d] text-[18px]">balance</span>
+                    <div className="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-3 sm:gap-4 sm:flex-1">
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-[#00254d]/10 flex items-center justify-center shrink-0">
+                          <span className="material-symbols-outlined text-[#00254d] text-[18px]">balance</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-black text-[11px] uppercase tracking-widest">{compareList.length} Tyre{compareList.length > 1 ? 's' : ''} Selected</span>
+                          <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Select up to 3</span>
+                        </div>
+                      </div>
+                      
+                      <button
+                        onClick={() => { setCompareList([]); setIsCompareOpen(false); }}
+                        className="sm:hidden w-[28px] h-[28px] rounded-full bg-slate-50 hover:bg-[#eef2f7] flex items-center justify-center text-[#64748b] hover:text-[#0f172a] transition-all duration-200 ease-out shadow-sm active:scale-95 shrink-0"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">close</span>
+                      </button>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-black text-[11px] uppercase tracking-widest">{compareList.length} Tyre{compareList.length > 1 ? 's' : ''} Selected</span>
-                      <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Select up to 3</span>
+
+                    <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3">
+                      <button onClick={() => setIsCompareOpen(true)} className="w-full sm:w-auto bg-[#00254d] hover:bg-[#001a33] active:scale-[0.96] text-white px-5 py-3 sm:py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-[0_4px_16px_rgba(0,37,77,0.18)] shrink-0">Compare Now</button>
+                      
+                      <button
+                        onClick={() => { setCompareList([]); setIsCompareOpen(false); }}
+                        className="hidden sm:flex w-[32px] h-[32px] rounded-full bg-slate-50 hover:bg-[#eef2f7] items-center justify-center text-[#64748b] hover:text-[#0f172a] transition-all duration-200 ease-out shadow-sm active:scale-[0.96] shrink-0"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">close</span>
+                      </button>
                     </div>
-                    <button onClick={() => setIsCompareOpen(true)} className="bg-[#00254d] hover:bg-[#001a33] active:scale-[0.96] text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-[0_4px_16px_rgba(0,37,77,0.18)] ml-3 shrink-0">Compare Now</button>
                   </motion.div>
                 )}
               </AnimatePresence>
