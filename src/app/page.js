@@ -585,7 +585,11 @@ export default function Home() {
                           <div className="absolute inset-x-[12%] bottom-3 h-6 bg-black/10 blur-xl rounded-full" />
 
                           <img
-                            src={`/cars/${model.toLowerCase().replace(/\s+/g, '-')}.png`}
+                            src={`/cars/${model.toLowerCase().replace(/\s+/g, '-')}.jpg`}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = `/cars/${model.toLowerCase().replace(/\s+/g, '-')}.jpeg`;
+                            }}
                             alt={model}
                             className="relative z-10 max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-[1.025]"
                             draggable="false"
@@ -834,7 +838,7 @@ export default function Home() {
                           <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Select up to 3</span>
                         </div>
                       </div>
-                      
+
                       <button
                         onClick={() => { setCompareList([]); setIsCompareOpen(false); }}
                         className="sm:hidden w-[28px] h-[28px] rounded-full bg-slate-50 hover:bg-[#eef2f7] flex items-center justify-center text-[#64748b] hover:text-[#0f172a] transition-all duration-200 ease-out shadow-sm active:scale-95 shrink-0"
@@ -845,7 +849,7 @@ export default function Home() {
 
                     <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3">
                       <button onClick={() => setIsCompareOpen(true)} className="w-full sm:w-auto bg-[#00254d] hover:bg-[#001a33] active:scale-[0.96] text-white px-5 py-3 sm:py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-[0_4px_16px_rgba(0,37,77,0.18)] shrink-0">Compare Now</button>
-                      
+
                       <button
                         onClick={() => { setCompareList([]); setIsCompareOpen(false); }}
                         className="hidden sm:flex w-[32px] h-[32px] rounded-full bg-slate-50 hover:bg-[#eef2f7] items-center justify-center text-[#64748b] hover:text-[#0f172a] transition-all duration-200 ease-out shadow-sm active:scale-[0.96] shrink-0"
