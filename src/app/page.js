@@ -86,6 +86,8 @@ export default function Home() {
   };
 
   const filterBarRef = useRef(null);
+  const sizeSectionRef = useRef(null);
+  const [highlightSizes, setHighlightSizes] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -136,6 +138,22 @@ export default function Home() {
     setSelectedModel(null);
     setSelectedSize(null);
     setStep(2);
+  };
+
+  const handleModelSelect = (model) => {
+    setSelectedModel(model);
+    setSelectedSize(null);
+
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        sizeSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+        setHighlightSizes(true);
+        setTimeout(() => setHighlightSizes(false), 800);
+      }, 180);
+    });
   };
 
   const brandInventory = fitments.filter(row =>
@@ -545,7 +563,7 @@ export default function Home() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="xl:ml-[240px] 2xl:ml-[260px] 2xl:mr-[360px] flex-1 h-full flex flex-col bg-[#f0f4f8] relative overflow-y-auto overflow-x-hidden scroll-smooth pt-[68px] xl:pt-20 pb-32 sm:pb-36 2xl:pb-32 px-5 sm:px-8 md:px-12 lg:px-16 2xl:px-20"
+              className="xl:ml-[240px] 2xl:ml-[260px] 2xl:mr-[360px] flex-1 h-full flex flex-col bg-[#f0f4f8] relative overflow-y-auto overflow-x-hidden scroll-smooth pt-[68px] xl:pt-20 pb-40 sm:pb-48 md:pb-52 2xl:pb-40 px-5 sm:px-8 md:px-12 lg:px-16 2xl:px-20"
             >
               <div className="hidden md:flex fixed top-20 xl:left-[240px] 2xl:left-[260px] left-0 w-full 2xl:w-[calc(100%-620px)] h-full overflow-hidden pointer-events-none z-0 items-start justify-center opacity-[0.025]">
                 <span className="text-[18vw] xl:text-[22vw] font-black text-[#0f172a] leading-none tracking-[-0.03em] uppercase whitespace-nowrap select-none" style={{ fontFamily: 'inherit' }}>
@@ -571,7 +589,7 @@ export default function Home() {
                   {uniqueModels.map(model => (
                     <div
                       key={model}
-                      onClick={() => setSelectedModel(model)}
+                      onClick={() => handleModelSelect(model)}
                       className={`relative flex flex-col rounded-[24px] cursor-pointer overflow-hidden group transition-all duration-300 ${selectedModel === model
                         ? 'bg-white ring-1 ring-[#00254d]/15 shadow-[0_20px_50px_rgba(0,37,77,0.14)] -translate-y-0.5'
                         : 'bg-white/92 ring-1 ring-black/5 hover:bg-white hover:shadow-[0_16px_40px_rgba(15,23,42,0.08)] hover:-translate-y-1'
@@ -620,7 +638,10 @@ export default function Home() {
                   ))}
                 </div>
 
-                <div className="mt-8 sm:mt-12 md:mt-16">
+                <div
+                  ref={sizeSectionRef}
+                  className="mt-8 sm:mt-12 md:mt-16 pb-10 sm:pb-14 md:pb-16 scroll-mt-24 xl:scroll-mt-12"
+                >
                   <h3 className="text-[11px] font-bold text-[#0f172a] uppercase tracking-[0.2em] pb-4 sm:pb-5 mb-5 sm:mb-6 border-b border-slate-200/60">Specified Wheel Diameter</h3>
                   <div className="flex flex-row flex-wrap gap-3">
                     {uniqueSizes.length > 0 ? (
@@ -630,7 +651,9 @@ export default function Home() {
                           onClick={() => setSelectedSize(size)}
                           className={`min-w-[110px] py-4 px-5 font-black tracking-widest rounded-xl transition-all duration-300 text-sm active:scale-[0.96] ${selectedSize === size
                             ? 'bg-[#00254d] text-white shadow-[0_8px_24px_rgba(0,37,77,0.20)] scale-[1.02]'
-                            : 'bg-white text-slate-500 hover:text-[#0f172a] hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 shadow-[0_2px_8px_rgba(15,23,42,0.04)]'
+                            : highlightSizes
+                              ? 'bg-blue-50 text-blue-800 shadow-[0_0_15px_rgba(59,130,246,0.3)] ring-1 ring-blue-300'
+                              : 'bg-white text-slate-500 hover:text-[#0f172a] hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 shadow-[0_2px_8px_rgba(15,23,42,0.04)]'
                             }`}
                         >
                           {size}
