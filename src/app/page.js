@@ -996,45 +996,61 @@ export default function Home() {
               </div>
 
               <AnimatePresence>
-                {compareList.length > 0 && (
-                  <motion.div
-                    initial={{ y: 80, opacity: 0, scale: 0.95 }}
-                    animate={{ y: 0, opacity: 1, scale: 1 }}
-                    exit={{ y: 80, opacity: 0, scale: 0.95 }}
-                    transition={{ type: 'spring', damping: 24, stiffness: 260 }}
-                    className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-[70] bg-white/95 sm:bg-white/80 backdrop-blur-xl text-[#0f172a] shadow-[0_12px_48px_rgba(0,37,77,0.18)] border border-white/60 rounded-2xl p-3 sm:p-3 sm:pl-5 flex flex-col sm:flex-row items-center gap-3 w-[calc(100vw-1rem)] max-w-[720px] md:max-w-fit"
-                  >
-                    <div className="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-3 sm:gap-4 sm:flex-1">
-                      <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="w-8 h-8 rounded-lg bg-[#00254d]/10 flex items-center justify-center shrink-0">
-                          <span className="material-symbols-outlined text-[#00254d] text-[18px]">balance</span>
+                {compareList.length > 0 && (() => {
+                  const firstBrand = compareList[0].TyreBrand || compareList[0].Brand;
+                  const allSameBrand = compareList.every(t => (t.TyreBrand || t.Brand) === firstBrand);
+                  const compareTheme = allSameBrand ? getBrandTheme(firstBrand) : { primary: '#0f172a', secondary: '#1e293b' };
+                  
+                  return (
+                    <motion.div
+                      initial={{ y: 80, opacity: 0, scale: 0.95 }}
+                      animate={{ y: 0, opacity: 1, scale: 1 }}
+                      exit={{ y: 80, opacity: 0, scale: 0.95 }}
+                      transition={{ type: 'spring', damping: 24, stiffness: 260 }}
+                      className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-[70] bg-white/95 sm:bg-white/85 backdrop-blur-xl text-[#0f172a] shadow-[0_12px_48px_rgba(0,37,77,0.18)] border border-white/60 rounded-2xl p-3 sm:p-3 flex flex-col sm:flex-row items-center gap-3 w-[calc(100vw-1rem)] max-w-[720px] md:max-w-fit"
+                      style={{ boxShadow: `0 12px 48px ${compareTheme.primary}40, 0 0 0 1px rgba(255,255,255,0.6) inset` }}
+                    >
+                      <div className="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-3 sm:gap-4 sm:flex-1 sm:pl-2">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-inner relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${compareTheme.primary}15, ${compareTheme.primary}05)` }}>
+                            <div className="absolute inset-0 opacity-20" style={{ background: `linear-gradient(135deg, ${compareTheme.primary}, transparent)` }}></div>
+                            <span className="material-symbols-outlined text-[20px] relative z-10" style={{ color: compareTheme.primary }}>balance</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-black text-[12px] uppercase tracking-widest">{compareList.length} Tyre{compareList.length > 1 ? 's' : ''} Selected</span>
+                            <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Select up to 3</span>
+                          </div>
                         </div>
-                        <div className="flex flex-col">
-                          <span className="font-black text-[11px] uppercase tracking-widest">{compareList.length} Tyre{compareList.length > 1 ? 's' : ''} Selected</span>
-                          <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Select up to 3</span>
-                        </div>
+
+                        <button
+                          onClick={() => { setCompareList([]); setIsCompareOpen(false); }}
+                          className="sm:hidden w-[28px] h-[28px] rounded-full bg-slate-50 hover:bg-[#eef2f7] flex items-center justify-center text-[#64748b] hover:text-[#0f172a] transition-all duration-200 ease-out shadow-sm active:scale-95 shrink-0"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">close</span>
+                        </button>
                       </div>
 
-                      <button
-                        onClick={() => { setCompareList([]); setIsCompareOpen(false); }}
-                        className="sm:hidden w-[28px] h-[28px] rounded-full bg-slate-50 hover:bg-[#eef2f7] flex items-center justify-center text-[#64748b] hover:text-[#0f172a] transition-all duration-200 ease-out shadow-sm active:scale-95 shrink-0"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">close</span>
-                      </button>
-                    </div>
+                      <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3 sm:pl-4">
+                        <button 
+                          onClick={() => setIsCompareOpen(true)} 
+                          className="w-full sm:w-auto active:scale-[0.96] text-white px-6 py-3.5 sm:py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg hover:shadow-xl shrink-0 flex items-center gap-2 justify-center relative overflow-hidden group/btn"
+                          style={{ background: `linear-gradient(135deg, ${compareTheme.primary}, ${compareTheme.secondary})`, boxShadow: `0 6px 20px ${compareTheme.primary}60` }}
+                        >
+                          <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover/btn:translate-y-0 transition-transform duration-300 ease-out rounded-[inherit] pointer-events-none"></div>
+                          <span className="relative z-10 transition-transform group-active/btn:scale-95">Compare Now</span>
+                          <span className="material-symbols-outlined text-[16px] relative z-10 transition-transform group-hover/btn:translate-x-0.5 ease-out">arrow_forward</span>
+                        </button>
 
-                    <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3">
-                      <button onClick={() => setIsCompareOpen(true)} className="w-full sm:w-auto bg-[#00254d] hover:bg-[#001a33] active:scale-[0.96] text-white px-5 py-3 sm:py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-[0_4px_16px_rgba(0,37,77,0.18)] shrink-0">Compare Now</button>
-
-                      <button
-                        onClick={() => { setCompareList([]); setIsCompareOpen(false); }}
-                        className="hidden sm:flex w-[32px] h-[32px] rounded-full bg-slate-50 hover:bg-[#eef2f7] items-center justify-center text-[#64748b] hover:text-[#0f172a] transition-all duration-200 ease-out shadow-sm active:scale-[0.96] shrink-0"
-                      >
-                        <span className="material-symbols-outlined text-[18px]">close</span>
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
+                        <button
+                          onClick={() => { setCompareList([]); setIsCompareOpen(false); }}
+                          className="hidden sm:flex w-[36px] h-[36px] rounded-full bg-slate-50 hover:bg-[#eef2f7] items-center justify-center text-[#64748b] hover:text-[#0f172a] transition-all duration-200 ease-out shadow-sm border border-slate-200/50 active:scale-[0.96] shrink-0"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">close</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  );
+                })()}
               </AnimatePresence>
 
               <div className="px-4 sm:px-6 md:px-8 xl:px-12 py-4 sm:py-5 md:py-6 pb-24 xl:pb-8 relative">
@@ -1156,9 +1172,9 @@ export default function Home() {
                               <div className="mt-3 max-w-[55%] relative z-20">
                                 <TyreBrandLogo
                                   brand={tyre.TyreBrand}
-                                  className="min-h-[48px] mb-2"
-                                  imgClassName="h-10 sm:h-12 md:h-14 w-auto object-contain object-left drop-shadow-sm"
-                                  textClassName="text-lg font-extrabold uppercase tracking-wide text-slate-800 truncate"
+                                  className="mb-2"
+                                  imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 group-hover:opacity-100 drop-shadow-sm"
+                                  textClassName="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1.5 truncate"
                                 />
                                 <h3 className="text-sm sm:text-base font-black text-[#0f172a] leading-tight line-clamp-3 pr-2 shadow-white/50 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
                                   {tyre.TyreModel || tyre.ModelID}
@@ -1184,15 +1200,28 @@ export default function Home() {
                               </div>
 
                               {/* Balance Icon */}
-                              <button
-                                onClick={(e) => toggleCompare(e, tyre)}
-                                className={`absolute bottom-3 right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-[6px] flex items-center justify-center z-40 transition-all duration-200 active:scale-95 shadow-md pointer-events-auto ${compareList.some(t => t.ModelID === tyre.ModelID)
-                                  ? 'bg-white text-[var(--brand-primary)] ring-2 ring-white ring-inset shadow-[0_4px_12px_rgba(0,0,0,0.15)]'
-                                  : 'bg-white/95 text-[var(--brand-primary)] hover:bg-white transition-colors duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.12)]'
-                                  }`}
-                              >
-                                <span className="material-symbols-outlined text-[16px] sm:text-[18px]">balance</span>
-                              </button>
+                              {(() => {
+                                const isSelected = compareList.some(t => t.ModelID === tyre.ModelID);
+                                return (
+                                  <button
+                                    onClick={(e) => toggleCompare(e, tyre)}
+                                    className={`absolute bottom-3 right-3 w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] flex items-center justify-center z-40 transition-all duration-300 active:scale-90 pointer-events-auto group/compare overflow-hidden ${
+                                      isSelected
+                                      ? 'text-white shadow-lg scale-105'
+                                      : 'bg-white/95 hover:bg-white backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                                    }`}
+                                    style={isSelected ? {
+                                      background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
+                                      boxShadow: `0 4px 16px ${theme.primary}60, inset 0 0 0 1px rgba(255,255,255,0.4)`
+                                    } : { color: theme.primary }}
+                                  >
+                                    <span className="material-symbols-outlined text-[18px] sm:text-[20px] relative z-10 transition-transform group-active/compare:scale-90">balance</span>
+                                    {isSelected && (
+                                      <div className="absolute inset-0 bg-white/20 animate-pulse pointer-events-none rounded-[inherit]"></div>
+                                    )}
+                                  </button>
+                                );
+                              })()}
 
                             </div>
                           </motion.div>
@@ -1221,7 +1250,7 @@ export default function Home() {
                   className="fixed bottom-0 left-0 right-0 z-[60] xl:hidden bg-white/95 backdrop-blur-xl border-t border-slate-200/80 shadow-[0_-4px_24px_rgba(0,37,77,0.10)] px-4 py-3.5 flex items-center gap-3"
                 >
                   <div className="flex-1 min-w-0">
-                    <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-0.5 h-[14px]" textClassName="text-[9px] font-black uppercase tracking-widest text-slate-400 truncate" />
+                    <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-1" imgClassName="h-5 sm:h-6 w-auto object-contain object-left opacity-90" textClassName="text-[12px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1 truncate" />
                     <p className="text-sm font-black text-[#0f172a] truncate line-clamp-1">{selectedTyre.TyreModel || selectedTyre.ModelID}</p>
                   </div>
                   <div className="shrink-0 text-right">
@@ -1294,7 +1323,7 @@ export default function Home() {
                       <div className="flex-1 overflow-y-auto px-7 py-2 flex flex-col hide-scrollbar">
                         {/* Brand & Model */}
                         <div className="mb-4">
-                          <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-3 h-[24px]" textClassName="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1" />
+                          <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-2" imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 hover:opacity-100" textClassName="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1.5 flex-wrap" />
                           <h1 className="text-[26px] text-[#0f172a] font-black tracking-[-0.02em] leading-tight mb-2">{selectedTyre.TyreModel || selectedTyre.ModelID}</h1>
                           {selectedTyre.BestFor && (
                             <span className="inline-block px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded shadow-sm border"
@@ -1409,51 +1438,119 @@ export default function Home() {
 
             <div className="flex-1 px-5 sm:px-8 md:px-12 py-6 sm:py-8 md:py-12">
               <div className={`grid gap-4 sm:gap-6 ${compareList.length === 2 ? 'grid-cols-1 md:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'}`}>
-                {compareList.map((tyre, idx) => (
-                  <div key={idx} className="flex flex-col bg-white rounded-xl overflow-hidden shadow-[0_4px_24px_rgba(15,23,42,0.06)] group border border-slate-100">
-                    <div className="h-60 w-full relative bg-gradient-to-b from-slate-50 to-white flex items-center justify-center overflow-hidden p-6 rounded-t-xl">
-                      <img
-                        src={tyre.ImageFileName ? `/tyres/${tyre.ImageFileName}` : "https://placehold.co/400x400/f5f5f5/a3a3a3?text=Image+Coming+Soon"}
-                        alt={tyre.TyreModel || "Tyre"}
-                        className="w-5/6 h-5/6 object-contain mix-blend-darken group-hover:scale-105 transition-transform duration-700 ease-out z-10 relative"
-                        onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/400x400/f5f5f5/a3a3a3?text=Image+Coming+Soon"; }}
-                      />
-                    </div>
-
-                    <div className="p-8 flex flex-col flex-1 bg-[#ffffff]">
-                      <div className="mb-6">
-                        <div className="text-[#475569] font-bold text-xs uppercase tracking-widest mb-1">{tyre.TyreBrand || tyre.Brand || "Premium"}</div>
-                        <div className="text-3xl font-black text-[#0f172a] uppercase tracking-[-0.02em] leading-none mb-4">{tyre.TyreModel || tyre.Model || "Tyre"}</div>
-                        <div className="text-[#00254d] text-3xl font-black tracking-[-0.02em]">{tyre.Price ? `₹${Number(String(tyre.Price).replace(/[^0-9.]/g, '')).toLocaleString('en-IN')}` : 'POA'}</div>
-                      </div>
-
-                      <div className="flex-1 pt-6 flex flex-col gap-4">
-                        <div className="flex flex-col gap-3 mb-4">
-                          <div className="flex justify-between items-center bg-transparent pb-2">
-                            <span className="text-[10px] text-[#475569] font-bold uppercase tracking-widest">Warranty</span>
-                            {tyre.Warranty ? <span className={`${getWarrantyColor(tyre.Warranty)} text-[9px] px-2 py-0.5 font-bold uppercase`}>{tyre.Warranty}</span> : <span className="text-[#475569]">-</span>}
-                          </div>
-                          <div className="flex justify-between items-center bg-transparent pb-2">
-                            <span className="text-[10px] text-[#475569] font-bold uppercase tracking-widest">Best For</span>
-                            {tyre.BestFor ? <span className={`${getBestForColor(tyre.BestFor)} text-[9px] px-2 py-0.5 font-black uppercase`}>{tyre.BestFor}</span> : <span className="text-[#475569]">-</span>}
+                {compareList.map((tyre, idx) => {
+                  const theme = getBrandTheme(tyre.TyreBrand || tyre.Brand);
+                  const benefits = getBenefits(tyre);
+                  
+                  return (
+                  <div key={idx} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(15,23,42,0.06)] group/ccard border border-slate-100 relative h-full">
+                    {/* Top Hero Section */}
+                    <div className="relative w-full shrink-0 flex p-5 sm:p-7 min-h-[250px] sm:min-h-[300px]">
+                      {/* Background Curves */}
+                      <div className="absolute top-0 right-0 bottom-0 w-[60%] sm:w-[55%] pointer-events-none overflow-hidden rounded-tr-2xl z-0">
+                        <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover/ccard:scale-[1.03]">
+                          <div
+                            className="absolute top-[-10%] right-[-15%] w-[110%] h-[120%] shadow-[-8px_0_24px_rgba(0,0,0,0.15)] z-0"
+                            style={{
+                              background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
+                              borderRadius: '50% 0 0 50% / 50% 0 0 50%',
+                            }}
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-[inherit]"></div>
                           </div>
                         </div>
+                      </div>
 
-                        {tyre.Description && (
-                          <div className="mb-2">
-                            <p className="text-sm text-[#475569] leading-relaxed line-clamp-3">{tyre.Description}</p>
-                          </div>
-                        )}
+                      {/* Decorative Strips (Unclipped) */}
+                      <div className="absolute top-0 right-0 bottom-0 w-[60%] sm:w-[55%] pointer-events-none rounded-tr-2xl z-[1]">
+                        <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover/ccard:scale-[1.03]">
+                          <div
+                            className="absolute top-[-15%] right-[-15%] w-[110%] h-[130%] border-l-[3px] border-y-transparent border-r-transparent opacity-95 shadow-[-4px_0_12px_rgba(0,0,0,0.06)]"
+                            style={{ borderColor: theme.stripeSecondary, borderRadius: '50% 0 0 50% / 50% 0 0 50%', transform: 'translateX(-22px)' }}
+                          />
+                          <div
+                            className="absolute top-[-15%] right-[-15%] w-[110%] h-[130%] border-l-[3px] border-y-transparent border-r-transparent opacity-100 shadow-[-2px_0_8px_rgba(0,0,0,0.06)] z-10"
+                            style={{ borderColor: theme.stripePrimary, borderRadius: '50% 0 0 50% / 50% 0 0 50%', transform: 'translateX(-11px)' }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Content Front Layer */}
+                      <div className="relative z-10 w-[55%] sm:w-[50%] flex flex-col justify-center">
+                        <TyreBrandLogo brand={tyre.TyreBrand || tyre.Brand} className="mb-2" imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 group-hover/ccard:opacity-100" textClassName="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1.5" />
+                        <h3 className="text-xl sm:text-2xl font-black text-[#0f172a] uppercase tracking-[-0.02em] leading-tight mb-2 pr-2 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">{tyre.TyreModel || tyre.ModelID}</h3>
+                        <div className="text-2xl sm:text-3xl font-black tracking-tight mb-4 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]" style={{ color: theme.primary }}>
+                          {tyre.Price ? `₹${Number(String(tyre.Price).replace(/[^0-9.]/g, '')).toLocaleString('en-IN')}` : 'POA'}
+                        </div>
+
+                        <div className="flex flex-col gap-2.5 mt-auto">
+                           {tyre.Warranty && (
+                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                               <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest">Warranty</span>
+                               <span className="text-[9px] sm:text-[10px] font-black uppercase text-[#0f172a] border border-[#0f172a]/10 px-1.5 py-0.5 rounded bg-[#0f172a]/[0.02] inline-block w-fit">{tyre.Warranty}</span>
+                             </div>
+                           )}
+                           {tyre.BestFor && (
+                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                               <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest">Best For</span>
+                               <span className="text-[9px] sm:text-[10px] font-black uppercase inline-block w-fit" style={{ color: theme.primary, backgroundColor: `${theme.primary}10`, border: `1px solid ${theme.primary}30`, padding: '2px 6px', borderRadius: '4px' }}>{tyre.BestFor}</span>
+                             </div>
+                           )}
+                        </div>
+                      </div>
+
+                      {/* Tyre Image Right Side */}
+                      <div className="absolute top-[10%] sm:top-1/2 -right-2 sm:-right-4 sm:-translate-y-1/2 w-[60%] sm:w-[65%] h-[80%] sm:h-[90%] flex items-center justify-center pointer-events-none z-[30]">
+                         <TyreImage
+                            fileName={tyre.ImageFileName}
+                            alt={tyre.TyreModel || 'Tyre'}
+                            className="w-[85%] sm:w-[85%] h-auto max-h-[100%] object-contain transition-transform duration-700 ease-out group-hover/ccard:scale-110 group-hover/ccard:-translate-y-1 relative z-30"
+                            style={{ filter: "drop-shadow(-8px 12px 16px rgba(0,0,0,0.35))" }}
+                          />
+                      </div>
+                    </div>
+
+                    {/* Bottom Details Section */}
+                    <div className="relative z-20 flex-1 bg-[#ffffff] p-5 sm:p-7 pt-0 flex flex-col">
+                      {tyre.Description && (
+                        <p className="mb-4 text-[11px] sm:text-[12px] text-slate-500 leading-relaxed line-clamp-3">{tyre.Description}</p>
+                      )}
+
+                      <div className="flex items-center gap-3 mb-4 mt-2">
+                         <span className="h-[2px] w-6" style={{ backgroundColor: theme.primary, opacity: 0.3 }}></span>
+                         <span className="text-[10px] text-[#0f172a] font-bold uppercase tracking-widest">Key Benefits</span>
+                      </div>
+
+                      <div className="flex flex-col gap-3.5 flex-1 pr-2">
+                         {benefits.slice(0, 4).map((b, i) => (
+                            <div key={i} className="flex gap-3 items-start relative z-10 w-full overflow-hidden">
+                              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shrink-0 border"
+                                style={{ backgroundColor: `${theme.primary}08`, color: theme.primary, borderColor: `${theme.primary}20` }}>
+                                <span className="material-symbols-outlined text-[13px] sm:text-[14px]">{b.icon}</span>
+                              </div>
+                              <div className="flex flex-col flex-1 min-w-0">
+                                <p className="text-[11px] sm:text-[12px] font-bold text-[#0f172a] leading-tight mb-0.5 truncate">{b.title}</p>
+                                <p className="text-[10px] sm:text-[11px] text-slate-500 leading-snug line-clamp-2">{b.desc}</p>
+                              </div>
+                            </div>
+                         ))}
                       </div>
 
                       <div className="mt-6 pt-5 border-t border-slate-100">
-                        <button onClick={(e) => { e.stopPropagation(); setCheckoutTyre(tyre); }} className="relative overflow-hidden group w-full bg-[#00254d] hover:bg-[#001a33] text-white font-black py-4 rounded-xl text-[12px] tracking-[0.12em] uppercase transition-all shadow-[0_4px_16px_rgba(0,37,77,0.12)] hover:shadow-[0_8px_24px_rgba(0,37,77,0.18)] active:scale-[0.97]">
-                          <span className="relative z-10 flex justify-center items-center gap-2">Add to Cart</span>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setCheckoutTyre(tyre); setIsCompareOpen(false); }} 
+                          className="relative overflow-hidden group w-full text-white font-black py-3.5 sm:py-4 rounded-xl text-[11px] sm:text-[12px] tracking-[0.12em] uppercase transition-all shadow-[0_4px_16px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.22)] active:scale-[0.97] flex items-center justify-center gap-2"
+                          style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})` }}
+                        >
+                          <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out rounded-[inherit] pointer-events-none"></div>
+                          <span className="material-symbols-outlined text-[16px] sm:text-[18px] relative z-10 transition-transform group-hover:-translate-y-0.5 ease-out">shopping_cart</span>
+                          <span className="relative z-10 transition-transform group-hover:-translate-y-0.5 ease-out delay-75">Add to Cart</span>
                         </button>
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </motion.div>
