@@ -39,6 +39,94 @@ function AnimatedPrice({ price }) {
   return <span ref={nodeRef}></span>;
 }
 
+const TYRE_BRAND_LOGOS = {
+  apollo: "/tyre-brands/apollo.png",
+  ceat: "/tyre-brands/ceat.png",
+  bridgestone: "/tyre-brands/bridgestone.png",
+  michelin: "/tyre-brands/michelin.png",
+  mrf: "/tyre-brands/mrf.png",
+  goodyear: "/tyre-brands/goodyear.png",
+};
+
+const getTyreImageCandidates = (fileName) => {
+  if (!fileName) return [];
+  const clean = fileName.toString().trim();
+  const hasExt = /\.[a-zA-Z0-9]+$/.test(clean);
+  if (hasExt) return [`/tyres/${clean}`];
+
+  return [
+    `/tyres/${clean}.png`,
+    `/tyres/${clean}.jpg`,
+    `/tyres/${clean}.jpeg`,
+    `/tyres/${clean}.webp`,
+  ];
+};
+
+function TyreImage({ fileName, alt, className, style }) {
+  const initialCandidates = getTyreImageCandidates(fileName);
+  const [imgSrc, setImgSrc] = useState(
+    initialCandidates.length > 0
+      ? initialCandidates[0]
+      : 'https://placehold.co/400x400/f5f5f5/a3a3a3?text=Image+Coming+Soon'
+  );
+  const [errorIndex, setErrorIndex] = useState(0);
+
+  useEffect(() => {
+    const candidates = getTyreImageCandidates(fileName);
+    setImgSrc(
+      candidates.length > 0
+        ? candidates[0]
+        : 'https://placehold.co/400x400/f5f5f5/a3a3a3?text=Image+Coming+Soon'
+    );
+    setErrorIndex(0);
+  }, [fileName]);
+
+  const handleError = () => {
+    const candidates = getTyreImageCandidates(fileName);
+    if (errorIndex + 1 < candidates.length) {
+      setErrorIndex(prev => prev + 1);
+      setImgSrc(candidates[errorIndex + 1]);
+    } else {
+      setImgSrc('https://placehold.co/400x400/f5f5f5/a3a3a3?text=Image+Coming+Soon');
+    }
+  };
+
+  return (
+    <img
+      src={imgSrc}
+      alt={alt}
+      className={className}
+      style={style}
+      onLoad={(e) => { e.target.style.opacity = 1; }}
+      onError={handleError}
+    />
+  );
+}
+
+function TyreBrandLogo({ brand, className, textClassName, imgClassName }) {
+  if (!brand) return <h4 className={textClassName}>Premium</h4>;
+  const cleanBrand = brand.toString().trim().toLowerCase();
+
+  const matchedKey = Object.keys(TYRE_BRAND_LOGOS).find(
+    k => cleanBrand.includes(k) || k.includes(cleanBrand) || cleanBrand === k
+  );
+
+  if (matchedKey) {
+    return (
+      <div className={`flex items-center ${className}`}>
+        <img
+          src={TYRE_BRAND_LOGOS[matchedKey]}
+          alt={brand}
+          className={`w-auto object-contain shrink-0 ${imgClassName || 'h-full'}`}
+          style={{ filter: "contrast(1.1) brightness(1.05)" }}
+        />
+      </div>
+    );
+  }
+
+  return <h4 className={textClassName}>{brand}</h4>;
+}
+
 const BRANDS = [
   { name: "KIA", id: "Kia", image: "kia.png" },
   { name: "MARUTI SUZUKI", id: "Maruti Suzuki", image: "suzuki.png" },
@@ -53,6 +141,20 @@ const BRANDS = [
   { name: "MAHINDRA", id: "Mahindra", image: "mahindra.png" },
   { name: "SKODA", id: "Skoda", image: "skoda.png" }
 ];
+
+const getBrandTheme = (brand) => {
+  if (!brand) return { primary: '#00254d', secondary: '#001a33', accent: null };
+  const clean = brand.toString().trim().toLowerCase();
+
+  if (clean.includes('apollo')) return { primary: '#6D28D9', secondary: '#4C1D95', accent: null };
+  if (clean.includes('bridgestone')) return { primary: '#050404ff', secondary: '#991B1B', accent: '#2563EB' };
+  if (clean.includes('ceat')) return { primary: '#2563EB', secondary: '#1E3A8A', accent: '#F97316' };
+  if (clean.includes('michelin')) return { primary: '#1D4ED8', secondary: '#1E3A8A', accent: '#FACC15' };
+  if (clean.includes('mrf')) return { primary: '#EF4444', secondary: '#991B1B', accent: null };
+  if (clean.includes('goodyear')) return { primary: '#1E3A8A', secondary: '#172554', accent: '#FACC15' };
+
+  return { primary: '#00254d', secondary: '#001a33', accent: null };
+};
 
 export default function Home() {
   const { selectedBrand, setSelectedBrand } = useAppContext();
@@ -164,7 +266,9 @@ export default function Home() {
   const modelInventory = brandInventory.filter(row =>
     row.CarModel && selectedModel && row.CarModel.toString().trim().toLowerCase() === selectedModel.toString().trim().toLowerCase()
   );
-  const uniqueSizes = [...new Set(modelInventory.map(row => row.WheelSize + " Inch"))].filter(Boolean);
+  const uniqueSizes = [...new Set(modelInventory.map(row => row.WheelSize + " Inch"))]
+    .filter(Boolean)
+    .sort((a, b) => parseInt(a) - parseInt(b));
 
   const filteredTyres = (() => {
     if (!selectedBrand || !selectedModel || !selectedSize) return [];
@@ -183,21 +287,31 @@ export default function Home() {
       row.RequiredSize && requiredSize && row.RequiredSize.toString().trim().toLowerCase() === requiredSize.toString().trim().toLowerCase()
     );
 
+    const normalize = (str) => str?.toString().trim().toLowerCase().replace(/\s+/g, '-');
+
     return matchingInventory.map(invItem => {
-      const invModelID = invItem.ModelID?.toString().trim().toLowerCase();
-      const catMatch = catalogue.find(cat => cat.ModelID?.toString().trim().toLowerCase() === invModelID) || {};
+      const catMatch = catalogue.find(cat =>
+        normalize(cat.ModelID) === normalize(invItem.ModelID)
+      );
+
+      const parts = invItem.ModelID?.split('-') || [];
+      const fallbackBrand = parts[0]
+        ? parts[0].charAt(0).toUpperCase() + parts[0].slice(1)
+        : "Unknown";
+      const fallbackModel = parts.slice(1).join(' ') || "Model Missing";
+
+      console.log("Mapping:", invItem.ModelID, "→", catMatch?.ModelID);
 
       return {
         ...invItem,
-        ...catMatch,
-        TyreBrand: catMatch.TyreBrand || invItem.Brand,
-        TyreModel: catMatch.TyreModel || invItem.Model || "Model Info Missing",
-        Price: invItem.Price,
-        Warranty: invItem.Warranty,
-        Description: catMatch.Description,
-        BestFor: catMatch.BestFor,
-        PromoBadge: catMatch.PromoBadge || invItem.PromoBadge,
-        ImageFileName: catMatch.ImageFileName || invItem.ImageFileName
+        ...(catMatch || {}),
+        ModelID: invItem.ModelID?.toString().trim() || "",
+        TyreBrand: (catMatch?.TyreBrand || fallbackBrand)?.toString().trim() || "",
+        TyreModel: (catMatch?.TyreModel || fallbackModel)?.toString().trim() || "",
+        Description: catMatch?.Description?.toString().trim() || "",
+        BestFor: catMatch?.BestFor?.toString().trim() || "",
+        ImageFileName: catMatch?.ImageFileName?.toString().trim() || invItem.ImageFileName?.toString().trim() || "",
+        PromoBadge: invItem.PromoBadge?.toString().trim() || catMatch?.PromoBadge?.toString().trim() || "",
       };
     });
   })();
@@ -891,15 +1005,17 @@ export default function Home() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
                       {displayedTyres.map((tyre, index) => {
                         const isSelected = selectedTyre?.ModelID === tyre.ModelID;
+                        const theme = getBrandTheme(tyre.TyreBrand || tyre.Brand);
+
                         let smartBadge = null;
                         if (tyre.PromoBadge) {
                           const pb = tyre.PromoBadge.toString().toLowerCase();
                           if (pb.includes('sale') || pb.includes('offer') || pb.includes('clearance')) {
-                            smartBadge = { label: tyre.PromoBadge, icon: 'sell', color: 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-200/50' };
+                            smartBadge = { label: tyre.PromoBadge, icon: 'sell', color: 'bg-red-500 text-white shadow-sm' };
                           } else if (pb.includes('popular') || pb.includes('recommend')) {
-                            smartBadge = { label: tyre.PromoBadge, icon: 'local_fire_department', color: 'bg-[#00254d] text-white' };
+                            smartBadge = { label: tyre.PromoBadge, icon: 'local_fire_department', color: 'bg-[#00254d] text-white shadow-sm' };
                           } else {
-                            smartBadge = { label: tyre.PromoBadge, icon: 'stars', color: 'bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-300/50' };
+                            smartBadge = { label: tyre.PromoBadge, icon: 'stars', color: 'bg-slate-700 text-white shadow-sm' };
                           }
                         }
                         return (
@@ -910,66 +1026,108 @@ export default function Home() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.03 }}
                             onClick={() => setSelectedTyre(selectedTyre?.ModelID === tyre.ModelID ? null : tyre)}
-                            className={`cursor-pointer rounded-xl border flex flex-col group overflow-hidden transition-all duration-300 text-left w-full relative active:scale-[0.98] ${isSelected
-                              ? 'border-[#00254d]/40 bg-white ring-2 ring-[#00254d]/20 shadow-[0_8px_32px_rgba(0,37,77,0.12)] -translate-y-0.5'
-                              : 'border-slate-200/80 bg-white shadow-[0_2px_8px_rgba(15,23,42,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(15,23,42,0.08)]'
+                            style={{
+                              '--brand-primary': theme.primary,
+                              '--brand-secondary': theme.secondary,
+                            }}
+                            className={`cursor-pointer flex flex-col group overflow-hidden transition-all duration-300 text-left w-full relative active:scale-[0.98] bg-white rounded-2xl min-h-[220px] ${isSelected
+                              ? 'ring-2 ring-[var(--brand-primary)] ring-offset-2 shadow-[0_4px_24px_rgba(0,0,0,0.12)] -translate-y-0.5'
+                              : 'shadow-[0_4px_16px_rgba(15,23,42,0.04)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] hover:-translate-y-1'
                               }`}
                           >
 
-                            {/* Image */}
-                            <div className="h-40 sm:h-44 w-full relative flex items-center justify-center p-3 sm:p-4 overflow-hidden bg-gradient-to-b from-slate-50/50 to-white">
-                              {/* Top-right action stack: tick only */}
-                              <div className="absolute top-3 right-3 flex flex-col gap-2 items-center z-30">
-                                {isSelected && (
-                                  <div className="w-6 h-6 bg-[#00254d] rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,37,77,0.25)]">
-                                    <span className="material-symbols-outlined text-white text-[13px]">check</span>
-                                  </div>
-                                )}
-                              </div>
+                            {/* Background Shapes */}
+                            <div className="absolute top-0 right-0 bottom-0 w-[55%] sm:w-[50%] pointer-events-none overflow-hidden rounded-r-2xl">
+                              {/* Secondary Accent (top corner sweep) */}
+                              {theme.accent && (
+                                <div
+                                  className="absolute top-[-20%] right-[-10%] w-[80%] h-[70%] transition-transform duration-700 ease-out group-hover:scale-110 opacity-60"
+                                  style={{
+                                    background: `radial-gradient(ellipse at top right, ${theme.accent}, transparent 60%)`,
+                                    filter: 'blur(12px)'
+                                  }}
+                                ></div>
+                              )}
 
-                              <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start z-20">
+                              {/* Base Primary Arc */}
+                              <div
+                                className="absolute top-[-10%] right-[-15%] w-[110%] h-[120%] transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.03]"
+                                style={{
+                                  background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
+                                  borderRadius: '50% 0 0 50% / 50% 0 0 50%',
+                                }}
+                              >
+                                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-[inherit]"></div>
+                              </div>
+                            </div>
+
+                            {/* Content Array */}
+                            <div className="relative z-10 p-4 flex flex-col h-full w-full pointer-events-none">
+
+                              {/* Top Left: Badges */}
+                              <div className="flex flex-col items-start gap-1.5 relative z-20">
                                 {smartBadge && (
-                                  <span className={`${smartBadge.color} text-[8px] px-2 py-0.5 font-black rounded-md uppercase tracking-widest flex items-center gap-1`}>
-                                    <span className="material-symbols-outlined text-[9px]">{smartBadge.icon}</span>
+                                  <span className={`${smartBadge.color} text-[8px] sm:text-[9px] px-2 py-0.5 font-bold rounded-[4px] uppercase tracking-widest flex items-center gap-1 shadow-sm`}>
+                                    <span className="material-symbols-outlined text-[10px]">{smartBadge.icon}</span>
                                     {smartBadge.label}
                                   </span>
                                 )}
-                                {tyre.Warranty && <span className={getWarrantyColor(tyre.Warranty)}>{tyre.Warranty.toUpperCase()} WARRANTY</span>}
-                                {tyre.BestFor && <span className={getBestForColor(tyre.BestFor)}>FOR: {tyre.BestFor.toUpperCase()}</span>}
+                                {tyre.Warranty && (
+                                  <span className="text-[8px] sm:text-[9px] px-2 py-0.5 font-extrabold rounded-[4px] uppercase tracking-widest shadow-sm ring-1 ring-inset"
+                                    style={{ backgroundColor: `${theme.primary}10`, color: theme.primary, ringColor: `${theme.primary}40` }}>
+                                    {tyre.Warranty} WARRANTY
+                                  </span>
+                                )}
+                                {tyre.BestFor && (
+                                  <span className="text-[8px] sm:text-[9px] px-2 py-0.5 font-extrabold rounded-[4px] uppercase tracking-widest shadow-sm ring-1 ring-inset"
+                                    style={{ backgroundColor: `${theme.secondary}10`, color: theme.secondary, ringColor: `${theme.secondary}40` }}>
+                                    FOR: {tyre.BestFor}
+                                  </span>
+                                )}
                               </div>
-                              {/* Floor shadow */}
-                              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-3 bg-[#0f172a]/10 blur-[10px] rounded-[100%] pointer-events-none"></div>
-                              <img
-                                src={tyre.ImageFileName ? `/tyres/${tyre.ImageFileName}` : 'https://placehold.co/400x400/f5f5f5/a3a3a3?text=Image+Coming+Soon'}
-                                alt={tyre.TyreModel || 'Tyre'}
-                                className="w-4/5 h-4/5 object-contain mix-blend-multiply transition-transform duration-500 relative z-10 group-hover:scale-[1.04]"
-                                style={{ opacity: 0, animation: 'fadeIn 0.4s ease forwards' }}
-                                onLoad={(e) => { e.target.style.opacity = 1; }}
-                                onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x400/f5f5f5/a3a3a3?text=Image+Coming+Soon'; }}
-                              />
-                            </div>
 
-                            {/* Details */}
-                            <div className="p-4 flex flex-col flex-grow">
-                              <div className="mb-3">
-                                <h4 className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-400 mb-0.5 truncate">{tyre.TyreBrand || tyre.Brand || 'Premium'}</h4>
-                                <h3 className="text-sm font-black text-[#0f172a] leading-tight line-clamp-1">{tyre.TyreModel || tyre.Model || 'Tyre'}</h3>
+                              {/* Middle Left: Logo & Model */}
+                              <div className="mt-3 max-w-[55%] relative z-20">
+                                <TyreBrandLogo
+                                  brand={tyre.TyreBrand}
+                                  className="min-h-[48px] mb-2"
+                                  imgClassName="h-10 sm:h-12 md:h-14 w-auto object-contain object-left drop-shadow-sm"
+                                  textClassName="text-lg font-extrabold uppercase tracking-wide text-slate-800 truncate"
+                                />
+                                <h3 className="text-sm sm:text-base font-black text-[#0f172a] leading-tight line-clamp-3 pr-2 shadow-white/50 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
+                                  {tyre.TyreModel || tyre.ModelID}
+                                </h3>
                               </div>
-                              <div className="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between min-h-[40px]">
-                                <div>
-                                  <p className="text-[8px] text-slate-400 uppercase tracking-widest mb-0.5 font-bold">Per Tyre</p>
-                                  <p className="text-lg font-black text-[#0f172a] leading-none tracking-tight">{tyre.Price ? `₹${Number(String(tyre.Price).replace(/[^0-9.]/g, '')).toLocaleString('en-IN')}` : 'POA'}</p>
-                                </div>
-                                <button
-                                  onClick={(e) => toggleCompare(e, tyre)}
-                                  className={`p-2 rounded-lg transition-all duration-200 flex items-center justify-center z-20 shrink-0 active:scale-[0.92] ${compareList.some(t => t.ModelID === tyre.ModelID)
-                                    ? 'bg-[#e0e7ff] text-[#3730a3] shadow-sm'
-                                    : 'bg-slate-50 text-slate-300 hover:bg-slate-100 hover:text-[#00254d]'
-                                    }`}
-                                >
-                                  <span className="material-symbols-outlined text-[18px]">balance</span>
-                                </button>
+
+                              {/* Bottom Left: Price */}
+                              <div className="mt-auto pt-4 relative z-20">
+                                <p className="text-[7.5px] sm:text-[8px] text-[#64748b] font-extrabold uppercase tracking-widest mb-0.5">Per Tyre</p>
+                                <p className="text-lg sm:text-xl font-black text-[var(--brand-primary)] leading-none tracking-tight">
+                                  {tyre.Price ? `₹${Number(String(tyre.Price).replace(/[^0-9.]/g, '')).toLocaleString('en-IN')}` : 'POA'}
+                                </p>
                               </div>
+
+                              {/* Tyre Image */}
+                              <div className="absolute top-[8%] -right-2 sm:-right-4 w-[60%] sm:w-[65%] h-[90%] flex items-center justify-center pointer-events-none">
+                                <TyreImage
+                                  fileName={tyre.ImageFileName}
+                                  alt={tyre.TyreModel || 'Tyre'}
+                                  className="w-[85%] sm:w-[90%] h-auto max-h-[160px] object-contain transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 group-hover:-translate-y-1 relative z-30"
+                                  style={{ filter: "drop-shadow(-8px 12px 14px rgba(0,0,0,0.35))" }}
+                                />
+                              </div>
+
+                              {/* Balance Icon */}
+                              <button
+                                onClick={(e) => toggleCompare(e, tyre)}
+                                className={`absolute bottom-3 right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-[6px] flex items-center justify-center z-40 transition-all duration-200 active:scale-95 shadow-md pointer-events-auto ${compareList.some(t => t.ModelID === tyre.ModelID)
+                                  ? 'bg-white text-[var(--brand-primary)] ring-2 ring-white ring-inset shadow-[0_4px_12px_rgba(0,0,0,0.15)]'
+                                  : 'bg-white/95 text-[var(--brand-primary)] hover:bg-white transition-colors duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.12)]'
+                                  }`}
+                              >
+                                <span className="material-symbols-outlined text-[16px] sm:text-[18px]">balance</span>
+                              </button>
+
                             </div>
                           </motion.div>
                         );
@@ -997,8 +1155,8 @@ export default function Home() {
                   className="fixed bottom-0 left-0 right-0 z-[60] xl:hidden bg-white/95 backdrop-blur-xl border-t border-slate-200/80 shadow-[0_-4px_24px_rgba(0,37,77,0.10)] px-4 py-3.5 flex items-center gap-3"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 truncate">{selectedTyre.TyreBrand || selectedTyre.Brand}</p>
-                    <p className="text-sm font-black text-[#0f172a] truncate line-clamp-1">{selectedTyre.TyreModel || selectedTyre.Model}</p>
+                    <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-0.5 h-[14px]" textClassName="text-[9px] font-black uppercase tracking-widest text-slate-400 truncate" />
+                    <p className="text-sm font-black text-[#0f172a] truncate line-clamp-1">{selectedTyre.TyreModel || selectedTyre.ModelID}</p>
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Per Tyre</p>
@@ -1033,19 +1191,19 @@ export default function Home() {
                         <span className="material-symbols-outlined text-[15px]">close</span>
                       </button>
                       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-3 bg-[#0f172a]/[0.06] blur-[12px] rounded-[100%] pointer-events-none"></div>
-                      <img
-                        src={selectedTyre.ImageFileName ? `/tyres/${selectedTyre.ImageFileName}` : '/tyre-placeholder.png'}
+                      <TyreImage
+                        fileName={selectedTyre.ImageFileName}
                         alt={selectedTyre.TyreModel || 'Tyre'}
                         className="w-4/5 h-48 object-contain mix-blend-multiply relative z-10 transition-transform duration-300 hover:scale-[1.02]"
-                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x400/f5f5f5/a3a3a3?text=Image+Coming+Soon'; }}
+                        style={{ opacity: 0, animation: 'fadeIn 0.4s ease forwards' }}
                       />
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-7 py-6 flex flex-col hide-scrollbar">
                       {/* Brand & Model */}
                       <div className="mb-5">
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1">{selectedTyre.TyreBrand || selectedTyre.Brand || 'Brand'}</p>
-                        <h1 className="text-2xl text-[#0f172a] font-black tracking-tight leading-tight">{selectedTyre.TyreModel || selectedTyre.Model || 'Model'}</h1>
+                        <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-2 h-[22px]" textClassName="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1" />
+                        <h1 className="text-2xl text-[#0f172a] font-black tracking-tight leading-tight">{selectedTyre.TyreModel || selectedTyre.ModelID}</h1>
                       </div>
 
                       {/* Price */}
