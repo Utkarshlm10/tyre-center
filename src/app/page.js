@@ -274,25 +274,41 @@ export default function Home() {
     }
 
     setSelectedBrand(brand.id);
-    setSelectedModel(null);
-    setSelectedSize(null);
+
+    const specificBrandInventory = fitments.filter(row =>
+      row.CarBrand && row.CarBrand.toString().trim().toLowerCase() === brand.id.toString().trim().toLowerCase()
+    );
+    const newUniqueModels = [...new Set(specificBrandInventory.map(row => row.CarModel))].filter(Boolean);
+    const firstModel = newUniqueModels[0] || null;
+    
+    setSelectedModel(firstModel);
+    
+    if (firstModel) {
+        const mi = specificBrandInventory.filter(row =>
+          row.CarModel && row.CarModel.toString().trim().toLowerCase() === firstModel.toString().trim().toLowerCase()
+        );
+        const sizes = [...new Set(mi.map(row => row.WheelSize + " Inch"))]
+          .filter(Boolean)
+          .sort((a, b) => parseInt(a) - parseInt(b));
+        setSelectedSize(sizes.length > 0 ? sizes[0] : null);
+    } else {
+        setSelectedSize(null);
+    }
+
     setStep(2);
   };
 
   const handleModelSelect = (model) => {
     setSelectedModel(model);
-    setSelectedSize(null);
-
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        sizeSectionRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-        setHighlightSizes(true);
-        setTimeout(() => setHighlightSizes(false), 800);
-      }, 180);
-    });
+    
+    const mi = brandInventory.filter(row =>
+      row.CarModel && row.CarModel.toString().trim().toLowerCase() === model.toString().trim().toLowerCase()
+    );
+    const sizes = [...new Set(mi.map(row => row.WheelSize + " Inch"))]
+      .filter(Boolean)
+      .sort((a, b) => parseInt(a) - parseInt(b));
+      
+    setSelectedSize(sizes.length > 0 ? sizes[0] : null);
   };
 
   const brandInventory = fitments.filter(row =>
@@ -709,203 +725,304 @@ export default function Home() {
           </motion.main>
         )}
 
-        {step === 2 && (
+        {step === 2 && (() => {
+          const getBrandThemeColor = (brand) => {
+            if (!brand) return '#00254d';
+            const clean = brand.toString().trim().toLowerCase();
+            if (clean.includes('hyundai')) return '#002c5f';
+            if (clean.includes('kia')) return '#bb162b';
+            if (clean.includes('tata')) return '#0033a0';
+            if (clean.includes('mahindra')) return '#e31837';
+            if (clean.includes('maruti') || clean.includes('suzuki')) return '#1e293b';
+            if (clean.includes('jeep')) return '#4b5320';
+            if (clean.includes('mercedes')) return '#000000';
+            if (clean.includes('audi')) return '#000000';
+            if (clean.includes('skoda')) return '#4ba82e';
+            if (clean.includes('volkswagen')) return '#001e50';
+            if (clean.includes('honda')) return '#0f172a';
+            if (clean.includes('bmw')) return '#0066b1';
+            if (clean.includes('toyota')) return '#eb0a1e';
+            return '#00254d';
+          };
+          const brandThemeColor = getBrandThemeColor(selectedBrand);
+          const activeModelName = selectedModel || uniqueModels[0];
+          
+          const activeModelDetails = brandInventory.find(row => row.CarModel === activeModelName);
+          const activeModelSubCat = activeModelDetails?.BodyType || activeModelDetails?.Category || 'Premium SUV';
+          
+          const activeModelSizes = (() => {
+              if (!activeModelName) return [];
+              const mi = brandInventory.filter(row =>
+                row.CarModel && row.CarModel.toString().trim().toLowerCase() === activeModelName.toString().trim().toLowerCase()
+              );
+              return [...new Set(mi.map(row => row.WheelSize + " Inch"))]
+                .filter(Boolean)
+                .sort((a, b) => parseInt(a) - parseInt(b));
+          })();
+
+          const modelsByCategory = {};
+          uniqueModels.forEach(model => {
+            const match = brandInventory.find(row => row.CarModel === model);
+            const cat = match?.Category || 'SUVs';
+            if (!modelsByCategory[cat]) modelsByCategory[cat] = [];
+            modelsByCategory[cat].push({
+               name: model,
+               sub: match?.BodyType || match?.Category || ''
+            });
+          });
+          const categoryOrder = ['SUVs', 'Sedans', 'Hatchbacks', 'EVs', 'MUVs'];
+          const sortedCategories = Object.keys(modelsByCategory).sort((a, b) => {
+             const idxA = categoryOrder.findIndex(c => c.toLowerCase() === a.toLowerCase());
+             const idxB = categoryOrder.findIndex(c => c.toLowerCase() === b.toLowerCase());
+             return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
+          });
+
+          return (
           <>
             <motion.main
               key="step2"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="xl:ml-[240px] 2xl:ml-[260px] 2xl:mr-[360px] flex-1 h-full flex flex-col bg-[#f0f4f8] relative overflow-y-auto overflow-x-hidden scroll-smooth pt-[68px] xl:pt-20 pb-40 sm:pb-48 md:pb-52 2xl:pb-40 px-5 sm:px-8 md:px-12 lg:px-16 2xl:px-20"
+              className="xl:ml-[240px] 2xl:ml-[260px] 2xl:mr-[320px] flex-1 h-full flex flex-col bg-[#f8fafc] relative overflow-y-auto overflow-x-hidden scroll-smooth pt-[68px] xl:pt-16 pb-40 px-5 sm:px-8 md:px-12 lg:px-16 2xl:px-20"
             >
-              <div className="hidden md:flex fixed top-20 xl:left-[240px] 2xl:left-[260px] left-0 w-full 2xl:w-[calc(100%-620px)] h-full overflow-hidden pointer-events-none z-0 items-start justify-center opacity-[0.025]">
-                <span className="text-[18vw] xl:text-[22vw] font-black text-[#0f172a] leading-none tracking-[-0.03em] uppercase whitespace-nowrap select-none" style={{ fontFamily: 'inherit' }}>
-                  {selectedBrand && selectedBrand.length > 5 ? selectedBrand.substring(0, 3) : selectedBrand}
+              {/* Background Watermark */}
+              <div className="flex fixed top-16 left-0 w-full h-full overflow-hidden pointer-events-none z-0 items-start justify-center">
+                <span className="text-[14vw] font-black text-[#0f172a]/[0.02] tracking-[-0.02em] uppercase leading-none select-none mt-12 w-full text-center">
+                  {selectedBrand}
                 </span>
               </div>
 
               <div className="flex flex-col z-10 w-full max-w-5xl mx-auto h-full">
-                <div className="mb-6 sm:mb-10 md:mb-14">
-                  <h2 className="text-[#00254d] font-bold text-[10px] uppercase tracking-[0.25em] mb-2 sm:mb-3 flex items-center gap-2">
-                    <span className="w-4 h-px bg-[#00254d]/30"></span>
+                {/* Header */}
+                <div className="mb-8">
+                  <h2 className="text-[#00254d] font-bold text-[9px] uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
                     Step 2 · Configuration
                   </h2>
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-black text-[#0f172a] tracking-[-0.03em] capitalize leading-[0.9]">{selectedBrand}</h1>
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#00254d] tracking-[-0.02em] mb-2 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
+                    Choose your {selectedBrand} model
+                  </h1>
+                  <p className="text-xs text-slate-800 font-medium tracking-wide">
+                    Select a vehicle to view available tyre sizes
+                  </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end pb-3 sm:pb-4 mb-5 sm:mb-6 w-full gap-2 border-b border-slate-200/60">
-                  <h3 className="text-[11px] font-bold text-[#0f172a] uppercase tracking-[0.2em]">Select Model Variant</h3>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{uniqueModels.length} Models</span>
-                </div>
+                {/* Hero Panel */}
+                <div className="bg-white rounded-[20px] shadow-[0_8px_30px_rgba(15,23,42,0.06)] mb-12 flex flex-col md:flex-row min-h-[300px] md:min-h-[360px] relative overflow-hidden border border-slate-100 items-stretch">
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 z-20" style={{ backgroundColor: brandThemeColor }}></div>
+                  
+                  {/* Car Image Container (Left Column) */}
+                  <div className="w-full md:w-[42%] flex justify-center items-center relative p-8 md:p-10 shrink-0 bg-slate-50/30">
+                    <img
+                      src={`/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.jpg`}
+                      onError={(e) => {
+                         e.target.onerror = null;
+                         e.target.src = `/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.jpeg`;
+                      }}
+                      alt={activeModelName}
+                      className="w-full max-w-[340px] h-auto max-h-[240px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.12)] z-10 relative"
+                    />
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 w-full">
-                  {uniqueModels.map(model => (
-                    <div
-                      key={model}
-                      onClick={() => handleModelSelect(model)}
-                      className={`relative flex flex-col rounded-[24px] cursor-pointer overflow-hidden group transition-all duration-300 ${selectedModel === model
-                        ? 'bg-white ring-1 ring-[#00254d]/15 shadow-[0_20px_50px_rgba(0,37,77,0.14)] -translate-y-0.5'
-                        : 'bg-white/92 ring-1 ring-black/5 hover:bg-white hover:shadow-[0_16px_40px_rgba(15,23,42,0.08)] hover:-translate-y-1'
-                        }`}
+                  {/* Car Info Container (Right Column) */}
+                  <div className="w-full md:w-[58%] flex flex-col items-start justify-center text-left z-10 p-8 sm:p-10 md:py-12 md:pr-12 md:pl-2">
+                    <span 
+                      className="inline-block px-2.5 py-1 mb-3 text-[9px] font-black uppercase tracking-widest text-white rounded shadow-sm shrink-0"
+                      style={{ backgroundColor: brandThemeColor }}
                     >
-                      {/* IMAGE SECTION */}
-                      <div className="relative px-4 pt-4 pb-2">
-                        <div className="relative w-full h-[170px] md:h-[190px] rounded-[18px] overflow-hidden bg-[linear-gradient(180deg,#f8fafc_0%,#eef2f7_100%)] flex items-center justify-center">
+                      Selected Model
+                    </span>
+                    <h2 className="text-2xl md:text-3xl font-black text-[#0f172a] mb-1">
+                      {selectedBrand} {activeModelName}
+                    </h2>
+                    <p className="text-[12px] font-bold text-slate-500 mb-3 shrink-0">{activeModelSubCat}</p>
+                    <p className="text-[12px] text-slate-600 mb-6 max-w-md leading-[1.6] shrink-0">
+                      A perfect blend of style, performance and comfort for city and highway drives.
+                    </p>
 
-                          {/* soft shadow under car */}
-                          <div className="absolute inset-x-[12%] bottom-3 h-6 bg-black/10 blur-xl rounded-full" />
+                    <h3 className="text-[10px] font-bold text-[#0f172a] uppercase tracking-widest mb-3 shrink-0">
+                      Available Wheel Sizes
+                    </h3>
+                    <div className="flex flex-wrap gap-2.5 w-full">
+                      {activeModelSizes.length > 0 ? (
+                        activeModelSizes.map(size => {
+                          const isSelectedSize = selectedModel === activeModelName && selectedSize === size;
+                          return (
+                            <button
+                              key={size}
+                              onClick={() => {
+                                 if (selectedModel !== activeModelName) handleModelSelect(activeModelName);
+                                 setSelectedSize(size);
+                              }}
+                              className="px-5 py-2.5 rounded-[10px] text-[11px] font-black tracking-widest transition-all duration-200 border shrink-0"
+                              style={isSelectedSize ? {
+                                  backgroundColor: brandThemeColor,
+                                  color: 'white',
+                                  borderColor: brandThemeColor,
+                                  boxShadow: `0 4px 12px ${brandThemeColor}40`
+                              } : {
+                                  backgroundColor: '#f8fafc',
+                                  color: '#475569',
+                                  borderColor: '#e2e8f0'
+                              }}
+                            >
+                              {size}
+                            </button>
+                          );
+                        })
+                      ) : (
+                         <p className="text-xs text-slate-400 shrink-0">No sizes found in database</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
-                          <img
-                            src={`/cars/${model.toLowerCase().replace(/\s+/g, '-')}.jpg`}
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = `/cars/${model.toLowerCase().replace(/\s+/g, '-')}.jpeg`;
-                            }}
-                            alt={model}
-                            className="relative z-10 max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-[1.025]"
-                            draggable="false"
-                          />
-
-                          {/* ACTION ICON */}
-                          {selectedModel === model ? (
-                            <div className="absolute top-3 right-3 z-20 w-10 h-10 rounded-full bg-[#00254d] text-white flex items-center justify-center shadow-[0_10px_24px_rgba(0,37,77,0.28)]">
-                              <span className="material-symbols-outlined text-[18px]">check</span>
-                            </div>
-                          ) : (
-                            <div className="absolute top-3 right-3 z-20 w-10 h-10 rounded-full bg-white/95 text-[#64748b] flex items-center justify-center shadow-[0_10px_24px_rgba(15,23,42,0.10)] group-hover:text-[#00254d] transition-colors">
-                              <span className="material-symbols-outlined text-[18px]">add</span>
-                            </div>
-                          )}
-                        </div>
+                {/* Grouped Models */}
+                <div className="flex flex-col gap-8 w-full mt-2">
+                  {sortedCategories.map(cat => (
+                    <div key={cat} className="flex flex-col">
+                      <div className="flex items-center justify-between mb-4 border-b border-slate-200/60 pb-2">
+                        <h3 className="text-sm font-black text-[#0f172a] tracking-tight">{cat}</h3>
                       </div>
-
-                      {/* TEXT SECTION */}
-                      <div className="px-5 pb-5 pt-2 flex items-center justify-between">
-                        <div>
-                          <p className="text-[16px] font-extrabold uppercase tracking-[0.06em] text-[#0f172a] group-hover:text-[#00254d] transition-colors">
-                            {model}
-                          </p>
-                        </div>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                        {modelsByCategory[cat].map(item => {
+                          const isSelected = selectedModel === item.name;
+                          return (
+                            <div
+                              key={item.name}
+                              onClick={() => handleModelSelect(item.name)}
+                              className="relative cursor-pointer transition-all duration-300 rounded-[14px] bg-white border flex flex-col group overflow-hidden"
+                              style={isSelected ? {
+                                 borderColor: brandThemeColor,
+                                 boxShadow: `0 8px 24px ${brandThemeColor}25`,
+                              } : {
+                                 borderColor: 'transparent',
+                                 boxShadow: '0 4px 12px rgba(15,23,42,0.03)'
+                              }}
+                            >
+                              {isSelected && (
+                                <div className="absolute top-2 right-2 w-5 h-5 rounded-full text-white flex items-center justify-center z-20 shadow-sm" style={{ backgroundColor: brandThemeColor }}>
+                                  <span className="material-symbols-outlined text-[13px]">check</span>
+                                </div>
+                              )}
+                              <div className="pt-4 pb-2 px-3 flex flex-col items-center justify-center h-[110px] w-full relative z-10">
+                                {/* Ground Soft Shadow */}
+                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[60%] h-3 bg-black/10 blur-xl rounded-full" />
+                                <img
+                                  src={`/cars/${item.name.toLowerCase().replace(/\s+/g, '-')}.jpg`}
+                                  onError={(e) => {
+                                     e.target.onerror = null;
+                                     e.target.src = `/cars/${item.name.toLowerCase().replace(/\s+/g, '-')}.jpeg`;
+                                  }}
+                                  alt={item.name}
+                                  className={`max-w-[90%] max-h-[100%] object-contain transition-transform duration-300 relative z-10 ${isSelected ? 'scale-105' : 'group-hover:scale-105'}`}
+                                />
+                              </div>
+                              <div className="px-3 pb-3 pt-1 text-left z-10 bg-white border-t border-slate-50">
+                                <h4 className="text-[13px] font-black truncate mb-0.5" style={{ color: isSelected ? brandThemeColor : '#0f172a' }}>{item.name}</h4>
+                                <p className="text-[10px] text-slate-500 font-medium truncate">{item.sub}</p>
+                              </div>
+                            </div>
+                          )
+                        })}
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div
-                  ref={sizeSectionRef}
-                  className="mt-8 sm:mt-12 md:mt-16 pb-10 sm:pb-14 md:pb-16 scroll-mt-24 xl:scroll-mt-12"
+                {/* Inline CTA — hidden on lg and above where sidebar shows */}
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="2xl:hidden mt-12 w-full mb-8"
                 >
-                  <h3 className="text-[11px] font-bold text-[#0f172a] uppercase tracking-[0.2em] pb-4 sm:pb-5 mb-5 sm:mb-6 border-b border-slate-200/60">Specified Wheel Diameter</h3>
-                  <div className="flex flex-row flex-wrap gap-3">
-                    {uniqueSizes.length > 0 ? (
-                      uniqueSizes.map(size => (
-                        <button
-                          key={size}
-                          onClick={() => setSelectedSize(size)}
-                          className={`min-w-[110px] py-4 px-5 font-black tracking-widest rounded-xl transition-all duration-300 text-sm active:scale-[0.96] ${selectedSize === size
-                            ? 'bg-[#00254d] text-white shadow-[0_8px_24px_rgba(0,37,77,0.20)] scale-[1.02]'
-                            : highlightSizes
-                              ? 'bg-blue-50 text-blue-800 shadow-[0_0_15px_rgba(59,130,246,0.3)] ring-1 ring-blue-300'
-                              : 'bg-white text-slate-500 hover:text-[#0f172a] hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 shadow-[0_2px_8px_rgba(15,23,42,0.04)]'
-                            }`}
-                        >
-                          {size}
-                        </button>
-                      ))
-                    ) : (
-                      <div className="text-slate-400 font-medium text-sm py-4">{selectedModel ? 'No sizes available in database.' : 'Select a vehicle model to view available sizes.'}</div>
-                    )}
-                  </div>
-                </div>
-
-                {/* ── Inline CTA — visible below 2xl where summary panel is hidden ── */}
-                {selectedModel && selectedSize && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    className="2xl:hidden mt-8 sm:mt-12 md:mt-14 w-full"
+                  <button
+                    onClick={() => setStep(3)}
+                    disabled={!(selectedModel && selectedSize)}
+                    className="w-full text-white font-black py-4 rounded-xl flex justify-center items-center gap-3 transition-all duration-300 disabled:opacity-30 disabled:shadow-none shadow-[0_8px_24px_rgba(0,0,0,0.12)] active:scale-[0.98]"
+                    style={{ backgroundColor: brandThemeColor }}
                   >
-                    <div className="bg-white/90 backdrop-blur-xl border border-slate-200/80 rounded-2xl p-5 sm:p-7 shadow-[0_8px_40px_rgba(0,37,77,0.08)]">
-                      <div className="flex items-center justify-between mb-5">
-                        <div>
-                          <p className="text-[9px] text-slate-400 font-bold tracking-[0.2em] uppercase mb-1">Ready to continue</p>
-                          <p className="text-[#0f172a] font-black text-lg sm:text-xl uppercase tracking-tight">{selectedModel} · {selectedSize}</p>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-bold tracking-widest">
-                          <span>REF: {selectedBrand ? selectedBrand.substring(0, 3).toUpperCase() : '---'}-{selectedModel ? selectedModel.substring(0, 3).toUpperCase() : '---'}-{selectedSize ? selectedSize.replace(/[^0-9]/g, '') : 'XX'}</span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setStep(3)}
-                        className="w-full bg-[#00254d] hover:bg-[#001a33] text-white font-black py-4 sm:py-5 rounded-xl flex justify-center items-center gap-3 transition-all duration-300 hover:shadow-[0_12px_32px_rgba(0,37,77,0.18)] active:scale-[0.98] shadow-[0_4px_16px_rgba(0,37,77,0.12)]"
-                      >
-                        <span className="text-[12px] tracking-[0.12em] uppercase">View Available Tyres</span>
-                        <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
+                    <span className="text-[12px] tracking-[0.12em] uppercase">View Available Tyres</span>
+                    <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                  </button>
+                </motion.div>
               </div>
             </motion.main>
 
             <motion.aside
-              initial={{ x: 360 }}
+              initial={{ x: 320 }}
               animate={{ x: 0 }}
-              exit={{ x: 360 }}
+              exit={{ x: 320 }}
               transition={{ ease: "circOut", duration: 0.5 }}
-              className="hidden 2xl:flex fixed right-0 top-0 w-[360px] h-screen bg-white/95 backdrop-blur-xl flex-col z-40 p-10 shadow-[-1px_0_0_0_rgba(0,37,77,0.08)] border-l border-slate-200/60"
+              className="hidden 2xl:flex fixed right-0 top-0 w-[320px] h-screen bg-white flex-col z-40 p-8 shadow-[-10px_0_30px_rgba(15,23,42,0.03)] border-l border-slate-100"
             >
-              <div className="flex items-center gap-3 mb-14">
-                <div className="w-1.5 h-5 rounded-full bg-[#00254d]"></div>
-                <h2 className="text-[#0f172a] font-black tracking-[0.2em] uppercase text-[12px]">Summary</h2>
+              <div className="flex items-center gap-2.5 mb-10">
+                <div className="w-1 h-4 rounded-full" style={{ backgroundColor: brandThemeColor }}></div>
+                <h2 className="text-[#0f172a] font-black tracking-widest uppercase text-[10px]">Summary</h2>
               </div>
 
-              <div className="flex flex-col gap-8 flex-1">
-                <div className="flex flex-col gap-2">
-                  <span className="text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase">Selected Configuration</span>
+              <div className="flex flex-col flex-1">
+                <span className="text-[8px] text-slate-400 font-bold tracking-[0.2em] uppercase mb-6">Selected Configuration</span>
+
+                <div className="flex justify-between items-center pb-3 border-b border-slate-50 mb-4">
+                  <span className="text-[9px] text-slate-400 font-bold tracking-[0.1em] uppercase">Manufacturer</span>
+                  <div className="flex items-center gap-2 text-[#0f172a] font-black text-[11px] uppercase">
+                    <img src={`/logos/${BRANDS.find(b => b.id === selectedBrand)?.image || 'default.png'}`} alt={selectedBrand} className="h-3 object-contain brightness-0" />
+                    {selectedBrand}
+                  </div>
                 </div>
 
-                <div className="flex justify-between items-end pb-4 border-b border-slate-100">
-                  <span className="text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase">Vehicle</span>
-                  <span className="text-[#0f172a] font-black text-xl uppercase text-right leading-none">{selectedModel || '-'}</span>
+                <div className="flex justify-between items-center pb-3 border-b border-slate-50 mb-4">
+                  <span className="text-[9px] text-slate-400 font-bold tracking-[0.1em] uppercase">Model</span>
+                  <span className="text-[#0f172a] font-black text-[11px] uppercase text-right">{activeModelName || '-'}</span>
                 </div>
 
-                <div className="flex justify-between items-end pb-4 border-b border-slate-100">
-                  <span className="text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase">Wheel Diameter</span>
-                  <span className={`font-black text-2xl text-right leading-none ${selectedSize ? 'text-[#00254d]' : 'text-slate-300'}`}>{selectedSize || '-'}</span>
+                <div className="flex justify-between items-center pb-3 border-b border-slate-50 mb-4">
+                  <span className="text-[9px] text-slate-400 font-bold tracking-[0.1em] uppercase">Body Type</span>
+                  <span className="text-[#0f172a] font-black text-[11px] uppercase text-right">{activeModelSubCat || '-'}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-slate-50 mb-8">
+                  <span className="text-[9px] text-slate-400 font-bold tracking-[0.1em] uppercase">Wheel Diameter</span>
+                  <span className="text-[#0f172a] font-black text-[11px] uppercase text-right">{selectedSize || '-'}</span>
                 </div>
 
                 {selectedModel && selectedSize && (
-                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 bg-[#f8fafc] p-5 rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] border border-slate-100 relative overflow-hidden">
-                    <div className="absolute left-0 top-0 bottom-0 w-1 rounded-r-full bg-[#00254d]"></div>
-                    <h4 className="text-[10px] text-[#00254d] font-bold tracking-[0.2em] uppercase mb-2 ml-3">Performance Note</h4>
-                    <p className="text-[12px] text-slate-500 font-medium leading-relaxed ml-3">
-                      Recommended configuration based on manufacturer specifications. Optimized for a balance of precision handling and ride comfort.
+                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-[#f8fafc] p-4 rounded-[12px] border border-slate-100 relative overflow-hidden">
+                    <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: brandThemeColor }}></div>
+                    <h4 className="text-[9px] text-[#0f172a] font-black uppercase mb-1.5 flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[13px]" style={{ color: brandThemeColor }}>star</span>
+                      Recommendation
+                    </h4>
+                    <p className="text-[10px] text-slate-500 font-medium leading-[1.6]">
+                      We'll show you the best tyre options for your {selectedBrand} {activeModelName} based on {selectedSize} wheel size.
                     </p>
                   </motion.div>
                 )}
               </div>
 
-              <div className="mt-auto flex flex-col gap-4 pt-8">
-                <div className="flex justify-between text-[9px] text-slate-400 font-bold tracking-widest px-1">
-                  <span>REF: {selectedBrand ? selectedBrand.substring(0, 3).toUpperCase() : '---'}-{selectedModel ? selectedModel.substring(0, 3).toUpperCase() : '---'}-{selectedSize ? selectedSize.replace(/[^0-9]/g, '') : 'XX'}</span>
+              <div className="mt-auto flex flex-col gap-3">
+                <div className="flex justify-between text-[8px] text-slate-400 font-bold tracking-widest px-1">
+                  <span>REF: {selectedBrand ? selectedBrand.substring(0, 3).toUpperCase() : '---'}-{activeModelName ? activeModelName.substring(0, 3).toUpperCase() : '---'}-{selectedSize ? selectedSize.replace(/[^0-9]/g, '') : 'XX'}</span>
                   <span>V2.05</span>
                 </div>
                 <button
                   onClick={() => setStep(3)}
-                  disabled={!selectedModel || !selectedSize}
-                  className="relative overflow-hidden group w-full bg-[#00254d] hover:bg-[#001a33] text-white font-black py-5 rounded-xl flex justify-center items-center gap-3 transition-all duration-300 hover:shadow-[0_12px_32px_rgba(0,37,77,0.18)] active:scale-[0.97] disabled:opacity-20 disabled:pointer-events-none disabled:bg-slate-200 disabled:text-slate-400 shadow-[0_4px_16px_rgba(0,37,77,0.12)]"
+                  disabled={!(selectedModel && selectedSize)}
+                  className="w-full text-white font-black py-4 rounded-[10px] flex justify-center items-center gap-2 transition-all duration-300 disabled:opacity-30 disabled:shadow-none active:scale-[0.98]"
+                  style={{
+                    backgroundColor: brandThemeColor,
+                    boxShadow: (selectedModel && selectedSize) ? `0 6px 16px ${brandThemeColor}40` : 'none'
+                  }}
                 >
-                  <span className="relative z-10 flex items-center gap-3">
-                    <span className="text-[12px] tracking-[0.12em] uppercase">View Available Tyres</span>
-                    <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                  </span>
+                  <span className="text-[10px] tracking-widest uppercase">View Available Tyres</span>
+                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
                 </button>
               </div>
             </motion.aside>
           </>
-        )}
+          );
+        })()}
 
         {step === 3 && (
           <motion.main
@@ -1000,7 +1117,7 @@ export default function Home() {
                   const firstBrand = compareList[0].TyreBrand || compareList[0].Brand;
                   const allSameBrand = compareList.every(t => (t.TyreBrand || t.Brand) === firstBrand);
                   const compareTheme = allSameBrand ? getBrandTheme(firstBrand) : { primary: '#0f172a', secondary: '#1e293b' };
-                  
+
                   return (
                     <motion.div
                       initial={{ y: 80, opacity: 0, scale: 0.95 }}
@@ -1031,8 +1148,8 @@ export default function Home() {
                       </div>
 
                       <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3 sm:pl-4">
-                        <button 
-                          onClick={() => setIsCompareOpen(true)} 
+                        <button
+                          onClick={() => setIsCompareOpen(true)}
                           className="w-full sm:w-auto active:scale-[0.96] text-white px-6 py-3.5 sm:py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg hover:shadow-xl shrink-0 flex items-center gap-2 justify-center relative overflow-hidden group/btn"
                           style={{ background: `linear-gradient(135deg, ${compareTheme.primary}, ${compareTheme.secondary})`, boxShadow: `0 6px 20px ${compareTheme.primary}60` }}
                         >
@@ -1205,11 +1322,10 @@ export default function Home() {
                                 return (
                                   <button
                                     onClick={(e) => toggleCompare(e, tyre)}
-                                    className={`absolute bottom-3 right-3 w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] flex items-center justify-center z-40 transition-all duration-300 active:scale-90 pointer-events-auto group/compare overflow-hidden ${
-                                      isSelected
+                                    className={`absolute bottom-3 right-3 w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] flex items-center justify-center z-40 transition-all duration-300 active:scale-90 pointer-events-auto group/compare overflow-hidden ${isSelected
                                       ? 'text-white shadow-lg scale-105'
                                       : 'bg-white/95 hover:bg-white backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
-                                    }`}
+                                      }`}
                                     style={isSelected ? {
                                       background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
                                       boxShadow: `0 4px 16px ${theme.primary}60, inset 0 0 0 1px rgba(255,255,255,0.4)`
@@ -1441,88 +1557,88 @@ export default function Home() {
                 {compareList.map((tyre, idx) => {
                   const theme = getBrandTheme(tyre.TyreBrand || tyre.Brand);
                   const benefits = getBenefits(tyre);
-                  
+
                   return (
-                  <div key={idx} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(15,23,42,0.06)] group/ccard border border-slate-100 relative h-full">
-                    {/* Top Hero Section */}
-                    <div className="relative w-full shrink-0 flex p-5 sm:p-7 min-h-[250px] sm:min-h-[300px]">
-                      {/* Background Curves */}
-                      <div className="absolute top-0 right-0 bottom-0 w-[60%] sm:w-[55%] pointer-events-none overflow-hidden rounded-tr-2xl z-0">
-                        <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover/ccard:scale-[1.03]">
-                          <div
-                            className="absolute top-[-10%] right-[-15%] w-[110%] h-[120%] shadow-[-8px_0_24px_rgba(0,0,0,0.15)] z-0"
-                            style={{
-                              background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
-                              borderRadius: '50% 0 0 50% / 50% 0 0 50%',
-                            }}
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-[inherit]"></div>
+                    <div key={idx} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(15,23,42,0.06)] group/ccard border border-slate-100 relative h-full">
+                      {/* Top Hero Section */}
+                      <div className="relative w-full shrink-0 flex p-5 sm:p-7 min-h-[250px] sm:min-h-[300px]">
+                        {/* Background Curves */}
+                        <div className="absolute top-0 right-0 bottom-0 w-[60%] sm:w-[55%] pointer-events-none overflow-hidden rounded-tr-2xl z-0">
+                          <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover/ccard:scale-[1.03]">
+                            <div
+                              className="absolute top-[-10%] right-[-15%] w-[110%] h-[120%] shadow-[-8px_0_24px_rgba(0,0,0,0.15)] z-0"
+                              style={{
+                                background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
+                                borderRadius: '50% 0 0 50% / 50% 0 0 50%',
+                              }}
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-[inherit]"></div>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Decorative Strips (Unclipped) */}
-                      <div className="absolute top-0 right-0 bottom-0 w-[60%] sm:w-[55%] pointer-events-none rounded-tr-2xl z-[1]">
-                        <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover/ccard:scale-[1.03]">
-                          <div
-                            className="absolute top-[-15%] right-[-15%] w-[110%] h-[130%] border-l-[3px] border-y-transparent border-r-transparent opacity-95 shadow-[-4px_0_12px_rgba(0,0,0,0.06)]"
-                            style={{ borderColor: theme.stripeSecondary, borderRadius: '50% 0 0 50% / 50% 0 0 50%', transform: 'translateX(-22px)' }}
-                          />
-                          <div
-                            className="absolute top-[-15%] right-[-15%] w-[110%] h-[130%] border-l-[3px] border-y-transparent border-r-transparent opacity-100 shadow-[-2px_0_8px_rgba(0,0,0,0.06)] z-10"
-                            style={{ borderColor: theme.stripePrimary, borderRadius: '50% 0 0 50% / 50% 0 0 50%', transform: 'translateX(-11px)' }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Content Front Layer */}
-                      <div className="relative z-10 w-[55%] sm:w-[50%] flex flex-col justify-center">
-                        <TyreBrandLogo brand={tyre.TyreBrand || tyre.Brand} className="mb-2" imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 group-hover/ccard:opacity-100" textClassName="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1.5" />
-                        <h3 className="text-xl sm:text-2xl font-black text-[#0f172a] uppercase tracking-[-0.02em] leading-tight mb-2 pr-2 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">{tyre.TyreModel || tyre.ModelID}</h3>
-                        <div className="text-2xl sm:text-3xl font-black tracking-tight mb-4 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]" style={{ color: theme.primary }}>
-                          {tyre.Price ? `₹${Number(String(tyre.Price).replace(/[^0-9.]/g, '')).toLocaleString('en-IN')}` : 'POA'}
+                        {/* Decorative Strips (Unclipped) */}
+                        <div className="absolute top-0 right-0 bottom-0 w-[60%] sm:w-[55%] pointer-events-none rounded-tr-2xl z-[1]">
+                          <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover/ccard:scale-[1.03]">
+                            <div
+                              className="absolute top-[-15%] right-[-15%] w-[110%] h-[130%] border-l-[3px] border-y-transparent border-r-transparent opacity-95 shadow-[-4px_0_12px_rgba(0,0,0,0.06)]"
+                              style={{ borderColor: theme.stripeSecondary, borderRadius: '50% 0 0 50% / 50% 0 0 50%', transform: 'translateX(-22px)' }}
+                            />
+                            <div
+                              className="absolute top-[-15%] right-[-15%] w-[110%] h-[130%] border-l-[3px] border-y-transparent border-r-transparent opacity-100 shadow-[-2px_0_8px_rgba(0,0,0,0.06)] z-10"
+                              style={{ borderColor: theme.stripePrimary, borderRadius: '50% 0 0 50% / 50% 0 0 50%', transform: 'translateX(-11px)' }}
+                            />
+                          </div>
                         </div>
 
-                        <div className="flex flex-col gap-2.5 mt-auto">
-                           {tyre.Warranty && (
-                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                               <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest">Warranty</span>
-                               <span className="text-[9px] sm:text-[10px] font-black uppercase text-[#0f172a] border border-[#0f172a]/10 px-1.5 py-0.5 rounded bg-[#0f172a]/[0.02] inline-block w-fit">{tyre.Warranty}</span>
-                             </div>
-                           )}
-                           {tyre.BestFor && (
-                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                               <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest">Best For</span>
-                               <span className="text-[9px] sm:text-[10px] font-black uppercase inline-block w-fit" style={{ color: theme.primary, backgroundColor: `${theme.primary}10`, border: `1px solid ${theme.primary}30`, padding: '2px 6px', borderRadius: '4px' }}>{tyre.BestFor}</span>
-                             </div>
-                           )}
-                        </div>
-                      </div>
+                        {/* Content Front Layer */}
+                        <div className="relative z-10 w-[55%] sm:w-[50%] flex flex-col justify-center">
+                          <TyreBrandLogo brand={tyre.TyreBrand || tyre.Brand} className="mb-2" imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 group-hover/ccard:opacity-100" textClassName="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1.5" />
+                          <h3 className="text-xl sm:text-2xl font-black text-[#0f172a] uppercase tracking-[-0.02em] leading-tight mb-2 pr-2 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">{tyre.TyreModel || tyre.ModelID}</h3>
+                          <div className="text-2xl sm:text-3xl font-black tracking-tight mb-4 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]" style={{ color: theme.primary }}>
+                            {tyre.Price ? `₹${Number(String(tyre.Price).replace(/[^0-9.]/g, '')).toLocaleString('en-IN')}` : 'POA'}
+                          </div>
 
-                      {/* Tyre Image Right Side */}
-                      <div className="absolute top-[10%] sm:top-1/2 -right-2 sm:-right-4 sm:-translate-y-1/2 w-[60%] sm:w-[65%] h-[80%] sm:h-[90%] flex items-center justify-center pointer-events-none z-[30]">
-                         <TyreImage
+                          <div className="flex flex-col gap-2.5 mt-auto">
+                            {tyre.Warranty && (
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                                <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest">Warranty</span>
+                                <span className="text-[9px] sm:text-[10px] font-black uppercase text-[#0f172a] border border-[#0f172a]/10 px-1.5 py-0.5 rounded bg-[#0f172a]/[0.02] inline-block w-fit">{tyre.Warranty}</span>
+                              </div>
+                            )}
+                            {tyre.BestFor && (
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                                <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest">Best For</span>
+                                <span className="text-[9px] sm:text-[10px] font-black uppercase inline-block w-fit" style={{ color: theme.primary, backgroundColor: `${theme.primary}10`, border: `1px solid ${theme.primary}30`, padding: '2px 6px', borderRadius: '4px' }}>{tyre.BestFor}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Tyre Image Right Side */}
+                        <div className="absolute top-[10%] sm:top-1/2 -right-2 sm:-right-4 sm:-translate-y-1/2 w-[60%] sm:w-[65%] h-[80%] sm:h-[90%] flex items-center justify-center pointer-events-none z-[30]">
+                          <TyreImage
                             fileName={tyre.ImageFileName}
                             alt={tyre.TyreModel || 'Tyre'}
                             className="w-[85%] sm:w-[85%] h-auto max-h-[100%] object-contain transition-transform duration-700 ease-out group-hover/ccard:scale-110 group-hover/ccard:-translate-y-1 relative z-30"
                             style={{ filter: "drop-shadow(-8px 12px 16px rgba(0,0,0,0.35))" }}
                           />
-                      </div>
-                    </div>
-
-                    {/* Bottom Details Section */}
-                    <div className="relative z-20 flex-1 bg-[#ffffff] p-5 sm:p-7 pt-0 flex flex-col">
-                      {tyre.Description && (
-                        <p className="mb-4 text-[11px] sm:text-[12px] text-slate-500 leading-relaxed line-clamp-3">{tyre.Description}</p>
-                      )}
-
-                      <div className="flex items-center gap-3 mb-4 mt-2">
-                         <span className="h-[2px] w-6" style={{ backgroundColor: theme.primary, opacity: 0.3 }}></span>
-                         <span className="text-[10px] text-[#0f172a] font-bold uppercase tracking-widest">Key Benefits</span>
+                        </div>
                       </div>
 
-                      <div className="flex flex-col gap-3.5 flex-1 pr-2">
-                         {benefits.slice(0, 4).map((b, i) => (
+                      {/* Bottom Details Section */}
+                      <div className="relative z-20 flex-1 bg-[#ffffff] p-5 sm:p-7 pt-0 flex flex-col">
+                        {tyre.Description && (
+                          <p className="mb-4 text-[11px] sm:text-[12px] text-slate-500 leading-relaxed line-clamp-3">{tyre.Description}</p>
+                        )}
+
+                        <div className="flex items-center gap-3 mb-4 mt-2">
+                          <span className="h-[2px] w-6" style={{ backgroundColor: theme.primary, opacity: 0.3 }}></span>
+                          <span className="text-[10px] text-[#0f172a] font-bold uppercase tracking-widest">Key Benefits</span>
+                        </div>
+
+                        <div className="flex flex-col gap-3.5 flex-1 pr-2">
+                          {benefits.slice(0, 4).map((b, i) => (
                             <div key={i} className="flex gap-3 items-start relative z-10 w-full overflow-hidden">
                               <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shrink-0 border"
                                 style={{ backgroundColor: `${theme.primary}08`, color: theme.primary, borderColor: `${theme.primary}20` }}>
@@ -1533,22 +1649,22 @@ export default function Home() {
                                 <p className="text-[10px] sm:text-[11px] text-slate-500 leading-snug line-clamp-2">{b.desc}</p>
                               </div>
                             </div>
-                         ))}
-                      </div>
+                          ))}
+                        </div>
 
-                      <div className="mt-6 pt-5 border-t border-slate-100">
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); setCheckoutTyre(tyre); setIsCompareOpen(false); }} 
-                          className="relative overflow-hidden group w-full text-white font-black py-3.5 sm:py-4 rounded-xl text-[11px] sm:text-[12px] tracking-[0.12em] uppercase transition-all shadow-[0_4px_16px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.22)] active:scale-[0.97] flex items-center justify-center gap-2"
-                          style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})` }}
-                        >
-                          <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out rounded-[inherit] pointer-events-none"></div>
-                          <span className="material-symbols-outlined text-[16px] sm:text-[18px] relative z-10 transition-transform group-hover:-translate-y-0.5 ease-out">shopping_cart</span>
-                          <span className="relative z-10 transition-transform group-hover:-translate-y-0.5 ease-out delay-75">Add to Cart</span>
-                        </button>
+                        <div className="mt-6 pt-5 border-t border-slate-100">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setCheckoutTyre(tyre); setIsCompareOpen(false); }}
+                            className="relative overflow-hidden group w-full text-white font-black py-3.5 sm:py-4 rounded-xl text-[11px] sm:text-[12px] tracking-[0.12em] uppercase transition-all shadow-[0_4px_16px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.22)] active:scale-[0.97] flex items-center justify-center gap-2"
+                            style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})` }}
+                          >
+                            <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out rounded-[inherit] pointer-events-none"></div>
+                            <span className="material-symbols-outlined text-[16px] sm:text-[18px] relative z-10 transition-transform group-hover:-translate-y-0.5 ease-out">shopping_cart</span>
+                            <span className="relative z-10 transition-transform group-hover:-translate-y-0.5 ease-out delay-75">Add to Cart</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
                   );
                 })}
               </div>
