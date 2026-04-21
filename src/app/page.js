@@ -143,17 +143,54 @@ const BRANDS = [
 ];
 
 const getBrandTheme = (brand) => {
-  if (!brand) return { primary: '#00254d', secondary: '#001a33', accent: null };
+  if (!brand) return { primary: '#00254d', secondary: '#001a33', accent: '#60a5fa', stripePrimary: '#ffffff', stripeSecondary: '#93c5fd' };
   const clean = brand.toString().trim().toLowerCase();
 
-  if (clean.includes('apollo')) return { primary: '#6D28D9', secondary: '#4C1D95', accent: null };
-  if (clean.includes('bridgestone')) return { primary: '#050404ff', secondary: '#991B1B', accent: '#2563EB' };
-  if (clean.includes('ceat')) return { primary: '#2563EB', secondary: '#1E3A8A', accent: '#F97316' };
-  if (clean.includes('michelin')) return { primary: '#1D4ED8', secondary: '#1E3A8A', accent: '#FACC15' };
-  if (clean.includes('mrf')) return { primary: '#EF4444', secondary: '#991B1B', accent: null };
-  if (clean.includes('goodyear')) return { primary: '#1E3A8A', secondary: '#172554', accent: '#FACC15' };
+  if (clean.includes('apollo')) return { primary: '#6D28D9', secondary: '#4C1D95', accent: '#C4B5FD', stripePrimary: '#ffffff', stripeSecondary: '#A78BFA' };
+  if (clean.includes('bridgestone')) return { primary: '#18181b', secondary: '#010101', accent: '#DC2626', stripePrimary: '#ffffff', stripeSecondary: '#DC2626' };
+  if (clean.includes('ceat')) return { primary: '#1D4ED8', secondary: '#1E3A8A', accent: '#F97316', stripePrimary: '#ffffff', stripeSecondary: '#EA580C' };
+  if (clean.includes('michelin')) return { primary: '#1D4ED8', secondary: '#1E3A8A', accent: '#FACC15', stripePrimary: '#ffffff', stripeSecondary: '#FACC15' };
+  if (clean.includes('mrf')) return { primary: '#DC2626', secondary: '#991B1B', accent: '#FCA5A5', stripePrimary: '#ffffff', stripeSecondary: '#FCA5A5' };
+  if (clean.includes('goodyear')) return { primary: '#1E3A8A', secondary: '#172554', accent: '#FACC15', stripePrimary: '#ffffff', stripeSecondary: '#FACC15' };
 
-  return { primary: '#00254d', secondary: '#001a33', accent: null };
+  return { primary: '#00254d', secondary: '#001a33', accent: '#60a5fa', stripePrimary: '#ffffff', stripeSecondary: '#93c5fd' };
+};
+
+const getBenefits = (tyre) => {
+  const bf = (tyre.BestFor || '').toLowerCase();
+  const desc = (tyre.Description || '').toLowerCase();
+  const cat = (tyre.Category || '').toLowerCase();
+
+  if (bf.includes('city') || bf.includes('urban') || desc.includes('fuel')) {
+    return [
+      { title: 'Excellent Fuel Efficiency', desc: 'Lower rolling resistance for better mileage', icon: 'local_gas_station' },
+      { title: 'Long Lasting', desc: 'Durable compound for extended life', icon: 'verified_user' },
+      { title: 'Superior Grip', desc: 'Confident handling on wet and dry roads', icon: 'tire_repair' },
+      { title: 'Comfortable Ride', desc: 'Reduced road noise for a smoother drive', icon: 'airline_seat_recline_extra' }
+    ];
+  }
+  if (bf.includes('highway') || bf.includes('touring') || cat.includes('ht') || desc.includes('comfort')) {
+    return [
+      { title: 'Highway Stability', desc: 'Smooth performance at high speeds', icon: 'speed' },
+      { title: 'Enhanced Braking', desc: 'Shorter braking distances', icon: 'car_crash' },
+      { title: 'Quiet Cabin', desc: 'Optimized tread pattern reduces noise', icon: 'volume_off' },
+      { title: 'All-Weather Ready', desc: 'Reliable traction in varied conditions', icon: 'water_drop' }
+    ];
+  }
+  if (bf.includes('all-terrain') || cat.includes('at') || desc.includes('off')) {
+    return [
+      { title: 'Rugged Durability', desc: 'Reinforced sidewalls resist cuts', icon: 'shield' },
+      { title: 'All-Terrain Traction', desc: 'Aggressive grip on dirt & mud', icon: 'terrain' },
+      { title: 'Responsive Handling', desc: 'Stable performance on paved roads', icon: 'compare_arrows' },
+      { title: 'Self-Cleaning Tread', desc: 'Evacuates mud and stones quickly', icon: 'cleaning_services' }
+    ];
+  }
+  return [
+    { title: 'Precision Control', desc: 'Immediate steering response', icon: 'sports_motorsports' },
+    { title: 'High-Speed Stability', desc: 'Maintains shape under intense forces', icon: 'speed' },
+    { title: 'Maximum Grip', desc: 'Specialized compound sticks to road', icon: 'tire_repair' },
+    { title: 'Sport Performance', desc: 'Engineered for dynamic driving', icon: 'flag' }
+  ];
 };
 
 export default function Home() {
@@ -449,6 +486,8 @@ export default function Home() {
       </div>
     );
   }
+
+  const selectedSidebarTheme = selectedTyre ? getBrandTheme(selectedTyre.TyreBrand || selectedTyre.Brand) : getBrandTheme('');
 
   return (
     <div className="flex h-screen w-full overflow-hidden text-[#0f172a] bg-[#f0f4f8] font-sans">
@@ -1037,11 +1076,11 @@ export default function Home() {
                           >
 
                             {/* Background Shapes */}
-                            <div className="absolute top-0 right-0 bottom-0 w-[55%] sm:w-[50%] pointer-events-none overflow-hidden rounded-r-2xl">
-                              {/* Secondary Accent (top corner sweep) */}
+                            <div className="absolute top-0 right-0 bottom-0 w-[60%] sm:w-[55%] pointer-events-none overflow-hidden rounded-r-2xl z-0">
+                              {/* Secondary Accent Gradient */}
                               {theme.accent && (
                                 <div
-                                  className="absolute top-[-20%] right-[-10%] w-[80%] h-[70%] transition-transform duration-700 ease-out group-hover:scale-110 opacity-60"
+                                  className="absolute top-[-20%] right-[-10%] w-[80%] h-[70%] transition-transform duration-700 ease-out group-hover:scale-[1.15] opacity-60 z-0"
                                   style={{
                                     background: `radial-gradient(ellipse at top right, ${theme.accent}, transparent 60%)`,
                                     filter: 'blur(12px)'
@@ -1049,15 +1088,42 @@ export default function Home() {
                                 ></div>
                               )}
 
-                              {/* Base Primary Arc */}
-                              <div
-                                className="absolute top-[-10%] right-[-15%] w-[110%] h-[120%] transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.03]"
-                                style={{
-                                  background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
-                                  borderRadius: '50% 0 0 50% / 50% 0 0 50%',
-                                }}
-                              >
-                                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-[inherit]"></div>
+                              <div className="absolute inset-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.03]">
+                                {/* Base Primary Arc */}
+                                <div
+                                  className="absolute top-[-10%] right-[-15%] w-[110%] h-[120%] shadow-[-6px_0_20px_rgba(0,0,0,0.12)] z-0"
+                                  style={{
+                                    background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
+                                    borderRadius: '50% 0 0 50% / 50% 0 0 50%',
+                                  }}
+                                >
+                                  <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-[inherit]"></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Decorative Strips Container (Unclipped, Layered Above Base) */}
+                            <div className="absolute top-0 right-0 bottom-0 w-[60%] sm:w-[55%] pointer-events-none rounded-r-2xl z-[1]">
+                              <div className="absolute inset-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.03]">
+                                {/* Outer Stripe (Secondary e.g. Red) */}
+                                <div
+                                  className="absolute top-[-15%] right-[-15%] w-[110%] h-[130%] border-l-[3px] border-y-transparent border-r-transparent opacity-95 shadow-[-4px_0_12px_rgba(0,0,0,0.06)]"
+                                  style={{
+                                    borderColor: theme.stripeSecondary,
+                                    borderRadius: '50% 0 0 50% / 50% 0 0 50%',
+                                    transform: 'translateX(-22px)',
+                                  }}
+                                />
+
+                                {/* Inner Stripe (Primary e.g. White) */}
+                                <div
+                                  className="absolute top-[-15%] right-[-15%] w-[110%] h-[130%] border-l-[3px] border-y-transparent border-r-transparent opacity-100 shadow-[-2px_0_8px_rgba(0,0,0,0.06)] z-10"
+                                  style={{
+                                    borderColor: theme.stripePrimary,
+                                    borderRadius: '50% 0 0 50% / 50% 0 0 50%',
+                                    transform: 'translateX(-11px)',
+                                  }}
+                                />
                               </div>
                             </div>
 
@@ -1173,99 +1239,148 @@ export default function Home() {
             </AnimatePresence>
 
             <AnimatePresence>
-              {selectedTyre && (
-                <motion.aside
-                  initial={{ x: '100%', opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: '100%', opacity: 0 }}
-                  transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-                  className="hidden xl:flex w-full xl:w-[400px] h-auto xl:h-full flex-col relative shrink-0 z-40 bg-white shadow-[-1px_0_0_0_rgba(0,37,77,0.06)] border-l border-slate-100"
-                >
-                  <div className="flex flex-col h-full">
-                    {/* Image Area */}
-                    <div className="relative w-full flex items-center justify-center p-8 overflow-hidden bg-gradient-to-b from-slate-50 to-white" style={{ minHeight: '240px' }}>
-                      <button
-                        onClick={() => setSelectedTyre(null)}
-                        className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-white/80 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center transition-all z-50 shadow-sm border border-slate-200/60 hover:shadow-md"
-                      >
-                        <span className="material-symbols-outlined text-[15px]">close</span>
-                      </button>
-                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-3 bg-[#0f172a]/[0.06] blur-[12px] rounded-[100%] pointer-events-none"></div>
-                      <TyreImage
-                        fileName={selectedTyre.ImageFileName}
-                        alt={selectedTyre.TyreModel || 'Tyre'}
-                        className="w-4/5 h-48 object-contain mix-blend-multiply relative z-10 transition-transform duration-300 hover:scale-[1.02]"
-                        style={{ opacity: 0, animation: 'fadeIn 0.4s ease forwards' }}
-                      />
-                    </div>
+              {selectedTyre && (() => {
+                const benefits = getBenefits(selectedTyre);
+                return (
+                  <motion.aside
+                    initial={{ x: '100%', opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: '100%', opacity: 0 }}
+                    transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+                    className="hidden xl:flex w-full xl:w-[400px] h-auto xl:h-full flex-col relative shrink-0 z-40 bg-white shadow-[-1px_0_0_0_rgba(0,37,77,0.06)] border-l border-slate-100"
+                  >
+                    <div className="flex flex-col h-full">
+                      {/* Image Area */}
+                      <div className="relative w-full flex items-center justify-center pt-16 pb-12 overflow-hidden" style={{ minHeight: '300px' }}>
+                        <div className="absolute inset-0 z-0 bg-[#ffffff] overflow-hidden">
+                          {/* Main colored backdrop fills the area */}
+                          <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${selectedSidebarTheme.primary}, ${selectedSidebarTheme.secondary})` }} />
 
-                    <div className="flex-1 overflow-y-auto px-7 py-6 flex flex-col hide-scrollbar">
-                      {/* Brand & Model */}
-                      <div className="mb-5">
-                        <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-2 h-[22px]" textClassName="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1" />
-                        <h1 className="text-2xl text-[#0f172a] font-black tracking-tight leading-tight">{selectedTyre.TyreModel || selectedTyre.ModelID}</h1>
+                          {/* Decorative Strips & Content Base Wrapper */}
+                          {/* Center at bottom-left corner to sweep naturally upward to top-right */}
+                          <div className="absolute top-[105%] left-[-10%] w-0 h-0">
+                            {/* Outer Stripe (Primary e.g. White) */}
+                            <div className="absolute rounded-[100%] border-[3px] -translate-x-1/2 -translate-y-1/2 opacity-90"
+                              style={{ width: '980px', height: '980px', borderColor: selectedSidebarTheme.stripePrimary }} />
+
+                            {/* Middle Stripe (Secondary e.g. Red) */}
+                            <div className="absolute rounded-[100%] border-[3px] -translate-x-1/2 -translate-y-1/2 shadow-[0_0_12px_rgba(0,0,0,0.1)]"
+                              style={{ width: '956px', height: '956px', borderColor: selectedSidebarTheme.stripeSecondary }} />
+
+                            {/* Inner Solid White Base */}
+                            <div className="absolute rounded-[100%] -translate-x-1/2 -translate-y-1/2 shadow-[0_0_40px_rgba(0,0,0,0.15)]"
+                              style={{ width: '932px', height: '932px', backgroundColor: '#ffffff' }} />
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => setSelectedTyre(null)}
+                          className="absolute top-4 right-4 text-white hover:text-slate-100 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full w-9 h-9 flex items-center justify-center transition-all z-50 shadow-sm border border-white/30"
+                        >
+                          <span className="material-symbols-outlined text-[15px]">close</span>
+                        </button>
+
+                        {/* Image Drop Shadow base */}
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[55%] h-5 bg-[#000]/25 blur-[14px] rounded-[100%] pointer-events-none z-10"></div>
+
+                        <TyreImage
+                          fileName={selectedTyre.ImageFileName}
+                          alt={selectedTyre.TyreModel || 'Tyre'}
+                          className="w-[75%] h-auto max-h-[220px] object-contain relative z-20 transition-transform duration-500 hover:scale-[1.03]"
+                          style={{ opacity: 0, animation: 'fadeIn 0.6s ease forwards' }}
+                        />
                       </div>
 
-                      {/* Price */}
-                      <div className="mb-6 pb-6 border-b border-slate-100">
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1">Price per tyre</p>
-                        <div className="text-[#00254d] text-3xl font-black tracking-tight"><AnimatedPrice price={selectedTyre.Price} /></div>
+                      <div className="flex-1 overflow-y-auto px-7 py-2 flex flex-col hide-scrollbar">
+                        {/* Brand & Model */}
+                        <div className="mb-4">
+                          <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-3 h-[24px]" textClassName="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-1" />
+                          <h1 className="text-[26px] text-[#0f172a] font-black tracking-[-0.02em] leading-tight mb-2">{selectedTyre.TyreModel || selectedTyre.ModelID}</h1>
+                          {selectedTyre.BestFor && (
+                            <span className="inline-block px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded shadow-sm border"
+                              style={{ backgroundColor: `${selectedSidebarTheme.primary}10`, color: selectedSidebarTheme.primary, borderColor: `${selectedSidebarTheme.primary}40` }}>
+                              FOR: {selectedTyre.BestFor}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Price */}
+                        <div className="mb-6 pt-3 pb-6 border-b border-slate-100">
+                          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1">Price per tyre</p>
+                          <div style={{ color: selectedSidebarTheme.primary }} className="text-3xl font-black tracking-[-0.02em] drop-shadow-sm"><AnimatedPrice price={selectedTyre.Price} /></div>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-[13px] text-slate-500 leading-[1.6] mb-8">
+                          {selectedTyre.Description || 'Designed to provide optimal grip, enhanced handling, and a comfortable ride — the ideal match for high-performance vehicles.'}
+                        </p>
+
+                        {/* Key Benefits */}
+                        <h3 className="text-[10px] font-bold text-[#00254d] uppercase tracking-[0.15em] mb-4 flex items-center gap-2">
+                          <span className="w-3 h-[2px] bg-[#00254d]/30"></span> Key Benefits
+                        </h3>
+                        <div className="flex flex-col gap-4 mb-8">
+                          {benefits.map((b, i) => (
+                            <div key={i} className="flex gap-3.5 items-start">
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border"
+                                style={{ backgroundColor: `${selectedSidebarTheme.primary}08`, color: selectedSidebarTheme.primary, borderColor: `${selectedSidebarTheme.primary}20` }}>
+                                <span className="material-symbols-outlined text-[16px]">{b.icon}</span>
+                              </div>
+                              <div className="flex flex-col pt-0.5">
+                                <p className="text-[12px] font-bold text-[#0f172a] leading-tight mb-0.5">{b.title}</p>
+                                <p className="text-[11px] text-slate-500 leading-tight">{b.desc}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Specs */}
+                        <h3 className="text-[10px] font-bold text-[#00254d] uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+                          <span className="w-3 h-[2px] bg-[#00254d]/30"></span> Specifications
+                        </h3>
+                        <div className="flex flex-col mb-4">
+                          {selectedTyre.Warranty && (
+                            <div className="flex items-center justify-between py-2.5 border-b border-slate-50">
+                              <span className="text-[11px] text-slate-500 font-medium">Warranty</span>
+                              <span className="text-[10px] text-[#0f172a] font-bold bg-slate-100 border border-slate-200/60 px-2.5 py-1 rounded-md">{selectedTyre.Warranty}</span>
+                            </div>
+                          )}
+                          {selectedTyre.BestFor && (
+                            <div className="flex items-center justify-between py-2.5 border-b border-slate-50">
+                              <span className="text-[11px] text-slate-500 font-medium">Best For</span>
+                              <span className="text-[10px] text-[#0f172a] font-bold bg-slate-100 border border-slate-200/60 px-2.5 py-1 rounded-md">{selectedTyre.BestFor}</span>
+                            </div>
+                          )}
+                          {selectedTyre.SpeedRating && (
+                            <div className="flex items-center justify-between py-2.5 border-b border-slate-50">
+                              <span className="text-[11px] text-slate-500 font-medium">Speed Rating</span>
+                              <span className="text-[10px] text-[#0f172a] font-bold bg-slate-100 border border-slate-200/60 px-2.5 py-1 rounded-md">{selectedTyre.SpeedRating}</span>
+                            </div>
+                          )}
+                          {selectedTyre.LoadIndex && (
+                            <div className="flex items-center justify-between py-2.5 border-b border-slate-50">
+                              <span className="text-[11px] text-slate-500 font-medium">Load Index</span>
+                              <span className="text-[10px] text-[#0f172a] font-bold bg-slate-100 border border-slate-200/60 px-2.5 py-1 rounded-md">{selectedTyre.LoadIndex}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
-                      {/* Description */}
-                      <p className="text-[13px] text-slate-500 leading-relaxed mb-6">
-                        {selectedTyre.Description || 'Designed to provide optimal grip, enhanced handling, and a comfortable ride — the ideal match for high-performance vehicles.'}
-                      </p>
-
-                      {/* Specs */}
-                      <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Specifications</h3>
-                      <div className="flex flex-col divide-y divide-slate-100 mb-6">
-                        {selectedTyre.SpeedRating && (
-                          <div className="flex items-center justify-between py-3">
-                            <span className="text-[11px] text-slate-500 font-medium">Speed Rating</span>
-                            <span className="text-[11px] text-[#0f172a] font-black bg-slate-50 px-2.5 py-1 rounded-md">{selectedTyre.SpeedRating}</span>
-                          </div>
-                        )}
-                        {selectedTyre.LoadIndex && (
-                          <div className="flex items-center justify-between py-3">
-                            <span className="text-[11px] text-slate-500 font-medium">Load Index</span>
-                            <span className="text-[11px] text-[#0f172a] font-black bg-slate-50 px-2.5 py-1 rounded-md">{selectedTyre.LoadIndex}</span>
-                          </div>
-                        )}
-                        {selectedTyre.Warranty && (
-                          <div className="flex items-center justify-between py-3">
-                            <span className="text-[11px] text-slate-500 font-medium">Warranty</span>
-                            <span className="text-[11px] text-[#0f172a] font-black bg-slate-50 px-2.5 py-1 rounded-md">{selectedTyre.Warranty}</span>
-                          </div>
-                        )}
-                        {selectedTyre.BestFor && (
-                          <div className="flex items-center justify-between py-3">
-                            <span className="text-[11px] text-slate-500 font-medium">Best For</span>
-                            <span className="text-[11px] text-[#0f172a] font-black bg-slate-50 px-2.5 py-1 rounded-md">{selectedTyre.BestFor}</span>
-                          </div>
-                        )}
-                        {selectedTyre.Category && (
-                          <div className="flex items-center justify-between py-3">
-                            <span className="text-[11px] text-slate-500 font-medium">Category</span>
-                            <span className="text-[11px] text-[#0f172a] font-black bg-slate-50 px-2.5 py-1 rounded-md">{selectedTyre.Category}</span>
-                          </div>
-                        )}
+                      {/* CTA */}
+                      <div className="p-5 bg-white border-t border-slate-100 shrink-0">
+                        <button
+                          onClick={() => setCheckoutTyre(selectedTyre)}
+                          style={{ backgroundColor: selectedSidebarTheme.primary }}
+                          className="w-full text-white font-black py-4 rounded-xl text-[12px] tracking-[0.12em] uppercase transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">shopping_cart</span>
+                          Add {selectedTyre.TyreModel || 'Tyre'} to Cart
+                        </button>
                       </div>
                     </div>
-
-                    {/* CTA */}
-                    <div className="p-5 bg-white border-t border-slate-100 shrink-0">
-                      <button
-                        onClick={() => setCheckoutTyre(selectedTyre)}
-                        className="w-full bg-[#00254d] hover:bg-[#001a33] text-white font-black py-4 rounded-xl text-[12px] tracking-[0.12em] uppercase transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,37,77,0.15)] hover:shadow-[0_8px_24px_rgba(0,37,77,0.22)]"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">shopping_cart</span>
-                        Add {selectedTyre.TyreModel || 'Tyre'} to Cart
-                      </button>
-                    </div>
-                  </div>
-                </motion.aside>
-              )}
+                  </motion.aside>
+                );
+              })()}
             </AnimatePresence>
           </motion.main>
         )}
