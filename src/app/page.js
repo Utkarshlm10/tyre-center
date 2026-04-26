@@ -745,6 +745,7 @@ export default function Home() {
           >
             {/* ── PREMIUM HERO CARD ── */}
             <section className="w-full px-4 sm:px-6 md:px-8 xl:px-10 pt-6 sm:pt-8 xl:pt-10">
+              <div className="max-w-[1320px] mx-auto">
               <div
                 className="relative w-full rounded-2xl xl:rounded-3xl overflow-hidden"
                 style={{
@@ -771,16 +772,16 @@ export default function Home() {
 
                     {/* WELCOME TO */}
                     <span
-                      className="text-[10px] sm:text-[11px] font-semibold uppercase text-[#2563eb] mb-3"
-                      style={{ letterSpacing: "0.25em" }}
+                      className="text-[10px] sm:text-[11px] xl:text-[12px] font-medium uppercase text-[#2563eb]/70 mb-3 font-body"
+                      style={{ letterSpacing: "0.32em" }}
                     >
                       Welcome to
                     </span>
 
-                    {/* TYRE CENTRE — single line desktop, fluid size */}
+                    {/* TYRE CENTRE — Clash Display, breathable */}
                     <h1
-                      className="font-black uppercase text-[#061735] whitespace-nowrap mb-5"
-                      style={{ fontSize: "clamp(2.8rem, 5.8vw, 5rem)", letterSpacing: "-0.02em", lineHeight: "1" }}
+                      className="uppercase text-[#061735] whitespace-nowrap mb-7 font-headline"
+                      style={{ fontSize: "clamp(2.8rem, 5.4vw, 5.8rem)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: "1.05" }}
                     >
                       Tyre Centre
                     </h1>
@@ -788,28 +789,31 @@ export default function Home() {
                     {/* Thin accent line */}
                     <div className="w-12 h-[2.5px] rounded-full bg-[#2563eb]/40 mb-5" />
 
-                    {/* Subheading */}
-                    <p className="text-[15px] sm:text-[16px] font-bold text-[#0b2545] leading-snug mb-2">
+                    {/* Subheading — Inter semibold, deeper navy */}
+                    <p className="text-[17px] sm:text-[18px] xl:text-[19px] font-semibold text-[#071e3d] leading-snug mb-3 font-body">
                       Chhattisgarh&apos;s Trusted Tyre Experts
                     </p>
 
-                    {/* Since 1995 — italic blue accent */}
-                    <p
-                      className="text-[13px] sm:text-sm text-[#2563eb] font-semibold mb-6"
-                      style={{ fontStyle: "italic", letterSpacing: "0.04em" }}
-                    >
-                      Since 1995
-                    </p>
+                    {/* Since 1995 — Pacifico accent with elegant extending line */}
+                    <div className="flex items-center gap-4 mb-7">
+                      <span
+                        className="text-[18px] sm:text-[21px] text-[#2563eb] font-accent"
+                        style={{ letterSpacing: "0.02em" }}
+                      >
+                        Since 1995
+                      </span>
+                      <div className="h-px w-16 sm:w-24 bg-gradient-to-r from-[#2563eb]/30 to-transparent rounded-full" />
+                    </div>
 
-                    {/* Description */}
-                    <p className="text-[14px] sm:text-[15px] text-slate-500 leading-[1.75] max-w-[300px] sm:max-w-[330px]">
+                    {/* Description — Inter regular, readable contrast */}
+                    <p className="text-[14px] sm:text-[15px] xl:text-[16px] text-[#4b5563] leading-relaxed max-w-[300px] sm:max-w-[340px] xl:max-w-[360px] font-body font-normal">
                       Premium tyres, expert fitment and trusted service in Bilaspur.
                     </p>
 
                   </div>
 
                   {/* RIGHT — tyre image, shifted slightly right & grounded */}
-                  <div className="flex items-end justify-end shrink-0 w-[240px] sm:w-[320px] md:w-[400px] lg:w-[470px] xl:w-[520px] self-end">
+                  <div className="flex items-end justify-center shrink-0 w-[240px] sm:w-[320px] md:w-[400px] lg:w-[440px] xl:w-[480px] self-end pr-2 xl:pr-6">
                     <img
                       src="/hero/hero-tyre.webp"
                       alt="Premium Tyre"
@@ -817,13 +821,13 @@ export default function Home() {
                       className="hero-tyre-float select-none w-full h-auto object-contain"
                       style={{
                         filter: "drop-shadow(0 32px 24px rgba(15,23,42,0.22)) drop-shadow(0 8px 16px rgba(15,23,42,0.10))",
-                        maxHeight: "clamp(220px, 38vh, 480px)",
-                        marginRight: "-1rem",
+                        maxHeight: "clamp(220px, 36vh, 460px)",
                       }}
                     />
                   </div>
 
                 </div>
+              </div>
               </div>
             </section>
 
@@ -832,19 +836,19 @@ export default function Home() {
               id="brand-section"
               className="w-full flex-1 pb-8 sm:pb-12 md:pb-16 flex flex-col items-center pt-6 sm:pt-8"
             >
-              <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 flex flex-col items-center">
+              <div className="w-full max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 xl:px-10 flex flex-col items-center">
 
                 {/* Section heading */}
                 <div className="flex flex-col items-center text-center mb-6 sm:mb-8 w-full">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-wide text-[#0f172a] uppercase">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-tight text-[#0f172a] uppercase font-headline">
                     Choose Your Vehicle Brand
                   </h2>
                   <div className="w-8 sm:w-12 h-[2px] bg-[#2563eb]/30 mx-auto mt-3 rounded-full" />
                 </div>
 
                 {/* Brand cards */}
-                <div className="w-full max-w-5xl mx-auto rounded-2xl md:rounded-3xl border border-white/70 bg-white/60 shadow-[0_4px_32px_rgba(15,23,42,0.07),inset_0_1px_0_rgba(255,255,255,0.8)] p-4 sm:p-6 md:p-8">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 justify-items-center w-full">
+                <div className="w-full max-w-[1200px] mx-auto rounded-2xl md:rounded-3xl border border-white/70 bg-white/60 shadow-[0_4px_32px_rgba(15,23,42,0.07),inset_0_1px_0_rgba(255,255,255,0.8)] p-5 sm:p-6 md:p-8 lg:p-10">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 md:gap-5 justify-items-center w-full">
                     {BRANDS.map((brand) => {
                       const isSelected = selectedBrand === brand.id;
                       return (
@@ -853,7 +857,7 @@ export default function Home() {
                           key={brand.id}
                           onClick={() => handleBrandClick(brand)}
                           className={
-                            "relative group aspect-[1.1/1] w-full max-w-[136px] rounded-2xl transition-all duration-200 active:scale-[0.94] " +
+                            "relative group aspect-[1.1/1] w-full max-w-[148px] rounded-2xl transition-all duration-200 active:scale-[0.94] " +
                             (isSelected
                               ? "scale-[1.05] ring-2 ring-[#2563eb] shadow-[0_8px_28px_rgba(37,99,235,0.22)]"
                               : "[@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1 [@media(hover:hover)_and_(pointer:fine)]:hover:shadow-[0_8px_24px_rgba(15,23,42,0.10)]")
@@ -872,14 +876,14 @@ export default function Home() {
                                 <span className="material-symbols-outlined text-[12px]">check</span>
                               </div>
                             )}
-                            <div className="w-full h-[72px] flex items-center justify-center">
+                            <div className="w-full h-[78px] flex items-center justify-center">
                               <img
                                 src={`/logos/${brand.image}`}
                                 alt={brand.name}
                                 className="h-full w-auto object-contain transition-transform duration-200 [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-110 drop-shadow-[0_4px_10px_rgba(0,0,0,0.12)]"
                               />
                             </div>
-                            <span className={`text-[8px] sm:text-[9px] font-black uppercase tracking-widest mt-1 ${isSelected ? 'text-[#1d4ed8]' : 'text-slate-400'}`}>
+                            <span className={`text-[8px] sm:text-[9px] font-medium uppercase tracking-widest mt-1 font-body ${isSelected ? 'text-[#1d4ed8]' : 'text-slate-400'}`}>
                               {brand.name}
                             </span>
                           </div>

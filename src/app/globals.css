@@ -6,9 +6,10 @@
 }
 
 @theme inline {
-  --font-headline: var(--font-inter), sans-serif;
+  --font-headline: 'Clash Display', var(--font-bebas), sans-serif;
   --font-body: var(--font-inter), sans-serif;
   --font-label: var(--font-inter), sans-serif;
+  --font-accent: var(--font-pacifico), cursive;
   
   --color-secondary-fixed-dim: #afcbd8;
   --color-on-primary-container: #9bbdff;
@@ -70,6 +71,12 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headline font applied selectively via .font-headline class — not globally */
+
+p {
+  line-height: 1.6;
 }
 
 /* ── Material Icons ── */
