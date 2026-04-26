@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Target your specific directory
-const directoryPath = path.join(__dirname, 'public', 'cars');
+const directoryPath = path.join(__dirname, 'hero');
 
 // Read all files in the directory
 fs.readdir(directoryPath, (err, files) => {
@@ -12,8 +12,8 @@ fs.readdir(directoryPath, (err, files) => {
     }
 
     files.forEach((file) => {
-        // Only process .jpg and .jpeg files
-        if (file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')) {
+        // Only process .jpg, .jpeg, and .png files
+        if (file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg') || file.toLowerCase().endsWith('.png')) {
             const inputPath = path.join(directoryPath, file);
 
             // Remove the old extension and add .webp

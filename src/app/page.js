@@ -743,134 +743,152 @@ export default function Home() {
             key="step1"
             className="xl:ml-[240px] 2xl:ml-[260px] flex-1 h-full flex flex-col bg-[#f0f4f8] relative overflow-y-auto scroll-smooth pt-[52px] xl:pt-0 animate-[fadeInFast_0.15s_ease-out]"
           >
-            {/* HERO */}
-            <section className="relative w-full overflow-hidden bg-[#f0f4f8]">
+            {/* ── PREMIUM HERO CARD ── */}
+            <section className="w-full px-4 sm:px-6 md:px-8 xl:px-10 pt-6 sm:pt-8 xl:pt-10">
               <div
-                className="relative w-full h-[42vh] md:h-[58vh] lg:h-[64vh] xl:h-[68vh] min-h-[300px] max-h-[760px] overflow-hidden"
+                className="relative w-full rounded-2xl xl:rounded-3xl overflow-hidden"
+                style={{
+                  minHeight: "clamp(300px, 42vh, 540px)",
+                  backgroundImage: "url('/hero/hero-bg.webp')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center right",
+                  boxShadow: "0 8px 48px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.06)",
+                }}
               >
-                {/* ambient base */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.95)_0%,_rgba(241,245,249,0.92)_38%,_rgba(240,244,248,1)_72%)]" />
+                {/* Left-to-right gradient overlay for text readability */}
+                <div
+                  className="absolute inset-0 z-[1]"
+                  style={{
+                    background: "linear-gradient(to right, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.88) 30%, rgba(255,255,255,0.55) 55%, rgba(255,255,255,0.10) 78%, rgba(255,255,255,0.0) 100%)",
+                  }}
+                />
 
-                {/* soft side atmospheric shading */}
-                <div className="absolute inset-y-0 left-0 w-[18%] bg-gradient-to-r from-[#dfe5ec] via-[#e8edf2]/70 to-transparent z-[1]" />
-                <div className="absolute inset-y-0 right-0 w-[18%] bg-gradient-to-l from-[#eef2f6] via-[#f3f6f9]/60 to-transparent z-[1]" />
+                {/* Hero content: text left, tyre right */}
+                <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between h-full w-full px-8 sm:px-10 md:px-14 lg:px-16 py-12 sm:py-14 md:py-16 gap-8 sm:gap-6">
 
-                {/* glow behind car */}
-                <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[78%] h-[58%] rounded-full bg-white/75 blur-[90px] z-[1]" />
+                  {/* LEFT — text only */}
+                  <div className="flex flex-col items-start">
 
-                {/* car wrapper */}
-                <div className="absolute inset-0 z-10 flex items-start justify-center pointer-events-none">
-                  <img
-                    src="/hero car.png"
-                    alt="Premium SUV"
-                    draggable="false"
-                    className="select-none h-auto object-contain"
-                    style={{
-                      width: "min(1500px, 108vw)",
-                      marginTop: "clamp(6px, 1.5vh, 18px)",
-                      filter: "drop-shadow(0 26px 60px rgba(15,23,42,0.16))",
-                      WebkitMaskImage:
-                        "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.95) 10%, rgba(0,0,0,1) 18%, rgba(0,0,0,1) 82%, rgba(0,0,0,0.95) 90%, transparent 100%), linear-gradient(to bottom, rgba(0,0,0,0.92) 0%, rgba(0,0,0,1) 12%, rgba(0,0,0,1) 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
-                      maskImage:
-                        "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.95) 10%, rgba(0,0,0,1) 18%, rgba(0,0,0,1) 82%, rgba(0,0,0,0.95) 90%, transparent 100%), linear-gradient(to bottom, rgba(0,0,0,0.92) 0%, rgba(0,0,0,1) 12%, rgba(0,0,0,1) 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
-                      WebkitMaskComposite: "source-in",
-                      maskComposite: "intersect",
-                    }}
-                  />
+                    {/* WELCOME TO */}
+                    <span
+                      className="text-[10px] sm:text-[11px] font-semibold uppercase text-[#2563eb] mb-3"
+                      style={{ letterSpacing: "0.25em" }}
+                    >
+                      Welcome to
+                    </span>
+
+                    {/* TYRE CENTRE — single line desktop, fluid size */}
+                    <h1
+                      className="font-black uppercase text-[#061735] whitespace-nowrap mb-5"
+                      style={{ fontSize: "clamp(2.8rem, 5.8vw, 5rem)", letterSpacing: "-0.02em", lineHeight: "1" }}
+                    >
+                      Tyre Centre
+                    </h1>
+
+                    {/* Thin accent line */}
+                    <div className="w-12 h-[2.5px] rounded-full bg-[#2563eb]/40 mb-5" />
+
+                    {/* Subheading */}
+                    <p className="text-[15px] sm:text-[16px] font-bold text-[#0b2545] leading-snug mb-2">
+                      Chhattisgarh&apos;s Trusted Tyre Experts
+                    </p>
+
+                    {/* Since 1995 — italic blue accent */}
+                    <p
+                      className="text-[13px] sm:text-sm text-[#2563eb] font-semibold mb-6"
+                      style={{ fontStyle: "italic", letterSpacing: "0.04em" }}
+                    >
+                      Since 1995
+                    </p>
+
+                    {/* Description */}
+                    <p className="text-[14px] sm:text-[15px] text-slate-500 leading-[1.75] max-w-[300px] sm:max-w-[330px]">
+                      Premium tyres, expert fitment and trusted service in Bilaspur.
+                    </p>
+
+                  </div>
+
+                  {/* RIGHT — tyre image, shifted slightly right & grounded */}
+                  <div className="flex items-end justify-end shrink-0 w-[240px] sm:w-[320px] md:w-[400px] lg:w-[470px] xl:w-[520px] self-end">
+                    <img
+                      src="/hero/hero-tyre.webp"
+                      alt="Premium Tyre"
+                      draggable="false"
+                      className="hero-tyre-float select-none w-full h-auto object-contain"
+                      style={{
+                        filter: "drop-shadow(0 32px 24px rgba(15,23,42,0.22)) drop-shadow(0 8px 16px rgba(15,23,42,0.10))",
+                        maxHeight: "clamp(220px, 38vh, 480px)",
+                        marginRight: "-1rem",
+                      }}
+                    />
+                  </div>
+
                 </div>
-
-                {/* floor reflection / fade */}
-                <div className="absolute left-0 right-0 bottom-0 h-[34%] z-20 bg-gradient-to-t from-[#f0f4f8] via-[#f0f4f8]/92 via-[35%] to-transparent" />
-                <div className="absolute left-1/2 bottom-[7%] -translate-x-1/2 w-[62%] h-10 rounded-[100%] bg-slate-400/20 blur-[26px] z-[5]" />
-
-                {/* blend hero into rest of page */}
-                <div className="absolute left-0 right-0 bottom-0 h-28 md:h-36 lg:h-44 z-30 bg-gradient-to-t from-[#f0f4f8] via-[#f0f4f8]/96 via-[38%] to-transparent" />
               </div>
             </section>
 
-            {/* CONTENT */}
+            {/* ── BRAND SECTION ── */}
             <section
-              className="w-full bg-[#f0f4f8] flex-1 pb-16 sm:pb-20 md:pb-28 flex flex-col items-center relative z-40"
-              style={{ marginTop: "clamp(-1.5rem, -3vw, -3.75rem)" }}
+              id="brand-section"
+              className="w-full flex-1 pb-8 sm:pb-12 md:pb-16 flex flex-col items-center pt-6 sm:pt-8"
             >
               <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 flex flex-col items-center">
-                {/* Heading */}
-                <div className="flex flex-col items-center text-center mb-6 sm:mb-8 md:mb-10 w-full">
-                  <p className="text-[10px] sm:text-[11px] font-bold text-[#00254d] uppercase tracking-[0.25em] mb-2 sm:mb-3">Step 1</p>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-black tracking-[-0.03em] text-[#0f172a] uppercase">
-                    Select Manufacturer
-                  </h1>
-                  <div className="w-10 sm:w-14 h-[2px] bg-[#00254d]/20 mx-auto my-3 sm:my-4 rounded-full" />
+
+                {/* Section heading */}
+                <div className="flex flex-col items-center text-center mb-6 sm:mb-8 w-full">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-wide text-[#0f172a] uppercase">
+                    Choose Your Vehicle Brand
+                  </h2>
+                  <div className="w-8 sm:w-12 h-[2px] bg-[#2563eb]/30 mx-auto mt-3 rounded-full" />
                 </div>
 
-                {/* Manufacturer panel */}
-                <div className="w-[calc(100%-1rem)] md:w-full max-w-5xl mx-auto rounded-2xl md:rounded-3xl border border-white/60 bg-white/40 shadow-md xl:shadow-[0_8px_60px_rgba(15,23,42,0.08),_inset_0_1px_0_rgba(255,255,255,0.5)] p-4 sm:p-6 md:p-8 lg:p-10">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-5 justify-items-center w-full">
-                    {BRANDS.map((brand, index) => {
+                {/* Brand cards */}
+                <div className="w-full max-w-5xl mx-auto rounded-2xl md:rounded-3xl border border-white/70 bg-white/60 shadow-[0_4px_32px_rgba(15,23,42,0.07),inset_0_1px_0_rgba(255,255,255,0.8)] p-4 sm:p-6 md:p-8">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 justify-items-center w-full">
+                    {BRANDS.map((brand) => {
                       const isSelected = selectedBrand === brand.id;
-
                       return (
                         <button
                           type="button"
                           key={brand.id}
                           onClick={() => handleBrandClick(brand)}
                           className={
-                            "relative group aspect-[1.15/1] w-full max-w-[110px] sm:max-w-[126px] md:max-w-[140px] rounded-2xl p-[2.5px] transition-all duration-300 active:scale-[0.94] " +
+                            "relative group aspect-[1.1/1] w-full max-w-[136px] rounded-2xl transition-all duration-200 active:scale-[0.94] " +
                             (isSelected
-                              ? "bg-gradient-to-br from-[#003d7a] via-[#00254d] to-[#0b2f63] shadow-lg xl:shadow-[0_12px_36px_rgba(0,37,77,0.30)] scale-[1.04]"
-                              : "bg-transparent [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1.5 [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]")
+                              ? "scale-[1.05] ring-2 ring-[#2563eb] shadow-[0_8px_28px_rgba(37,99,235,0.22)]"
+                              : "[@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1 [@media(hover:hover)_and_(pointer:fine)]:hover:shadow-[0_8px_24px_rgba(15,23,42,0.10)]")
                           }
                         >
                           <div
                             className={
-                              "relative h-full w-full rounded-[0.85rem] flex flex-col items-center justify-between overflow-hidden transition-all duration-300 p-3 " +
+                              "relative h-full w-full rounded-2xl flex flex-col items-center justify-between p-3.5 transition-all duration-200 " +
                               (isSelected
-                                ? "bg-[#00254d]"
-                                : "bg-white shadow-sm xl:shadow-[0_4px_16px_rgba(15,23,42,0.05)] [@media(hover:hover)_and_(pointer:fine)]:group-hover:shadow-[0_12px_28px_rgba(15,23,42,0.10)]")
+                                ? "bg-[#eff6ff] border-2 border-[#2563eb]"
+                                : "bg-white border border-slate-100 shadow-sm")
                             }
                           >
                             {isSelected && (
-                              <div className="absolute top-2 right-2 z-20 w-5 h-5 rounded-full bg-blue-400 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(96,165,250,0.5)]">
+                              <div className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-[#2563eb] text-white flex items-center justify-center shadow-sm">
                                 <span className="material-symbols-outlined text-[12px]">check</span>
                               </div>
                             )}
-
-                            {/* subtle inner plate for selected state so logos remain visible */}
-                            <div
-                              className={
-                                "absolute inset-[6px] rounded-[0.65rem] transition-all duration-300 " +
-                                (isSelected
-                                  ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] border border-white/[0.08]"
-                                  : "bg-transparent")
-                              }
-                            />
-
-                            {/* Image Container - Fixed height prevents collapsing */}
-                            <div className="w-full h-[70px] flex items-center justify-center relative z-10">
+                            <div className="w-full h-[72px] flex items-center justify-center">
                               <img
                                 src={`/logos/${brand.image}`}
                                 alt={brand.name}
-                                className="
-      h-full w-auto object-contain
-      transition-all duration-300
-      [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-110
-      drop-shadow-[0_6px_14px_rgba(0,0,0,0.15)]
-    "
+                                className="h-full w-auto object-contain transition-transform duration-200 [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-110 drop-shadow-[0_4px_10px_rgba(0,0,0,0.12)]"
                               />
                             </div>
-
-                            {/* Text Container - mt-auto pushes it to the bottom */}
-                            <div className="mt-auto shrink-0 text-center w-full transition-colors duration-300 z-10">
-                              <span className={`text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase tracking-widest ${selectedBrand === brand.id ? 'text-blue-100' : 'text-slate-400 group-hover:text-slate-600'}`}>
-                                {brand.name}
-                              </span>
-                            </div>
+                            <span className={`text-[8px] sm:text-[9px] font-black uppercase tracking-widest mt-1 ${isSelected ? 'text-[#1d4ed8]' : 'text-slate-400'}`}>
+                              {brand.name}
+                            </span>
                           </div>
                         </button>
                       );
                     })}
                   </div>
                 </div>
+
               </div>
             </section>
           </main>
@@ -1120,45 +1138,45 @@ export default function Home() {
 
                         {/* ── CTA Button: View Available Tyres — only shown once size is selected ── */}
                         {selectedSize && (
-                        <div className="mt-5 w-full" style={{ maxWidth: '360px' }}>
-                          <button
-                            onClick={() => {
-                              if (activeModelName && (selectedModel !== activeModelName || !selectedSize)) {
-                                handleModelSelect(activeModelName);
-                              }
-                              if (selectedModel && selectedSize) setStep(3);
-                            }}
-                            disabled={!(selectedModel && selectedSize)}
-                            className="group relative overflow-hidden w-full flex items-center justify-between px-7 rounded-xl font-black uppercase tracking-widest text-white text-[11px] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97]"
-                            style={{
-                              height: '52px',
-                              background: 'linear-gradient(to right, #1185f4, #0066d6)',
-                              boxShadow: '0 10px 26px rgba(17,133,244,0.28)',
-                            }}
-                            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 14px 34px rgba(17,133,244,0.34)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 10px 26px rgba(17,133,244,0.28)'; }}
-                          >
-                            {/* Shine sweep — outer handles slide, inner handles skew */}
-                            <span
-                              className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none overflow-hidden"
+                          <div className="mt-5 w-full" style={{ maxWidth: '360px' }}>
+                            <button
+                              onClick={() => {
+                                if (activeModelName && (selectedModel !== activeModelName || !selectedSize)) {
+                                  handleModelSelect(activeModelName);
+                                }
+                                if (selectedModel && selectedSize) setStep(3);
+                              }}
+                              disabled={!(selectedModel && selectedSize)}
+                              className="group relative overflow-hidden w-full flex items-center justify-between px-7 rounded-xl font-black uppercase tracking-widest text-white text-[11px] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97]"
+                              style={{
+                                height: '52px',
+                                background: 'linear-gradient(to right, #1185f4, #0066d6)',
+                                boxShadow: '0 10px 26px rgba(17,133,244,0.28)',
+                              }}
+                              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 14px 34px rgba(17,133,244,0.34)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 10px 26px rgba(17,133,244,0.28)'; }}
                             >
+                              {/* Shine sweep — outer handles slide, inner handles skew */}
                               <span
-                                className="absolute inset-0"
-                                style={{
-                                  background: 'linear-gradient(120deg, transparent, rgba(255,255,255,0.32), transparent)',
-                                  transform: 'skewX(-20deg)',
-                                }}
-                              />
-                            </span>
-                            <span>View Available Tyres</span>
-                            <ArrowRight size={16} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-1 shrink-0" />
-                          </button>
+                                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none overflow-hidden"
+                              >
+                                <span
+                                  className="absolute inset-0"
+                                  style={{
+                                    background: 'linear-gradient(120deg, transparent, rgba(255,255,255,0.32), transparent)',
+                                    transform: 'skewX(-20deg)',
+                                  }}
+                                />
+                              </span>
+                              <span>View Available Tyres</span>
+                              <ArrowRight size={16} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-1 shrink-0" />
+                            </button>
 
-                          {/* Helper text */}
-                          <p className="mt-2 text-[12px] text-white/55">
-                            See compatible tyres based on selected size
-                          </p>
-                        </div>
+                            {/* Helper text */}
+                            <p className="mt-2 text-[12px] text-white/55">
+                              See compatible tyres based on selected size
+                            </p>
+                          </div>
                         )}
 
                       </div>
