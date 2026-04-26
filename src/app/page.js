@@ -1,9 +1,10 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState, useRef } from "react";
 import { useAppContext } from "@/context/store";
 import { motion, AnimatePresence, animate } from "framer-motion";
 import Papa from "papaparse";
+import { Factory, Car, CarFront, CircleDot, Star, ArrowRight, Ruler, Disc } from "lucide-react";
 
 function AnimatedPrice({ price }) {
   const nodeRef = useRef(null);
@@ -231,6 +232,7 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [showStickyBar, setShowStickyBar] = useState(false);
 
   useEffect(() => {
     if (selectedBrand) {
@@ -615,13 +617,15 @@ export default function Home() {
                   : { color: "rgba(255,255,255,0.58)" }),
               }}
             >
-              <span
-                className="sidebar-nav-icon material-symbols-outlined text-[20px]"
+              <Car
+                size={20}
+                strokeWidth={2}
+                className="sidebar-nav-icon"
                 style={{
                   transition: "color 300ms ease",
                   color: step === 1 ? "#ffffff" : "rgba(255,255,255,0.52)",
                 }}
-              >directions_car</span>
+              />
               <span className="text-[12px] font-semibold uppercase" style={{ letterSpacing: "0.09em" }}>Select Vehicle</span>
               {step === 1 && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.75)]" />}
             </a>
@@ -642,13 +646,15 @@ export default function Home() {
                   : { color: "rgba(255,255,255,0.58)" }),
               }}
             >
-              <span
-                className="sidebar-nav-icon material-symbols-outlined text-[20px]"
+              <Ruler
+                size={20}
+                strokeWidth={2}
+                className="sidebar-nav-icon"
                 style={{
                   transition: "color 300ms ease",
                   color: step === 2 ? "#ffffff" : "rgba(255,255,255,0.52)",
                 }}
-              >straighten</span>
+              />
               <span className="text-[12px] font-semibold uppercase" style={{ letterSpacing: "0.09em" }}>Model & Size</span>
               {step === 2 && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.75)]" />}
             </a>
@@ -669,13 +675,15 @@ export default function Home() {
                   : { color: "rgba(255,255,255,0.58)" }),
               }}
             >
-              <span
-                className="sidebar-nav-icon material-symbols-outlined text-[20px]"
+              <Disc
+                size={20}
+                strokeWidth={2}
+                className="sidebar-nav-icon"
                 style={{
                   transition: "color 300ms ease",
                   color: step === 3 ? "#ffffff" : "rgba(255,255,255,0.52)",
                 }}
-              >tire_repair</span>
+              />
               <span className="text-[12px] font-semibold uppercase flex-1" style={{ letterSpacing: "0.09em" }}>View Tyres</span>
               {step === 3 && (
                 <span className="relative flex h-1.5 w-1.5 ml-auto">
@@ -945,12 +953,66 @@ export default function Home() {
 
           return (
             <>
+              {/* ══════════════════════════════════════════════════
+                  COMPACT STICKY BAR
+              ══════════════════════════════════════════════════ */}
+              <AnimatePresence>
+                {showStickyBar && activeModelName && selectedSize && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="fixed top-[68px] xl:top-0 left-0 right-0 xl:left-[240px] 2xl:left-[260px] 2xl:right-[360px] z-[40] pt-2 xl:pt-4 px-2 sm:px-4 xl:px-6 pointer-events-none"
+                  >
+                    <div className="mx-auto max-w-5xl bg-white/90 backdrop-blur-md border border-white/40 shadow-[0_8px_30px_rgba(15,23,42,0.12)] rounded-xl xl:rounded-[20px] p-2 xl:p-3 flex items-center justify-between gap-2 xl:gap-4 pointer-events-auto overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                      <div className="flex items-center gap-2 xl:gap-4 shrink-0">
+                        <div className="w-10 h-8 xl:w-14 xl:h-11 bg-slate-50/80 rounded-lg xl:rounded-xl flex items-center justify-center p-1 xl:p-1.5 shrink-0 border border-slate-100/50">
+                          <img 
+                            src={`/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.webp`} 
+                            onError={(e) => { e.target.onerror = null; e.target.src = `/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.jpg`; }}
+                            className="max-w-full max-h-full object-contain mix-blend-multiply" 
+                            alt={activeModelName} 
+                          />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <div className="flex items-center gap-1 xl:gap-1.5 whitespace-nowrap">
+                            <span className="text-[9px] xl:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{selectedBrand}</span>
+                            <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+                            <span className="text-[9px] xl:text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[80px] sm:max-w-none">{activeModelSubCat}</span>
+                          </div>
+                          <span className="text-[13px] xl:text-[15px] font-black text-[#0a1929] leading-tight mt-0.5 truncate">{activeModelName}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 xl:gap-5 shrink-0 ml-auto pl-2">
+                        <div className="hidden sm:flex flex-col items-end border-r border-slate-200/60 pr-3 xl:pr-5 mr-1">
+                          <span className="text-[8px] xl:text-[9px] font-bold text-slate-400 uppercase tracking-widest">Wheel Size</span>
+                          <span className="text-[11px] xl:text-[13px] font-black text-[#1185f4]">{selectedSize}</span>
+                        </div>
+                        
+                        <button 
+                          onClick={() => setStep(3)}
+                          disabled={!(selectedModel && selectedSize)}
+                          className="bg-[#1185f4] hover:bg-blue-600 text-white text-[10px] xl:text-[11px] font-black uppercase tracking-widest px-3 py-2 xl:px-5 xl:py-3 rounded-lg xl:rounded-xl transition-all duration-300 shadow-[0_4px_14px_rgba(17,133,244,0.35)] hover:shadow-[0_6px_20px_rgba(17,133,244,0.45)] hover:-translate-y-0.5 active:scale-95 disabled:opacity-40 disabled:hover:translate-y-0 flex items-center gap-1.5 xl:gap-2 group whitespace-nowrap"
+                        >
+                          <span className="sm:hidden">View Tyres</span>
+                          <span className="hidden sm:inline">View Tyres</span>
+                          <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <motion.main
                 key="step2"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.4, ease: 'easeOut' }}
+                onScroll={(e) => setShowStickyBar(e.target.scrollTop > 380)}
                 className="xl:ml-[240px] 2xl:ml-[260px] 2xl:mr-[360px] flex-1 h-full flex flex-col relative overflow-y-auto overflow-x-hidden scroll-smooth pt-[68px] xl:pt-16 pb-16 px-4 sm:px-6"
                 style={{ background: 'radial-gradient(circle at top, #f8fbff 0%, #eef3f9 55%, #f6f9fd 100%)' }}
               >
@@ -1021,6 +1083,18 @@ export default function Home() {
 
                     {/* Left — Car image */}
                     <div className="w-full md:w-[56%] flex justify-center items-end relative py-10 md:py-6 px-6 shrink-0 overflow-hidden min-h-[240px] md:min-h-0">
+                      {/* Top-left soft highlight — slightly washing over the car area to match background spotlight */}
+                      <div 
+                        className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] pointer-events-none z-[12]" 
+                        style={{ background: 'radial-gradient(ellipse at top left, rgba(255,255,255,0.08) 0%, rgba(100,180,255,0.03) 45%, transparent 70%)', mixBlendMode: 'screen' }} 
+                      />
+
+                      {/* Subtle blue-white rim light behind the car to make it pop */}
+                      <div 
+                        className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[85%] h-[75%] pointer-events-none z-[5]" 
+                        style={{ background: 'radial-gradient(circle, rgba(220,240,255,0.15) 0%, transparent 60%)', filter: 'blur(50px)' }} 
+                      />
+
                       {/* Floor darkening patch — anchors car to surface */}
                       <div
                         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[28%] pointer-events-none z-[4]"
@@ -1050,7 +1124,7 @@ export default function Home() {
                         alt={activeModelName}
                         className="w-full max-w-[520px] h-auto object-contain z-10 relative"
                         style={{
-                          filter: 'drop-shadow(0 22px 44px rgba(0,0,0,0.45)) drop-shadow(0 6px 12px rgba(0,10,40,0.35))',
+                          filter: 'drop-shadow(0 22px 44px rgba(0,0,0,0.45)) drop-shadow(0 6px 12px rgba(0,10,40,0.35)) brightness(1.04) contrast(1.05)',
                           transform: 'translateY(4px)',
                           transition: 'transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94)',
                         }}
@@ -1129,6 +1203,9 @@ export default function Home() {
                       </motion.div>
                     </div>
                   </motion.div>
+
+                  {/* Spacer to prevent overlap on mobile/tablet when sticky bar is shown */}
+                  <div className={`w-full transition-all duration-300 ${showStickyBar ? 'h-[72px] xl:h-0' : 'h-0'}`} />
 
                   {/* ══════════════════════════════════════════════════
                       CAR TYPE FILTER TABS — premium spacious pill group
@@ -1252,14 +1329,13 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                                   </div>
 
                                   {/* Text area */}
-                                  <div className="px-4 pb-4 pt-1.5 flex flex-col">
+                                  <div className="px-4 py-3 flex flex-col justify-center">
                                     <h4
-                                      className="text-[15px] font-black truncate mb-0.5 leading-tight"
+                                      className="text-[16px] font-black tracking-[0.02em] truncate leading-none"
                                       style={{ color: isSelected ? '#1185f4' : '#0f172a' }}
                                     >
                                       {item.name}
                                     </h4>
-                                    <p className="text-[11px] text-slate-500 font-medium truncate">{item.sub}</p>
                                   </div>
                                 </motion.div>
                               );
@@ -1348,7 +1424,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                   <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined text-[15px] text-[#1185f4]">factory</span>
+                        <Factory size={18} strokeWidth={2.2} color="#1185f4" />
                       </div>
                       <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Manufacturer</span>
                     </div>
@@ -1362,7 +1438,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                   <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined text-[15px] text-[#1185f4]">directions_car</span>
+                        <Car size={18} strokeWidth={2.2} color="#1185f4" />
                       </div>
                       <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Model</span>
                     </div>
@@ -1378,7 +1454,12 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
 
                   {/* Body Type */}
                   <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
-                    <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Body Type</span>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                        <CarFront size={18} strokeWidth={2.2} color="#1185f4" />
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Body Type</span>
+                    </div>
                     <motion.span
                       key={activeModelSubCat}
                       initial={{ opacity: 0, y: -4 }}
@@ -1393,7 +1474,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                   <div className="flex justify-between items-center pb-5 border-b border-slate-100 mb-8">
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined text-[15px] text-[#1185f4]">tire_repair</span>
+                        <CircleDot size={18} strokeWidth={2.2} color="#1185f4" />
                       </div>
                       <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase shrink-0">Wheel Diameter</span>
                     </div>
@@ -1417,7 +1498,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                     >
                       <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#1185f4] rounded-l-[16px]" />
                       <h4 className="text-[10px] text-[#0a1929] font-black uppercase mb-2 flex items-center gap-2 tracking-[0.12em]">
-                        <span className="material-symbols-outlined text-[14px] text-[#1185f4]">star</span>
+                        <Star size={18} strokeWidth={2.2} color="#1185f4" />
                         Recommendation
                       </h4>
                       <p className="text-[12px] text-slate-500 font-medium leading-[1.65]">
@@ -1443,7 +1524,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                     }}
                   >
                     <span className="text-[12px] tracking-[0.1em] uppercase">View Available Tyres</span>
-                    <span className="material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+                    <ArrowRight size={18} strokeWidth={2.2} className="transition-transform duration-300 group-hover:translate-x-1" color="currentColor" />
                   </button>
                 </div>
               </motion.aside>
