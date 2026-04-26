@@ -722,7 +722,7 @@ export default function Home() {
       </aside>
 
       {/* ── MOBILE / TABLET TOP NAV (below xl) ── */}
-      <nav className="xl:hidden fixed top-0 left-0 right-0 w-full bg-[#00254d]/95 backdrop-blur-xl text-white flex items-center justify-between px-4 sm:px-6 md:px-8 py-3 z-50 shadow-[0_4px_20px_rgba(0,37,77,0.25)] border-b border-white/[0.08]">
+      <nav className="xl:hidden fixed top-0 left-0 right-0 w-full bg-[#00254d]/95 backdrop-blur-sm text-white flex items-center justify-between px-4 sm:px-6 md:px-8 py-3 z-50 shadow-md border-b border-white/[0.08]">
         <div className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform" onClick={() => setStep(1)}>
           <img src="/logo.png" alt="Tyre Centre" className="h-8 w-8 object-contain rounded-full shadow-sm bg-white" />
           <div className="flex flex-col">
@@ -737,14 +737,11 @@ export default function Home() {
         </div>
       </nav>
 
-      <AnimatePresence mode="wait">
+      <>
         {step === 1 && (
-          <motion.main
+          <main
             key="step1"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="xl:ml-[240px] 2xl:ml-[260px] flex-1 h-full flex flex-col bg-[#f0f4f8] relative overflow-y-auto scroll-smooth pt-[52px] xl:pt-0"
+            className="xl:ml-[240px] 2xl:ml-[260px] flex-1 h-full flex flex-col bg-[#f0f4f8] relative overflow-y-auto scroll-smooth pt-[52px] xl:pt-0 animate-[fadeInFast_0.15s_ease-out]"
           >
             {/* HERO */}
             <section className="relative w-full overflow-hidden bg-[#f0f4f8]">
@@ -807,24 +804,21 @@ export default function Home() {
                 </div>
 
                 {/* Manufacturer panel */}
-                <div className="w-[calc(100%-1rem)] md:w-full max-w-5xl mx-auto rounded-2xl md:rounded-3xl border border-white/60 bg-white/40 backdrop-blur-2xl shadow-[0_8px_60px_rgba(15,23,42,0.08),_inset_0_1px_0_rgba(255,255,255,0.5)] p-4 sm:p-6 md:p-8 lg:p-10">
+                <div className="w-[calc(100%-1rem)] md:w-full max-w-5xl mx-auto rounded-2xl md:rounded-3xl border border-white/60 bg-white/40 shadow-md xl:shadow-[0_8px_60px_rgba(15,23,42,0.08),_inset_0_1px_0_rgba(255,255,255,0.5)] p-4 sm:p-6 md:p-8 lg:p-10">
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-5 justify-items-center w-full">
                     {BRANDS.map((brand, index) => {
                       const isSelected = selectedBrand === brand.id;
 
                       return (
-                        <motion.button
+                        <button
                           type="button"
                           key={brand.id}
-                          initial={{ opacity: 0, y: 12 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.35, delay: index * 0.035, ease: [0.25, 0.46, 0.45, 0.94] }}
                           onClick={() => handleBrandClick(brand)}
                           className={
                             "relative group aspect-[1.15/1] w-full max-w-[110px] sm:max-w-[126px] md:max-w-[140px] rounded-2xl p-[2.5px] transition-all duration-300 active:scale-[0.94] " +
                             (isSelected
-                              ? "bg-gradient-to-br from-[#003d7a] via-[#00254d] to-[#0b2f63] shadow-[0_12px_36px_rgba(0,37,77,0.30)] scale-[1.04]"
-                              : "bg-transparent hover:-translate-y-1.5 hover:scale-[1.02]")
+                              ? "bg-gradient-to-br from-[#003d7a] via-[#00254d] to-[#0b2f63] shadow-lg xl:shadow-[0_12px_36px_rgba(0,37,77,0.30)] scale-[1.04]"
+                              : "bg-transparent [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1.5 [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02]")
                           }
                         >
                           <div
@@ -832,7 +826,7 @@ export default function Home() {
                               "relative h-full w-full rounded-[0.85rem] flex flex-col items-center justify-between overflow-hidden transition-all duration-300 p-3 " +
                               (isSelected
                                 ? "bg-[#00254d]"
-                                : "bg-white shadow-[0_4px_16px_rgba(15,23,42,0.05)] group-hover:shadow-[0_12px_28px_rgba(15,23,42,0.10)]")
+                                : "bg-white shadow-sm xl:shadow-[0_4px_16px_rgba(15,23,42,0.05)] [@media(hover:hover)_and_(pointer:fine)]:group-hover:shadow-[0_12px_28px_rgba(15,23,42,0.10)]")
                             }
                           >
                             {isSelected && (
@@ -859,7 +853,7 @@ export default function Home() {
                                 className="
       h-full w-auto object-contain
       transition-all duration-300
-      group-hover:scale-110
+      [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-110
       drop-shadow-[0_6px_14px_rgba(0,0,0,0.15)]
     "
                               />
@@ -872,14 +866,14 @@ export default function Home() {
                               </span>
                             </div>
                           </div>
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
                 </div>
               </div>
             </section>
-          </motion.main>
+          </main>
         )}
 
         {step === 2 && (() => {
@@ -934,10 +928,6 @@ export default function Home() {
             return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
           });
 
-          // ── Car-type filter (state lifted into IIFE via a module-level trick: we use a
-          //    React.useState call at top level but expose it inside this block)
-          // NOTE: activeCarTypeFilter is declared at the component level below; we just reference it here.
-
           const carTypeFilters = ['ALL', ...sortedCategories];
 
           const getCatIcon = (cat) => {
@@ -953,67 +943,10 @@ export default function Home() {
 
           return (
             <>
-              {/* ══════════════════════════════════════════════════
-                  COMPACT STICKY BAR
-              ══════════════════════════════════════════════════ */}
-              <AnimatePresence>
-                {showStickyBar && activeModelName && selectedSize && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="fixed top-[68px] xl:top-0 left-0 right-0 xl:left-[240px] 2xl:left-[260px] 2xl:right-[360px] z-[40] pt-2 xl:pt-4 px-2 sm:px-4 xl:px-6 pointer-events-none"
-                  >
-                    <div className="mx-auto max-w-5xl bg-white/90 backdrop-blur-md border border-white/40 shadow-[0_8px_30px_rgba(15,23,42,0.12)] rounded-xl xl:rounded-[20px] p-2 xl:p-3 flex items-center justify-between gap-2 xl:gap-4 pointer-events-auto overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                      <div className="flex items-center gap-2 xl:gap-4 shrink-0">
-                        <div className="w-10 h-8 xl:w-14 xl:h-11 bg-slate-50/80 rounded-lg xl:rounded-xl flex items-center justify-center p-1 xl:p-1.5 shrink-0 border border-slate-100/50">
-                          <img 
-                            src={`/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.webp`} 
-                            onError={(e) => { e.target.onerror = null; e.target.src = `/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.jpg`; }}
-                            className="max-w-full max-h-full object-contain mix-blend-multiply" 
-                            alt={activeModelName} 
-                          />
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <div className="flex items-center gap-1 xl:gap-1.5 whitespace-nowrap">
-                            <span className="text-[9px] xl:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{selectedBrand}</span>
-                            <span className="w-1 h-1 rounded-full bg-slate-200"></span>
-                            <span className="text-[9px] xl:text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[80px] sm:max-w-none">{activeModelSubCat}</span>
-                          </div>
-                          <span className="text-[13px] xl:text-[15px] font-black text-[#0a1929] leading-tight mt-0.5 truncate">{activeModelName}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 xl:gap-5 shrink-0 ml-auto pl-2">
-                        <div className="hidden sm:flex flex-col items-end border-r border-slate-200/60 pr-3 xl:pr-5 mr-1">
-                          <span className="text-[8px] xl:text-[9px] font-bold text-slate-400 uppercase tracking-widest">Wheel Size</span>
-                          <span className="text-[11px] xl:text-[13px] font-black text-[#1185f4]">{selectedSize}</span>
-                        </div>
-                        
-                        <button 
-                          onClick={() => setStep(3)}
-                          disabled={!(selectedModel && selectedSize)}
-                          className="bg-[#1185f4] hover:bg-blue-600 text-white text-[10px] xl:text-[11px] font-black uppercase tracking-widest px-3 py-2 xl:px-5 xl:py-3 rounded-lg xl:rounded-xl transition-all duration-300 shadow-[0_4px_14px_rgba(17,133,244,0.35)] hover:shadow-[0_6px_20px_rgba(17,133,244,0.45)] hover:-translate-y-0.5 active:scale-95 disabled:opacity-40 disabled:hover:translate-y-0 flex items-center gap-1.5 xl:gap-2 group whitespace-nowrap"
-                        >
-                          <span className="sm:hidden">View Tyres</span>
-                          <span className="hidden sm:inline">View Tyres</span>
-                          <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
 
-              <motion.main
+              <main
                 key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-                onScroll={(e) => setShowStickyBar(e.target.scrollTop > 380)}
-                className="xl:ml-[240px] 2xl:ml-[260px] 2xl:mr-[360px] flex-1 h-full flex flex-col relative overflow-y-auto overflow-x-hidden scroll-smooth pt-[68px] xl:pt-16 pb-16 px-4 sm:px-6"
+                className="xl:ml-[240px] 2xl:ml-[260px] flex-1 h-full flex flex-col relative overflow-y-auto overflow-x-hidden scroll-smooth pt-[68px] xl:pt-16 pb-16 px-4 sm:px-6 animate-[fadeInFast_0.12s_ease-out]"
                 style={{ background: 'radial-gradient(circle at top, #f8fbff 0%, #eef3f9 55%, #f6f9fd 100%)' }}
               >
                 {/* Subtle background radial glow */}
@@ -1026,15 +959,12 @@ export default function Home() {
                   </span>
                 </div>
 
-                <div className="flex flex-col z-10 w-full max-w-5xl mx-auto relative">
+                <div className="flex flex-col z-10 w-full max-w-6xl mx-auto relative">
 
 
 
                   {/* ── Page heading ── */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.05, duration: 0.4 }}
+                  <div
                     className="mb-7 text-left"
                   >
                     <h1 className="text-[32px] sm:text-4xl md:text-[42px] font-black text-[#0a1929] tracking-[-0.03em] mb-1.5 leading-tight">
@@ -1043,16 +973,13 @@ export default function Home() {
                     <p className="text-[13px] md:text-sm text-slate-500 font-medium tracking-wide">
                       Select a vehicle to view available tyre sizes
                     </p>
-                  </motion.div>
+                  </div>
 
                   {/* ══════════════════════════════════════════════════
                       HERO CARD — premium cinematic dark
                   ══════════════════════════════════════════════════ */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1, duration: 0.45 }}
-                    className="rounded-[28px] shadow-[0_36px_90px_rgba(2,6,23,0.65),0_0_0_1px_rgba(255,255,255,0.08)] mb-10 flex flex-col md:flex-row min-h-[280px] md:min-h-[330px] relative overflow-hidden items-stretch"
+                  <div
+                    className="rounded-[28px] shadow-lg xl:shadow-[0_36px_90px_rgba(2,6,23,0.65),0_0_0_1px_rgba(255,255,255,0.08)] mb-10 flex flex-col md:flex-row min-h-[280px] md:min-h-[330px] relative overflow-hidden items-stretch"
                     style={{
                       backgroundImage: "url('/background.jpeg')",
                       backgroundSize: 'cover',
@@ -1062,7 +989,7 @@ export default function Home() {
                   >
                     {/* Noise grain — removes flat digital look */}
                     <div
-                      className="absolute inset-0 pointer-events-none z-[2] opacity-[0.04] mix-blend-soft-light"
+                      className="absolute inset-0 pointer-events-none z-[2] opacity-0 xl:opacity-[0.04] mix-blend-normal xl:mix-blend-soft-light"
                       style={{
                         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
                         backgroundSize: '180px 180px',
@@ -1084,25 +1011,25 @@ export default function Home() {
                     {/* Left — Car image */}
                     <div className="w-full md:w-[56%] flex justify-center items-end relative py-10 md:py-6 px-6 shrink-0 overflow-hidden min-h-[240px] md:min-h-0">
                       {/* Top-left soft highlight — slightly washing over the car area to match background spotlight */}
-                      <div 
-                        className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] pointer-events-none z-[12]" 
-                        style={{ background: 'radial-gradient(ellipse at top left, rgba(255,255,255,0.08) 0%, rgba(100,180,255,0.03) 45%, transparent 70%)', mixBlendMode: 'screen' }} 
+                      <div
+                        className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] pointer-events-none z-[12] hidden xl:block"
+                        style={{ background: 'radial-gradient(ellipse at top left, rgba(255,255,255,0.08) 0%, rgba(100,180,255,0.03) 45%, transparent 70%)', mixBlendMode: 'screen' }}
                       />
 
                       {/* Subtle blue-white rim light behind the car to make it pop */}
-                      <div 
-                        className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[85%] h-[75%] pointer-events-none z-[5]" 
-                        style={{ background: 'radial-gradient(circle, rgba(220,240,255,0.15) 0%, transparent 60%)', filter: 'blur(50px)' }} 
+                      <div
+                        className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[85%] h-[75%] pointer-events-none z-[5] hidden xl:block"
+                        style={{ background: 'radial-gradient(circle, rgba(220,240,255,0.15) 0%, transparent 60%)', filter: 'blur(50px)' }}
                       />
 
                       {/* Floor darkening patch — anchors car to surface */}
                       <div
                         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[28%] pointer-events-none z-[4]"
-                        style={{ background: 'radial-gradient(ellipse at center bottom, rgba(0,0,0,0.38) 0%, transparent 70%)', filter: 'blur(18px)' }}
+                        style={{ background: 'radial-gradient(ellipse at center bottom, rgba(0,0,0,0.38) 0%, transparent 70%)', filter: 'blur(10px)' }}
                       />
                       {/* Soft ambient shadow — depth layer */}
                       <div
-                        className="absolute bottom-[4%] left-1/2 -translate-x-1/2 pointer-events-none z-[5]"
+                        className="absolute bottom-[4%] left-1/2 -translate-x-1/2 pointer-events-none z-[5] hidden xl:block"
                         style={{ width: '68%', height: '18px', background: 'radial-gradient(ellipse, rgba(0,0,0,0.40) 0%, transparent 72%)', filter: 'blur(12px)' }}
                       />
                       {/* Hard contact shadow — tight, sharp, directly under tyres */}
@@ -1112,7 +1039,7 @@ export default function Home() {
                       />
                       {/* Under-car blue glow — subtle floor bounce */}
                       <div
-                        className="absolute bottom-[6%] left-1/2 -translate-x-1/2 w-[72%] h-[26%] pointer-events-none z-[4]"
+                        className="absolute bottom-[6%] left-1/2 -translate-x-1/2 w-[72%] h-[26%] pointer-events-none z-[4] hidden xl:block"
                         style={{ background: 'radial-gradient(ellipse at center, rgba(30,100,255,0.13) 0%, transparent 68%)', filter: 'blur(24px)' }}
                       />
                       <img
@@ -1122,23 +1049,16 @@ export default function Home() {
                           e.target.src = `/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.jpg`;
                         }}
                         alt={activeModelName}
-                        className="w-full max-w-[520px] h-auto object-contain z-10 relative"
+                        className="w-full max-w-[520px] h-auto object-contain z-10 relative [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.055] [@media(hover:hover)_and_(pointer:fine)]:hover:translate-y-0 translate-y-1 transition-transform duration-[0.65s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] drop-shadow-[0_10px_20px_rgba(0,0,0,0.35)] xl:drop-shadow-[0_22px_44px_rgba(0,0,0,0.45)]"
                         style={{
-                          filter: 'drop-shadow(0 22px 44px rgba(0,0,0,0.45)) drop-shadow(0 6px 12px rgba(0,10,40,0.35)) brightness(1.04) contrast(1.05)',
-                          transform: 'translateY(4px)',
-                          transition: 'transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94)',
+                          filter: 'brightness(1.04) contrast(1.05)',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.055) translateY(0px)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1) translateY(4px)'; }}
                       />
                     </div>
 
                     {/* Right — Model info + wheel sizes */}
                     <div className="w-full md:w-[44%] flex flex-col justify-center text-left z-10 px-7 py-8 md:py-10 md:pr-10 lg:pl-5 shrink-0">
-                      <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.18, duration: 0.4 }}
+                      <div
                         className="flex flex-col"
                       >
                         {/* Body type label */}
@@ -1186,11 +1106,9 @@ export default function Home() {
                                 >
                                   {size}
                                   {isSelectedSize && (
-                                    <motion.span
-                                      initial={{ scale: 0 }}
-                                      animate={{ scale: 1 }}
+                                    <span
                                       className="material-symbols-outlined text-[12px]"
-                                    >check_circle</motion.span>
+                                    >check_circle</span>
                                   )}
                                 </button>
                               );
@@ -1200,20 +1118,59 @@ export default function Home() {
                           )}
                         </div>
 
-                      </motion.div>
-                    </div>
-                  </motion.div>
+                        {/* ── CTA Button: View Available Tyres — only shown once size is selected ── */}
+                        {selectedSize && (
+                        <div className="mt-5 w-full" style={{ maxWidth: '360px' }}>
+                          <button
+                            onClick={() => {
+                              if (activeModelName && (selectedModel !== activeModelName || !selectedSize)) {
+                                handleModelSelect(activeModelName);
+                              }
+                              if (selectedModel && selectedSize) setStep(3);
+                            }}
+                            disabled={!(selectedModel && selectedSize)}
+                            className="group relative overflow-hidden w-full flex items-center justify-between px-7 rounded-xl font-black uppercase tracking-widest text-white text-[11px] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97]"
+                            style={{
+                              height: '52px',
+                              background: 'linear-gradient(to right, #1185f4, #0066d6)',
+                              boxShadow: '0 10px 26px rgba(17,133,244,0.28)',
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 14px 34px rgba(17,133,244,0.34)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 10px 26px rgba(17,133,244,0.28)'; }}
+                          >
+                            {/* Shine sweep — outer handles slide, inner handles skew */}
+                            <span
+                              className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none overflow-hidden"
+                            >
+                              <span
+                                className="absolute inset-0"
+                                style={{
+                                  background: 'linear-gradient(120deg, transparent, rgba(255,255,255,0.32), transparent)',
+                                  transform: 'skewX(-20deg)',
+                                }}
+                              />
+                            </span>
+                            <span>View Available Tyres</span>
+                            <ArrowRight size={16} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-1 shrink-0" />
+                          </button>
 
-                  {/* Spacer to prevent overlap on mobile/tablet when sticky bar is shown */}
-                  <div className={`w-full transition-all duration-300 ${showStickyBar ? 'h-[72px] xl:h-0' : 'h-0'}`} />
+                          {/* Helper text */}
+                          <p className="mt-2 text-[12px] text-white/55">
+                            See compatible tyres based on selected size
+                          </p>
+                        </div>
+                        )}
+
+                      </div>
+                    </div>
+                  </div>
+
+
 
                   {/* ══════════════════════════════════════════════════
                       CAR TYPE FILTER TABS — premium spacious pill group
                   ══════════════════════════════════════════════════ */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15, duration: 0.4 }}
+                  <div
                     className="mt-8 mb-7"
                   >
                     <div className="w-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] px-px">
@@ -1236,7 +1193,7 @@ export default function Home() {
                         })}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
 
                   {/* ══════════════════════════════════════════════════
                       CATEGORY-GROUPED MODEL GRIDS
@@ -1247,11 +1204,8 @@ export default function Home() {
                       if (!isVisible) return null;
                       const items = modelsByCategory[cat] || [];
                       return (
-                        <motion.div
+                        <div
                           key={cat}
-                          initial={{ opacity: 0, y: 18 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: catIdx * 0.07, duration: 0.4 }}
                           className="flex flex-col"
                         >
                           {/* Category header — text only, no icon */}
@@ -1268,28 +1222,22 @@ export default function Home() {
                             {items.map((item, itemIdx) => {
                               const isSelected = selectedModel === item.name;
                               return (
-                                <motion.div
+                                <div
                                   key={item.name}
-                                  initial={{ opacity: 0, y: 12 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ delay: catIdx * 0.05 + itemIdx * 0.04, duration: 0.35 }}
                                   onClick={() => handleModelSelect(item.name)}
                                   className={`relative cursor-pointer rounded-[18px] border flex flex-col group overflow-hidden transition-all duration-300 ${isSelected
-                                    ? 'border-[#1185f4] shadow-[0_14px_36px_rgba(17,133,244,0.22)] -translate-y-1'
-                                    : 'border-transparent shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_34px_rgba(15,23,42,0.08)] hover:-translate-y-1'
+                                    ? 'border-[#1185f4] shadow-md xl:shadow-[0_14px_36px_rgba(17,133,244,0.22)] -translate-y-1'
+                                    : 'border-transparent shadow-sm xl:shadow-[0_8px_24px_rgba(15,23,42,0.04)] [@media(hover:hover)_and_(pointer:fine)]:hover:shadow-[0_14px_34px_rgba(15,23,42,0.08)] [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1'
                                     }`}
                                   style={isSelected ? { background: 'linear-gradient(to bottom, #ffffff, #f8fbff)' } : { background: '#ffffff' }}
                                 >
                                   {/* Selected check badge */}
                                   {isSelected && (
-                                    <motion.div
-                                      initial={{ scale: 0 }}
-                                      animate={{ scale: 1 }}
-                                      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                                    <div
                                       className="absolute top-3 right-3 w-[22px] h-[22px] rounded-full bg-[#1185f4] text-white flex items-center justify-center z-20 shadow-[0_4px_10px_rgba(17,133,244,0.4)]"
                                     >
                                       <span className="material-symbols-outlined text-[13px]">check</span>
-                                    </motion.div>
+                                    </div>
                                   )}
 
                                   {/* Car image area — premium showroom background */}
@@ -1324,7 +1272,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                                         e.target.src = `/cars/${item.name.toLowerCase().replace(/\s+/g, '-')}.jpg`;
                                       }}
                                       alt={item.name}
-                                      className={`max-w-full max-h-[88px] w-auto object-contain relative z-10 transition-transform duration-500 ease-out ${isSelected ? 'scale-[1.08]' : 'group-hover:scale-[1.10]'}`}
+                                      className={`max-w-full max-h-[88px] w-auto object-contain relative z-10 transition-transform duration-500 ease-out ${isSelected ? 'scale-[1.08]' : '[@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.10]'}`}
                                     />
                                   </div>
 
@@ -1337,20 +1285,17 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                                       {item.name}
                                     </h4>
                                   </div>
-                                </motion.div>
+                                </div>
                               );
                             })}
                           </div>
-                        </motion.div>
+                        </div>
                       );
                     })}
                   </div>
 
                   {/* ── Trust Strip — in-flow, appears at end of page ── */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.4 }}
+                  <div
                     className="w-full mt-14 mb-6"
                   >
                     <div className="bg-white rounded-[22px] border border-slate-100 shadow-[0_10px_30px_rgba(15,23,42,0.07)] px-5 sm:px-8 py-5">
@@ -1373,161 +1318,16 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                         ))}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
 
-                  {/* ── Inline CTA (hidden on 2xl where sidebar shows) ── */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.35, duration: 0.4 }}
-                    className="2xl:hidden w-full mb-6"
-                  >
-                    <button
-                      onClick={() => setStep(3)}
-                      disabled={!(selectedModel && selectedSize)}
-                      className="w-full text-white font-black py-4 rounded-[14px] flex justify-center items-center gap-3 transition-all duration-300 disabled:opacity-30 disabled:shadow-none active:scale-[0.98] group hover:-translate-y-0.5"
-                      style={{
-                        background: 'linear-gradient(135deg,#1e90ff,#0066b1)',
-                        boxShadow: (selectedModel && selectedSize) ? '0 12px 30px rgba(0,102,177,0.4)' : 'none'
-                      }}
-                    >
-                      <span className="text-[12px] tracking-[0.12em] uppercase">View Available Tyres</span>
-                      <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
-                    </button>
-                  </motion.div>
+
 
                 </div>
-              </motion.main>
+              </main>
 
 
 
-              {/* ══════════════════════════════════════════════════
-                  RIGHT SUMMARY SIDEBAR
-              ══════════════════════════════════════════════════ */}
-              <motion.aside
-                initial={{ x: 360 }}
-                animate={{ x: 0 }}
-                exit={{ x: 360 }}
-                transition={{ ease: 'circOut', duration: 0.5 }}
-                className="hidden 2xl:flex fixed right-0 top-0 w-[360px] h-screen bg-white flex-col z-40 p-10 shadow-[-14px_0_40px_rgba(15,23,42,0.05)] border-l border-slate-100"
-              >
-                {/* Header */}
-                <div className="flex items-center gap-3 mb-10">
-                  <div className="w-[3px] h-5 rounded-full bg-[#1185f4]" />
-                  <h2 className="text-[#0a1929] font-black tracking-widest uppercase text-[12px]">Summary</h2>
-                </div>
 
-                <div className="flex flex-col flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden">
-                  <span className="text-[9px] text-[#1185f4] font-black tracking-[0.18em] uppercase mb-7">Selected Configuration</span>
-
-                  {/* Manufacturer */}
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                        <Factory size={18} strokeWidth={2.2} color="#1185f4" />
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Manufacturer</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-[#0a1929] font-black text-[11px] uppercase tracking-tight">
-                      <img src={`/logos/${BRANDS.find(b => b.id === selectedBrand)?.image || 'default.png'}`} alt={selectedBrand} className="h-6 w-auto object-contain brightness-0" />
-                      {selectedBrand}
-                    </div>
-                  </div>
-
-                  {/* Model */}
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                        <Car size={18} strokeWidth={2.2} color="#1185f4" />
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Model</span>
-                    </div>
-                    <motion.span
-                      key={activeModelName}
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-[#0a1929] font-black text-[11px] uppercase tracking-tight text-right"
-                    >
-                      {activeModelName || '-'}
-                    </motion.span>
-                  </div>
-
-                  {/* Body Type */}
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                        <CarFront size={18} strokeWidth={2.2} color="#1185f4" />
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Body Type</span>
-                    </div>
-                    <motion.span
-                      key={activeModelSubCat}
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-[#0a1929] font-black text-[11px] uppercase tracking-tight text-right"
-                    >
-                      {activeModelSubCat || '-'}
-                    </motion.span>
-                  </div>
-
-                  {/* Wheel Diameter */}
-                  <div className="flex justify-between items-center pb-5 border-b border-slate-100 mb-8">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                        <CircleDot size={18} strokeWidth={2.2} color="#1185f4" />
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase shrink-0">Wheel Diameter</span>
-                    </div>
-                    <motion.span
-                      key={selectedSize}
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-[#0a1929] font-black text-[11px] uppercase tracking-tight text-right"
-                    >
-                      {selectedSize || '-'}
-                    </motion.span>
-                  </div>
-
-                  {/* Recommendation card */}
-                  {selectedModel && selectedSize && (
-                    <motion.div
-                      key={`${selectedModel}-${selectedSize}`}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-[#f8fbff] p-5 rounded-[16px] relative overflow-hidden border border-blue-100/70 shadow-[0_8px_24px_rgba(15,23,42,0.06)]"
-                    >
-                      <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#1185f4] rounded-l-[16px]" />
-                      <h4 className="text-[10px] text-[#0a1929] font-black uppercase mb-2 flex items-center gap-2 tracking-[0.12em]">
-                        <Star size={18} strokeWidth={2.2} color="#1185f4" />
-                        Recommendation
-                      </h4>
-                      <p className="text-[12px] text-slate-500 font-medium leading-[1.65]">
-                        Best tyres for your <span className="font-bold text-slate-700">{selectedBrand} {activeModelName}</span> with <span className="font-bold text-slate-700">{selectedSize}</span> wheels.
-                      </p>
-                    </motion.div>
-                  )}
-                </div>
-
-                {/* Bottom CTA */}
-                <div className="mt-auto flex flex-col gap-4 pt-6">
-                  <div className="flex justify-between text-[9px] text-slate-300 font-bold tracking-widest px-1">
-                    <span>REF: {selectedBrand ? selectedBrand.substring(0, 3).toUpperCase() : '---'}-{activeModelName ? activeModelName.substring(0, 3).toUpperCase() : '---'}-{selectedSize ? selectedSize.replace(/[^0-9]/g, '') : 'XX'}</span>
-                    <span>V2.1</span>
-                  </div>
-                  <button
-                    onClick={() => setStep(3)}
-                    disabled={!(selectedModel && selectedSize)}
-                    className="w-full text-white font-black py-[18px] rounded-[14px] flex justify-center items-center gap-3 transition-all duration-300 disabled:opacity-30 disabled:shadow-none active:scale-[0.98] group hover:-translate-y-0.5"
-                    style={{
-                      background: 'linear-gradient(135deg,#1e90ff,#0066b1)',
-                      boxShadow: (selectedModel && selectedSize) ? '0 12px 30px rgba(0,102,177,0.4)' : 'none'
-                    }}
-                  >
-                    <span className="text-[12px] tracking-[0.1em] uppercase">View Available Tyres</span>
-                    <ArrowRight size={18} strokeWidth={2.2} className="transition-transform duration-300 group-hover:translate-x-1" color="currentColor" />
-                  </button>
-                </div>
-              </motion.aside>
             </>
           );
         })()}
@@ -1536,13 +1336,9 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
 
 
         {step === 3 && (
-          <motion.main
+          <main
             key="step3"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ ease: "easeOut", duration: 0.4 }}
-            className="xl:ml-[240px] 2xl:ml-[260px] flex flex-col xl:flex-row flex-1 h-full overflow-hidden bg-[#f0f4f8] relative pt-[52px] xl:pt-0"
+            className="xl:ml-[240px] 2xl:ml-[260px] flex flex-col xl:flex-row flex-1 h-full overflow-hidden bg-[#f0f4f8] relative pt-[52px] xl:pt-0 animate-[fadeInFast_0.12s_ease-out]"
           >
             <div className={`flex-1 h-full flex flex-col relative overflow-y-auto scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] transition-all duration-500 ${selectedTyre ? "w-full xl:w-2/3" : "w-full"}`}>
               <div className="sticky top-0 z-30 bg-[#f0f4f8]/95 backdrop-blur-[20px] pt-4 sm:pt-5 xl:pt-6 pb-4 sm:pb-4 flex flex-col gap-3 sm:gap-3.5 w-full mb-3 sm:mb-4 border-b border-slate-200/50 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
@@ -1685,7 +1481,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                 {displayedTyres.length > 0 ? (
                   <>
                     <h3 className="text-[11px] sm:text-xs font-bold text-slate-400 mb-3 sm:mb-4 px-1 uppercase tracking-widest">Top picks for your {selectedBrand} {selectedModel}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+                    <div className={`grid gap-4 md:gap-5 ${selectedTyre ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3'}`}>
                       {displayedTyres.map((tyre, index) => {
                         const isSelected = selectedTyre?.ModelID === tyre.ModelID;
                         const theme = getBrandTheme(tyre.TyreBrand || tyre.Brand);
@@ -1702,12 +1498,8 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                           }
                         }
                         return (
-                          <motion.div
+                          <div
                             key={index}
-                            layout
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: index * 0.03 }}
                             onClick={() => setSelectedTyre(selectedTyre?.ModelID === tyre.ModelID ? null : tyre)}
                             style={{
                               '--brand-primary': theme.primary,
@@ -1715,7 +1507,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                             }}
                             className={`cursor-pointer flex flex-col group overflow-hidden transition-all duration-300 text-left w-full relative active:scale-[0.98] bg-white rounded-2xl min-h-[220px] ${isSelected
                               ? 'ring-2 ring-[var(--brand-primary)] ring-offset-2 shadow-[0_4px_24px_rgba(0,0,0,0.12)] -translate-y-0.5'
-                              : 'shadow-[0_4px_16px_rgba(15,23,42,0.04)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] hover:-translate-y-1'
+                              : 'shadow-sm xl:shadow-[0_4px_16px_rgba(15,23,42,0.04)] [@media(hover:hover)_and_(pointer:fine)]:hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1'
                               }`}
                           >
 
@@ -1801,7 +1593,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                                 <TyreBrandLogo
                                   brand={tyre.TyreBrand}
                                   className="mb-2"
-                                  imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 group-hover:opacity-100 drop-shadow-sm"
+                                  imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100 drop-shadow-sm"
                                   textClassName="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1.5 truncate"
                                 />
                                 <h3 className="text-sm sm:text-base font-black text-[#0f172a] leading-tight line-clamp-3 pr-2 shadow-white/50 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
@@ -1822,8 +1614,8 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                                 <TyreImage
                                   fileName={tyre.ImageFileName}
                                   alt={tyre.TyreModel || 'Tyre'}
-                                  className="w-[85%] sm:w-[90%] h-auto max-h-[160px] object-contain transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 group-hover:-translate-y-1 relative z-30"
-                                  style={{ filter: "drop-shadow(-8px 12px 14px rgba(0,0,0,0.35))" }}
+                                  className="w-[85%] sm:w-[90%] h-auto max-h-[160px] object-contain transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-110 [@media(hover:hover)_and_(pointer:fine)]:group-hover:-translate-y-1 relative z-30"
+                                  style={{ filter: "drop-shadow(-4px 6px 8px rgba(0,0,0,0.25))" }}
                                 />
                               </div>
 
@@ -1835,7 +1627,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                                     onClick={(e) => toggleCompare(e, tyre)}
                                     className={`absolute bottom-3 right-3 w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] flex items-center justify-center z-40 transition-all duration-300 active:scale-90 pointer-events-auto group/compare overflow-hidden ${isSelected
                                       ? 'text-white shadow-lg scale-105'
-                                      : 'bg-white/95 hover:bg-white backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                                      : 'bg-white/95 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-white backdrop-blur-sm shadow-sm xl:shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
                                       }`}
                                     style={isSelected ? {
                                       background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
@@ -1851,7 +1643,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                               })()}
 
                             </div>
-                          </motion.div>
+                          </div>
                         );
                       })}
                     </div>
@@ -2038,9 +1830,9 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                 );
               })()}
             </AnimatePresence>
-          </motion.main>
+          </main>
         )}
-      </AnimatePresence>
+      </>
 
       <AnimatePresence>
         {isCompareOpen && compareList.length > 0 && (
