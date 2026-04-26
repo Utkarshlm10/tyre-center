@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState, useRef } from "react";
 import { useAppContext } from "@/context/store";
@@ -209,6 +209,7 @@ export default function Home() {
   const [selectedTyre, setSelectedTyre] = useState(null);
   const [compareList, setCompareList] = useState([]);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [activeCarTypeFilter, setActiveCarTypeFilter] = useState('ALL');
 
   const [checkoutTyre, setCheckoutTyre] = useState(null);
   const [quantity, setQuantity] = useState(4);
@@ -280,19 +281,19 @@ export default function Home() {
     );
     const newUniqueModels = [...new Set(specificBrandInventory.map(row => row.CarModel))].filter(Boolean);
     const firstModel = newUniqueModels[0] || null;
-    
+
     setSelectedModel(firstModel);
-    
+
     if (firstModel) {
-        const mi = specificBrandInventory.filter(row =>
-          row.CarModel && row.CarModel.toString().trim().toLowerCase() === firstModel.toString().trim().toLowerCase()
-        );
-        const sizes = [...new Set(mi.map(row => row.WheelSize + " Inch"))]
-          .filter(Boolean)
-          .sort((a, b) => parseInt(a) - parseInt(b));
-        setSelectedSize(sizes.length > 0 ? sizes[0] : null);
+      const mi = specificBrandInventory.filter(row =>
+        row.CarModel && row.CarModel.toString().trim().toLowerCase() === firstModel.toString().trim().toLowerCase()
+      );
+      const sizes = [...new Set(mi.map(row => row.WheelSize + " Inch"))]
+        .filter(Boolean)
+        .sort((a, b) => parseInt(a) - parseInt(b));
+      setSelectedSize(sizes.length > 0 ? sizes[0] : null);
     } else {
-        setSelectedSize(null);
+      setSelectedSize(null);
     }
 
     setStep(2);
@@ -300,14 +301,14 @@ export default function Home() {
 
   const handleModelSelect = (model) => {
     setSelectedModel(model);
-    
+
     const mi = brandInventory.filter(row =>
       row.CarModel && row.CarModel.toString().trim().toLowerCase() === model.toString().trim().toLowerCase()
     );
     const sizes = [...new Set(mi.map(row => row.WheelSize + " Inch"))]
       .filter(Boolean)
       .sort((a, b) => parseInt(a) - parseInt(b));
-      
+
     setSelectedSize(sizes.length > 0 ? sizes[0] : null);
   };
 
@@ -507,60 +508,208 @@ export default function Home() {
 
   return (
     <div className="flex h-screen w-full overflow-hidden text-[#0f172a] bg-[#f0f4f8] font-sans">
-      <aside className="hidden xl:flex flex-col h-screen py-8 px-4 w-[240px] 2xl:w-[260px] z-50 bg-[linear-gradient(180deg,#062f5b_0%,#031f3d_100%)] shadow-[inset_-1px_0_0_rgba(255,255,255,0.04)] text-slate-300 border-r-0 fixed left-0 top-0">
-        <div className="mb-8 px-4 flex flex-col items-center text-center cursor-pointer group" onClick={() => setStep(1)}>
+      {/* ── PREMIUM LEFT SIDEBAR ── */}
+      <aside
+        className="hidden xl:flex flex-col h-screen w-[240px] 2xl:w-[260px] z-50 fixed left-0 top-0 text-slate-300 overflow-hidden"
+        style={{
+          /* Layered gradient: lighter navy top → deep navy bottom */
+          background: "linear-gradient(175deg, #0d3a6e 0%, #072850 35%, #041d3d 65%, #020f22 100%)",
+          /* Right-edge inner shadow separating from content */
+          boxShadow: "inset -1px 0 0 rgba(255,255,255,0.06), inset -4px 0 24px rgba(0,0,0,0.35), 4px 0 32px rgba(0,0,0,0.40)",
+        }}
+      >
+        {/* ── Top highlight line (subtle upper rim light) */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px pointer-events-none z-10"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18) 45%, transparent)" }}
+        />
 
-          {/* Logo */}
-          <img
-            src="/logo.png"
-            alt="Tyre Centre"
-            className="h-16 w-16 object-contain mb-3 drop-shadow-md rounded-full transition-transform duration-200 group-active:scale-95"
-          />
+        {/* ── Noise texture overlay (very low opacity) */}
+        <div
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+            opacity: 0.028,
+            mixBlendMode: "overlay",
+          }}
+        />
 
-          {/* Title */}
-          <div className="text-lg font-black text-white tracking-[-0.02em] uppercase leading-none">
-            Tyre Centre
+        {/* ── Vertical lighting overlay: brighter top, darker bottom */}
+        <div
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{
+            background: "linear-gradient(180deg, rgba(255,255,255,0.045) 0%, transparent 45%, rgba(0,0,0,0.18) 100%)",
+          }}
+        />
+
+        {/* ── Radial light near top-center (behind logo focal point) */}
+        <div
+          className="absolute top-0 left-0 right-0 h-48 pointer-events-none z-10"
+          style={{
+            background: "radial-gradient(ellipse 80% 90% at 50% 0%, rgba(56,139,253,0.18) 0%, transparent 70%)",
+          }}
+        />
+
+        {/* ── All sidebar content (above overlays, so z-20) */}
+        <div className="relative z-20 flex flex-col h-full py-8 px-4">
+
+          {/* ── LOGO AREA ── */}
+          <div className="mb-8 px-4 flex flex-col items-center text-center cursor-pointer group" onClick={() => setStep(1)}>
+
+            {/* Radial glow behind logo */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: "20px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "120px",
+                height: "120px",
+                background: "radial-gradient(circle, rgba(96,165,250,0.22) 0%, transparent 70%)",
+                borderRadius: "50%",
+                filter: "blur(8px)",
+              }}
+            />
+
+            {/* Logo */}
+            <img
+              src="/logo.png"
+              alt="Tyre Centre"
+              className="relative h-16 w-16 object-contain mb-3 rounded-full transition-transform duration-300 group-active:scale-95 group-hover:scale-105"
+              style={{
+                filter: "drop-shadow(0 0 14px rgba(96,165,250,0.45)) drop-shadow(0 4px 12px rgba(0,0,0,0.55))",
+              }}
+            />
+
+            {/* Title */}
+            <div className="text-lg font-black text-white uppercase leading-none" style={{ letterSpacing: "-0.01em" }}>
+              Tyre Centre
+            </div>
+
+            {/* Subtitle */}
+            <div className="text-[10px] uppercase font-bold mt-1" style={{ letterSpacing: "0.22em", color: "rgba(147,197,253,0.55)" }}>
+              Bilaspur Atelier
+            </div>
+
           </div>
 
-          {/* Subtitle */}
-          <div className="text-[10px] uppercase tracking-[0.2em] text-blue-200/60 font-bold mt-1">
-            Bilaspur Atelier
+          {/* Divider */}
+          <div className="w-full h-px mb-6" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12) 45%, transparent)" }} />
+
+          {/* ── NAV ITEMS ── */}
+          <nav className="flex-1 space-y-1.5 mt-2">
+
+            {/* Step 1 */}
+            <a
+              onClick={() => setStep(1)}
+              href="#"
+              className={`sidebar-nav-item${step === 1 ? ' sidebar-nav-active' : ''} group flex items-center gap-3.5 py-3 px-4 cursor-pointer rounded-xl mx-1 active:scale-[0.97]`}
+              style={{
+                transition: "background 300ms ease, box-shadow 300ms ease, transform 300ms ease, color 300ms ease",
+                ...(step === 1
+                  ? {
+                    background: "linear-gradient(90deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.055) 100%)",
+                    boxShadow: "0 4px 18px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.12), 0 0 14px rgba(96,165,250,0.14)",
+                    color: "#ffffff",
+                  }
+                  : { color: "rgba(255,255,255,0.58)" }),
+              }}
+            >
+              <span
+                className="sidebar-nav-icon material-symbols-outlined text-[20px]"
+                style={{
+                  transition: "color 300ms ease",
+                  color: step === 1 ? "#ffffff" : "rgba(255,255,255,0.52)",
+                }}
+              >directions_car</span>
+              <span className="text-[12px] font-semibold uppercase" style={{ letterSpacing: "0.09em" }}>Select Vehicle</span>
+              {step === 1 && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.75)]" />}
+            </a>
+
+            {/* Step 2 */}
+            <a
+              onClick={() => selectedBrand && setStep(2)}
+              href="#"
+              className={`sidebar-nav-item${step === 2 ? ' sidebar-nav-active' : ''} group flex items-center gap-3.5 py-3 px-4 cursor-pointer rounded-xl mx-1 active:scale-[0.97]`}
+              style={{
+                transition: "background 300ms ease, box-shadow 300ms ease, transform 300ms ease, color 300ms ease",
+                ...(step === 2
+                  ? {
+                    background: "linear-gradient(90deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.055) 100%)",
+                    boxShadow: "0 4px 18px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.12), 0 0 14px rgba(96,165,250,0.14)",
+                    color: "#ffffff",
+                  }
+                  : { color: "rgba(255,255,255,0.58)" }),
+              }}
+            >
+              <span
+                className="sidebar-nav-icon material-symbols-outlined text-[20px]"
+                style={{
+                  transition: "color 300ms ease",
+                  color: step === 2 ? "#ffffff" : "rgba(255,255,255,0.52)",
+                }}
+              >straighten</span>
+              <span className="text-[12px] font-semibold uppercase" style={{ letterSpacing: "0.09em" }}>Model & Size</span>
+              {step === 2 && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.75)]" />}
+            </a>
+
+            {/* Step 3 */}
+            <a
+              onClick={() => selectedModel && selectedSize && setStep(3)}
+              href="#"
+              className={`sidebar-nav-item${step === 3 ? ' sidebar-nav-active' : ''} group flex items-center gap-3.5 py-3 px-4 cursor-pointer rounded-xl mx-1 active:scale-[0.97]`}
+              style={{
+                transition: "background 300ms ease, box-shadow 300ms ease, transform 300ms ease, color 300ms ease",
+                ...(step === 3
+                  ? {
+                    background: "linear-gradient(90deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.055) 100%)",
+                    boxShadow: "0 4px 18px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.12), 0 0 14px rgba(96,165,250,0.14)",
+                    color: "#ffffff",
+                  }
+                  : { color: "rgba(255,255,255,0.58)" }),
+              }}
+            >
+              <span
+                className="sidebar-nav-icon material-symbols-outlined text-[20px]"
+                style={{
+                  transition: "color 300ms ease",
+                  color: step === 3 ? "#ffffff" : "rgba(255,255,255,0.52)",
+                }}
+              >tire_repair</span>
+              <span className="text-[12px] font-semibold uppercase flex-1" style={{ letterSpacing: "0.09em" }}>View Tyres</span>
+              {step === 3 && (
+                <span className="relative flex h-1.5 w-1.5 ml-auto">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.75)]"></span>
+                </span>
+              )}
+            </a>
+
+          </nav>
+
+          {/* Bottom divider */}
+          <div className="w-full mb-4 mt-6" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }} />
+
+          {/* ── BOTTOM UTILITY LINKS ── */}
+          <div className="space-y-1 px-1">
+            <a
+              className="sidebar-util-link flex items-center gap-3.5 py-2.5 px-4 rounded-lg active:scale-[0.97]"
+              href="#"
+              style={{ color: "rgba(255,255,255,0.38)", transition: "color 300ms ease, background 300ms ease" }}
+            >
+              <span className="material-symbols-outlined text-[18px]">settings</span>
+              <span className="text-[9px] uppercase font-semibold" style={{ letterSpacing: "0.1em" }}>Settings</span>
+            </a>
+            <a
+              className="sidebar-util-link flex items-center gap-3.5 py-2.5 px-4 rounded-lg active:scale-[0.97]"
+              href="#"
+              style={{ color: "rgba(255,255,255,0.38)", transition: "color 300ms ease, background 300ms ease" }}
+            >
+              <span className="material-symbols-outlined text-[18px]">help</span>
+              <span className="text-[9px] uppercase font-semibold" style={{ letterSpacing: "0.1em" }}>Help</span>
+            </a>
           </div>
 
-        </div>
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
-        <nav className="flex-1 space-y-2 mt-2">
-          <a onClick={() => setStep(1)} className={`group flex items-center gap-3.5 py-3 px-4 cursor-pointer transition-all duration-300 ease-out active:scale-[0.97] rounded-lg mx-1 ${step === 1 ? 'bg-[linear-gradient(90deg,rgba(255,255,255,0.12),rgba(255,255,255,0.05))] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]' : 'text-white/60 hover:text-white hover:bg-white/[0.05] hover:-translate-y-[1px]'}`} href="#">
-            <span className={`material-symbols-outlined text-[20px] transition-colors duration-300 ease-out ${step === 1 ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>directions_car</span>
-            <span className="text-[12px] font-semibold tracking-[0.1em] uppercase">Select Vehicle</span>
-            {step === 1 && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.6)]" />}
-          </a>
-          <a onClick={() => selectedBrand && setStep(2)} className={`group flex items-center gap-3.5 py-3 px-4 cursor-pointer transition-all duration-300 ease-out active:scale-[0.97] rounded-lg mx-1 ${step === 2 ? 'bg-[linear-gradient(90deg,rgba(255,255,255,0.12),rgba(255,255,255,0.05))] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]' : 'text-white/60 hover:text-white hover:bg-white/[0.05] hover:-translate-y-[1px]'}`} href="#">
-            <span className={`material-symbols-outlined text-[20px] transition-colors duration-300 ease-out ${step === 2 ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>straighten</span>
-            <span className="text-[12px] font-semibold tracking-[0.1em] uppercase">Model & Size</span>
-            {step === 2 && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.6)]" />}
-          </a>
-          <a onClick={() => selectedModel && selectedSize && setStep(3)} className={`group flex items-center gap-3.5 py-3 px-4 cursor-pointer transition-all duration-300 ease-out active:scale-[0.97] rounded-lg mx-1 ${step === 3 ? 'bg-[linear-gradient(90deg,rgba(255,255,255,0.12),rgba(255,255,255,0.05))] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]' : 'text-white/60 hover:text-white hover:bg-white/[0.05] hover:-translate-y-[1px]'}`} href="#">
-            <span className={`material-symbols-outlined text-[20px] transition-colors duration-300 ease-out ${step === 3 ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>tire_repair</span>
-            <span className="text-[12px] font-semibold tracking-[0.1em] uppercase flex-1">View Tyres</span>
-            {step === 3 && (
-              <span className="relative flex h-1.5 w-1.5 ml-auto">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.6)]"></span>
-              </span>
-            )}
-          </a>
-        </nav>
-        <div className="w-full border-t border-white/[0.08] mb-4 mt-6" />
-        <div className="space-y-1 px-1">
-          <a className="flex items-center gap-3.5 py-2.5 px-4 text-white/40 hover:text-white/80 transition-all duration-300 ease-out rounded-lg hover:bg-white/[0.03] active:scale-[0.97]" href="#">
-            <span className="material-symbols-outlined text-[18px]">settings</span>
-            <span className="text-[9px] uppercase tracking-[0.1em] font-semibold">Settings</span>
-          </a>
-          <a className="flex items-center gap-3.5 py-2.5 px-4 text-white/40 hover:text-white/80 transition-all duration-300 ease-out rounded-lg hover:bg-white/[0.03] active:scale-[0.97]" href="#">
-            <span className="material-symbols-outlined text-[18px]">help</span>
-            <span className="text-[9px] uppercase tracking-[0.1em] font-semibold">Help</span>
-          </a>
         </div>
       </aside>
 
@@ -746,18 +895,18 @@ export default function Home() {
           };
           const brandThemeColor = getBrandThemeColor(selectedBrand);
           const activeModelName = selectedModel || uniqueModels[0];
-          
+
           const activeModelDetails = brandInventory.find(row => row.CarModel === activeModelName);
           const activeModelSubCat = activeModelDetails?.BodyType || activeModelDetails?.Category || 'Premium SUV';
-          
+
           const activeModelSizes = (() => {
-              if (!activeModelName) return [];
-              const mi = brandInventory.filter(row =>
-                row.CarModel && row.CarModel.toString().trim().toLowerCase() === activeModelName.toString().trim().toLowerCase()
-              );
-              return [...new Set(mi.map(row => row.WheelSize + " Inch"))]
-                .filter(Boolean)
-                .sort((a, b) => parseInt(a) - parseInt(b));
+            if (!activeModelName) return [];
+            const mi = brandInventory.filter(row =>
+              row.CarModel && row.CarModel.toString().trim().toLowerCase() === activeModelName.toString().trim().toLowerCase()
+            );
+            return [...new Set(mi.map(row => row.WheelSize + " Inch"))]
+              .filter(Boolean)
+              .sort((a, b) => parseInt(a) - parseInt(b));
           })();
 
           const modelsByCategory = {};
@@ -766,263 +915,544 @@ export default function Home() {
             const cat = match?.Category || 'SUVs';
             if (!modelsByCategory[cat]) modelsByCategory[cat] = [];
             modelsByCategory[cat].push({
-               name: model,
-               sub: match?.BodyType || match?.Category || ''
+              name: model,
+              sub: match?.BodyType || match?.Category || ''
             });
           });
           const categoryOrder = ['SUVs', 'Sedans', 'Hatchbacks', 'EVs', 'MUVs'];
           const sortedCategories = Object.keys(modelsByCategory).sort((a, b) => {
-             const idxA = categoryOrder.findIndex(c => c.toLowerCase() === a.toLowerCase());
-             const idxB = categoryOrder.findIndex(c => c.toLowerCase() === b.toLowerCase());
-             return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
+            const idxA = categoryOrder.findIndex(c => c.toLowerCase() === a.toLowerCase());
+            const idxB = categoryOrder.findIndex(c => c.toLowerCase() === b.toLowerCase());
+            return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
           });
 
-          return (
-          <>
-            <motion.main
-              key="step2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="xl:ml-[240px] 2xl:ml-[260px] 2xl:mr-[320px] flex-1 h-full flex flex-col bg-[#f8fafc] relative overflow-y-auto overflow-x-hidden scroll-smooth pt-[68px] xl:pt-16 pb-40 px-5 sm:px-8 md:px-12 lg:px-16 2xl:px-20"
-            >
-              {/* Background Watermark */}
-              <div className="flex fixed top-16 left-0 w-full h-full overflow-hidden pointer-events-none z-0 items-start justify-center">
-                <span className="text-[14vw] font-black text-[#0f172a]/[0.02] tracking-[-0.02em] uppercase leading-none select-none mt-12 w-full text-center">
-                  {selectedBrand}
-                </span>
-              </div>
+          // ── Car-type filter (state lifted into IIFE via a module-level trick: we use a
+          //    React.useState call at top level but expose it inside this block)
+          // NOTE: activeCarTypeFilter is declared at the component level below; we just reference it here.
 
-              <div className="flex flex-col z-10 w-full max-w-5xl mx-auto h-full">
-                {/* Header */}
-                <div className="mb-8">
-                  <h2 className="text-[#00254d] font-bold text-[9px] uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
-                    Step 2 · Configuration
-                  </h2>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#00254d] tracking-[-0.02em] mb-2 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
-                    Choose your {selectedBrand} model
-                  </h1>
-                  <p className="text-xs text-slate-800 font-medium tracking-wide">
-                    Select a vehicle to view available tyre sizes
-                  </p>
+          const carTypeFilters = ['ALL', ...sortedCategories];
+
+          const getCatIcon = (cat) => {
+            const c = cat.toLowerCase();
+            if (c === 'all') return 'directions_car';
+            if (c.includes('suv')) return 'airport_shuttle';
+            if (c.includes('sedan')) return 'directions_car';
+            if (c.includes('hatch')) return 'time_to_leave';
+            if (c.includes('ev')) return 'electric_car';
+            if (c.includes('muv') || c.includes('mpv')) return 'airport_shuttle';
+            return 'directions_car';
+          };
+
+          return (
+            <>
+              <motion.main
+                key="step2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                className="xl:ml-[240px] 2xl:ml-[260px] 2xl:mr-[360px] flex-1 h-full flex flex-col relative overflow-y-auto overflow-x-hidden scroll-smooth pt-[68px] xl:pt-16 pb-16 px-4 sm:px-6"
+                style={{ background: 'radial-gradient(circle at top, #f8fbff 0%, #eef3f9 55%, #f6f9fd 100%)' }}
+              >
+                {/* Subtle background radial glow */}
+                <div className="pointer-events-none absolute top-[15%] left-1/2 -translate-x-1/2 w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-blue-400/[0.06] blur-[120px] z-0" />
+
+                {/* Brand watermark */}
+                <div className="flex fixed top-16 left-0 w-full h-full overflow-hidden pointer-events-none z-0 items-start justify-center">
+                  <span className="text-[14vw] font-black text-[#0f172a]/[0.02] tracking-[-0.02em] uppercase leading-none select-none mt-12 w-full text-center">
+                    {selectedBrand}
+                  </span>
                 </div>
 
-                {/* Hero Panel */}
-                <div className="bg-white rounded-[20px] shadow-[0_8px_30px_rgba(15,23,42,0.06)] mb-12 flex flex-col md:flex-row min-h-[300px] md:min-h-[360px] relative overflow-hidden border border-slate-100 items-stretch">
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 z-20" style={{ backgroundColor: brandThemeColor }}></div>
-                  
-                  {/* Car Image Container (Left Column) */}
-                  <div className="w-full md:w-[42%] flex justify-center items-center relative p-8 md:p-10 shrink-0 bg-slate-50/30">
-                    <img
-                      src={`/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.jpg`}
-                      onError={(e) => {
-                         e.target.onerror = null;
-                         e.target.src = `/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.jpeg`;
-                      }}
-                      alt={activeModelName}
-                      className="w-full max-w-[340px] h-auto max-h-[240px] object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.12)] z-10 relative"
-                    />
-                  </div>
+                <div className="flex flex-col z-10 w-full max-w-5xl mx-auto relative">
 
-                  {/* Car Info Container (Right Column) */}
-                  <div className="w-full md:w-[58%] flex flex-col items-start justify-center text-left z-10 p-8 sm:p-10 md:py-12 md:pr-12 md:pl-2">
-                    <span 
-                      className="inline-block px-2.5 py-1 mb-3 text-[9px] font-black uppercase tracking-widest text-white rounded shadow-sm shrink-0"
-                      style={{ backgroundColor: brandThemeColor }}
-                    >
-                      Selected Model
-                    </span>
-                    <h2 className="text-2xl md:text-3xl font-black text-[#0f172a] mb-1">
-                      {selectedBrand} {activeModelName}
-                    </h2>
-                    <p className="text-[12px] font-bold text-slate-500 mb-3 shrink-0">{activeModelSubCat}</p>
-                    <p className="text-[12px] text-slate-600 mb-6 max-w-md leading-[1.6] shrink-0">
-                      A perfect blend of style, performance and comfort for city and highway drives.
+
+
+                  {/* ── Page heading ── */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05, duration: 0.4 }}
+                    className="mb-7 text-left"
+                  >
+                    <h1 className="text-[32px] sm:text-4xl md:text-[42px] font-black text-[#0a1929] tracking-[-0.03em] mb-1.5 leading-tight">
+                      Choose your <span className="text-[#1185f4]">{selectedBrand}</span> model
+                    </h1>
+                    <p className="text-[13px] md:text-sm text-slate-500 font-medium tracking-wide">
+                      Select a vehicle to view available tyre sizes
                     </p>
+                  </motion.div>
 
-                    <h3 className="text-[10px] font-bold text-[#0f172a] uppercase tracking-widest mb-3 shrink-0">
-                      Available Wheel Sizes
-                    </h3>
-                    <div className="flex flex-wrap gap-2.5 w-full">
-                      {activeModelSizes.length > 0 ? (
-                        activeModelSizes.map(size => {
-                          const isSelectedSize = selectedModel === activeModelName && selectedSize === size;
+                  {/* ══════════════════════════════════════════════════
+                      HERO CARD — premium cinematic dark
+                  ══════════════════════════════════════════════════ */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.45 }}
+                    className="rounded-[28px] shadow-[0_36px_90px_rgba(2,6,23,0.65),0_0_0_1px_rgba(255,255,255,0.08)] mb-10 flex flex-col md:flex-row min-h-[280px] md:min-h-[330px] relative overflow-hidden items-stretch"
+                    style={{
+                      backgroundImage: "url('/background.jpeg')",
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
+                    }}
+                  >
+                    {/* Noise grain — removes flat digital look */}
+                    <div
+                      className="absolute inset-0 pointer-events-none z-[2] opacity-[0.04] mix-blend-soft-light"
+                      style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+                        backgroundSize: '180px 180px',
+                      }}
+                    />
+                    {/* Overlay 1: left→right dark scrim — car side stays bright, text side is dark */}
+                    <div
+                      className="absolute inset-0 pointer-events-none z-[3]"
+                      style={{ background: 'linear-gradient(to right, rgba(2,6,23,0.05) 0%, rgba(2,6,23,0.45) 45%, rgba(2,6,23,0.88) 100%)' }}
+                    />
+                    {/* Overlay 2: bottom fade — grounds the car into the surface */}
+                    <div
+                      className="absolute inset-x-0 bottom-0 h-[45%] pointer-events-none z-[3]"
+                      style={{ background: 'linear-gradient(to top, rgba(2,6,23,0.72) 0%, transparent 100%)' }}
+                    />
+                    {/* Top edge highlight */}
+                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none z-[4]" />
+
+                    {/* Left — Car image */}
+                    <div className="w-full md:w-[56%] flex justify-center items-end relative py-10 md:py-6 px-6 shrink-0 overflow-hidden min-h-[240px] md:min-h-0">
+                      {/* Floor darkening patch — anchors car to surface */}
+                      <div
+                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[28%] pointer-events-none z-[4]"
+                        style={{ background: 'radial-gradient(ellipse at center bottom, rgba(0,0,0,0.38) 0%, transparent 70%)', filter: 'blur(18px)' }}
+                      />
+                      {/* Soft ambient shadow — depth layer */}
+                      <div
+                        className="absolute bottom-[4%] left-1/2 -translate-x-1/2 pointer-events-none z-[5]"
+                        style={{ width: '68%', height: '18px', background: 'radial-gradient(ellipse, rgba(0,0,0,0.40) 0%, transparent 72%)', filter: 'blur(12px)' }}
+                      />
+                      {/* Hard contact shadow — tight, sharp, directly under tyres */}
+                      <div
+                        className="absolute bottom-[4.5%] left-1/2 -translate-x-1/2 pointer-events-none z-[6]"
+                        style={{ width: '54%', height: '8px', background: 'radial-gradient(ellipse, rgba(0,0,0,0.65) 0%, transparent 68%)', filter: 'blur(5px)' }}
+                      />
+                      {/* Under-car blue glow — subtle floor bounce */}
+                      <div
+                        className="absolute bottom-[6%] left-1/2 -translate-x-1/2 w-[72%] h-[26%] pointer-events-none z-[4]"
+                        style={{ background: 'radial-gradient(ellipse at center, rgba(30,100,255,0.13) 0%, transparent 68%)', filter: 'blur(24px)' }}
+                      />
+                      <img
+                        src={`/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.webp`}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.jpg`;
+                        }}
+                        alt={activeModelName}
+                        className="w-full max-w-[520px] h-auto object-contain z-10 relative"
+                        style={{
+                          filter: 'drop-shadow(0 22px 44px rgba(0,0,0,0.45)) drop-shadow(0 6px 12px rgba(0,10,40,0.35))',
+                          transform: 'translateY(4px)',
+                          transition: 'transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94)',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.055) translateY(0px)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1) translateY(4px)'; }}
+                      />
+                    </div>
+
+                    {/* Right — Model info + wheel sizes */}
+                    <div className="w-full md:w-[44%] flex flex-col justify-center text-left z-10 px-7 py-8 md:py-10 md:pr-10 lg:pl-5 shrink-0">
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.18, duration: 0.4 }}
+                        className="flex flex-col"
+                      >
+                        {/* Body type label */}
+                        <p className="text-[10px] font-black text-[#60a5fa] uppercase tracking-[0.2em] mb-2">{activeModelSubCat}</p>
+
+                        {/* Model title — bigger, tighter */}
+                        <h2 className="text-[26px] md:text-[34px] font-black text-white mb-2 tracking-[-0.03em] leading-[1.05]">
+                          {selectedBrand}&nbsp;{activeModelName}
+                        </h2>
+
+                        {/* Thin rule */}
+                        <div className="w-10 h-[2px] rounded-full bg-gradient-to-r from-[#1e90ff] to-transparent mb-3" />
+
+                        {/* Description */}
+                        <p className="text-[13px] text-white/60 mb-5 max-w-[270px] leading-[1.65] font-normal hidden sm:block">
+                          A perfect blend of style, performance and comfort — engineered for every drive.
+                        </p>
+
+                        {/* Wheel sizes */}
+                        <h3 className="text-[8px] font-black text-white/40 uppercase tracking-[0.22em] mb-2.5 shrink-0">Available Wheel Sizes</h3>
+                        <div className="flex flex-wrap gap-2 w-full">
+                          {activeModelSizes.length > 0 ? (
+                            activeModelSizes.map(size => {
+                              const isSelectedSize = selectedModel === activeModelName && selectedSize === size;
+                              return (
+                                <button
+                                  key={size}
+                                  onClick={() => {
+                                    if (selectedModel !== activeModelName) handleModelSelect(activeModelName);
+                                    setSelectedSize(size);
+                                  }}
+                                  className="flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-[10px] text-[11px] font-black tracking-widest transition-all duration-300 border active:scale-[0.96]"
+                                  style={isSelectedSize ? {
+                                    background: 'linear-gradient(135deg, #1e90ff, #0a6ed4)',
+                                    borderColor: 'rgba(96,165,250,0.6)',
+                                    color: '#ffffff',
+                                    boxShadow: '0 6px 22px rgba(17,133,244,0.5), inset 0 1px 0 rgba(255,255,255,0.15)',
+                                    transform: 'scale(1.05)',
+                                  } : {
+                                    background: 'rgba(255,255,255,0.06)',
+                                    backdropFilter: 'blur(8px)',
+                                    borderColor: 'rgba(255,255,255,0.12)',
+                                    color: 'rgba(255,255,255,0.85)',
+                                  }}
+                                >
+                                  {size}
+                                  {isSelectedSize && (
+                                    <motion.span
+                                      initial={{ scale: 0 }}
+                                      animate={{ scale: 1 }}
+                                      className="material-symbols-outlined text-[12px]"
+                                    >check_circle</motion.span>
+                                  )}
+                                </button>
+                              );
+                            })
+                          ) : (
+                            <p className="text-[11px] text-white/40">No sizes found in database</p>
+                          )}
+                        </div>
+
+                      </motion.div>
+                    </div>
+                  </motion.div>
+
+                  {/* ══════════════════════════════════════════════════
+                      CAR TYPE FILTER TABS — premium spacious pill group
+                  ══════════════════════════════════════════════════ */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15, duration: 0.4 }}
+                    className="mt-8 mb-7"
+                  >
+                    <div className="w-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] px-px">
+                      <div className="inline-flex items-center gap-1 bg-white border border-slate-100 rounded-2xl p-1.5 shadow-[0_8px_24px_rgba(15,23,42,0.06)] min-w-max">
+                        {carTypeFilters.map((filter) => {
+                          const isActive = activeCarTypeFilter === filter;
+                          const label = filter === 'ALL' ? 'All Types' : filter;
                           return (
                             <button
-                              key={size}
-                              onClick={() => {
-                                 if (selectedModel !== activeModelName) handleModelSelect(activeModelName);
-                                 setSelectedSize(size);
-                              }}
-                              className="px-5 py-2.5 rounded-[10px] text-[11px] font-black tracking-widest transition-all duration-200 border shrink-0"
-                              style={isSelectedSize ? {
-                                  backgroundColor: brandThemeColor,
-                                  color: 'white',
-                                  borderColor: brandThemeColor,
-                                  boxShadow: `0 4px 12px ${brandThemeColor}40`
-                              } : {
-                                  backgroundColor: '#f8fafc',
-                                  color: '#475569',
-                                  borderColor: '#e2e8f0'
-                              }}
+                              key={filter}
+                              onClick={() => setActiveCarTypeFilter(filter)}
+                              className={`px-6 py-3 text-[13px] font-black whitespace-nowrap shrink-0 rounded-xl min-w-[110px] transition-all duration-300 ${isActive
+                                ? 'bg-[#1185f4] text-white shadow-[0_8px_20px_rgba(17,133,244,0.25)]'
+                                : 'text-slate-500 hover:text-[#1185f4] hover:bg-blue-50'
+                                }`}
                             >
-                              {size}
+                              {label}
                             </button>
                           );
-                        })
-                      ) : (
-                         <p className="text-xs text-slate-400 shrink-0">No sizes found in database</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Grouped Models */}
-                <div className="flex flex-col gap-8 w-full mt-2">
-                  {sortedCategories.map(cat => (
-                    <div key={cat} className="flex flex-col">
-                      <div className="flex items-center justify-between mb-4 border-b border-slate-200/60 pb-2">
-                        <h3 className="text-sm font-black text-[#0f172a] tracking-tight">{cat}</h3>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                        {modelsByCategory[cat].map(item => {
-                          const isSelected = selectedModel === item.name;
-                          return (
-                            <div
-                              key={item.name}
-                              onClick={() => handleModelSelect(item.name)}
-                              className="relative cursor-pointer transition-all duration-300 rounded-[14px] bg-white border flex flex-col group overflow-hidden"
-                              style={isSelected ? {
-                                 borderColor: brandThemeColor,
-                                 boxShadow: `0 8px 24px ${brandThemeColor}25`,
-                              } : {
-                                 borderColor: 'transparent',
-                                 boxShadow: '0 4px 12px rgba(15,23,42,0.03)'
-                              }}
-                            >
-                              {isSelected && (
-                                <div className="absolute top-2 right-2 w-5 h-5 rounded-full text-white flex items-center justify-center z-20 shadow-sm" style={{ backgroundColor: brandThemeColor }}>
-                                  <span className="material-symbols-outlined text-[13px]">check</span>
-                                </div>
-                              )}
-                              <div className="pt-4 pb-2 px-3 flex flex-col items-center justify-center h-[110px] w-full relative z-10">
-                                {/* Ground Soft Shadow */}
-                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[60%] h-3 bg-black/10 blur-xl rounded-full" />
-                                <img
-                                  src={`/cars/${item.name.toLowerCase().replace(/\s+/g, '-')}.jpg`}
-                                  onError={(e) => {
-                                     e.target.onerror = null;
-                                     e.target.src = `/cars/${item.name.toLowerCase().replace(/\s+/g, '-')}.jpeg`;
-                                  }}
-                                  alt={item.name}
-                                  className={`max-w-[90%] max-h-[100%] object-contain transition-transform duration-300 relative z-10 ${isSelected ? 'scale-105' : 'group-hover:scale-105'}`}
-                                />
-                              </div>
-                              <div className="px-3 pb-3 pt-1 text-left z-10 bg-white border-t border-slate-50">
-                                <h4 className="text-[13px] font-black truncate mb-0.5" style={{ color: isSelected ? brandThemeColor : '#0f172a' }}>{item.name}</h4>
-                                <p className="text-[10px] text-slate-500 font-medium truncate">{item.sub}</p>
-                              </div>
-                            </div>
-                          )
                         })}
                       </div>
                     </div>
-                  ))}
+                  </motion.div>
+
+                  {/* ══════════════════════════════════════════════════
+                      CATEGORY-GROUPED MODEL GRIDS
+                  ══════════════════════════════════════════════════ */}
+                  <div className="flex flex-col gap-10 w-full">
+                    {sortedCategories.map((cat, catIdx) => {
+                      const isVisible = activeCarTypeFilter === 'ALL' || activeCarTypeFilter === cat;
+                      if (!isVisible) return null;
+                      const items = modelsByCategory[cat] || [];
+                      return (
+                        <motion.div
+                          key={cat}
+                          initial={{ opacity: 0, y: 18 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: catIdx * 0.07, duration: 0.4 }}
+                          className="flex flex-col"
+                        >
+                          {/* Category header — text only, no icon */}
+                          <div className="flex items-center gap-4 mb-5">
+                            <div className="flex items-center gap-2 shrink-0">
+                              <h3 className="text-[15px] font-black text-[#0a1929] tracking-tight">{cat}</h3>
+                              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 rounded-full px-2 py-0.5">{items.length}</span>
+                            </div>
+                            <div className="flex-1 h-px bg-slate-200/70" />
+                          </div>
+
+                          {/* Cards grid */}
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
+                            {items.map((item, itemIdx) => {
+                              const isSelected = selectedModel === item.name;
+                              return (
+                                <motion.div
+                                  key={item.name}
+                                  initial={{ opacity: 0, y: 12 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: catIdx * 0.05 + itemIdx * 0.04, duration: 0.35 }}
+                                  onClick={() => handleModelSelect(item.name)}
+                                  className={`relative cursor-pointer rounded-[18px] border flex flex-col group overflow-hidden transition-all duration-300 ${isSelected
+                                    ? 'border-[#1185f4] shadow-[0_14px_36px_rgba(17,133,244,0.22)] -translate-y-1'
+                                    : 'border-transparent shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_34px_rgba(15,23,42,0.08)] hover:-translate-y-1'
+                                    }`}
+                                  style={isSelected ? { background: 'linear-gradient(to bottom, #ffffff, #f8fbff)' } : { background: '#ffffff' }}
+                                >
+                                  {/* Selected check badge */}
+                                  {isSelected && (
+                                    <motion.div
+                                      initial={{ scale: 0 }}
+                                      animate={{ scale: 1 }}
+                                      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                                      className="absolute top-3 right-3 w-[22px] h-[22px] rounded-full bg-[#1185f4] text-white flex items-center justify-center z-20 shadow-[0_4px_10px_rgba(17,133,244,0.4)]"
+                                    >
+                                      <span className="material-symbols-outlined text-[13px]">check</span>
+                                    </motion.div>
+                                  )}
+
+                                  {/* Car image area — premium showroom background */}
+                                  <div className="relative flex items-center justify-center h-[116px] px-3 pt-5 pb-2 overflow-hidden">
+                                    {/* 1. Blue-white radial gradient base */}
+                                    <div
+                                      className="absolute inset-0 pointer-events-none"
+                                      style={{
+                                        background: `
+radial-gradient(circle at 30% 50%, rgba(59,130,246,0.35), transparent 40%),
+radial-gradient(circle at 70% 30%, rgba(96,165,250,0.25), transparent 45%),
+linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
+`
+                                      }}
+                                    />
+                                    {/* 2. Blue dot texture */}
+                                    <div
+                                      className="absolute inset-0 pointer-events-none opacity-[0.35]"
+                                      style={{
+                                        backgroundImage: 'radial-gradient(rgba(17,133,244,0.10) 1px, transparent 1px)',
+                                        backgroundSize: '8px 8px',
+                                      }}
+                                    />
+                                    {/* 3. Soft blue glow centred behind car */}
+                                    <div className="absolute inset-x-[18%] top-[15%] bottom-[20%] bg-[#1185f4]/[0.10] blur-[22px] rounded-full pointer-events-none z-0" />
+                                    {/* 4. Floor shadow */}
+                                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[68%] h-3 bg-black/[0.08] blur-xl rounded-full pointer-events-none z-0" />
+                                    <img
+                                      src={`/cars/${item.name.toLowerCase().replace(/\s+/g, '-')}.webp`}
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = `/cars/${item.name.toLowerCase().replace(/\s+/g, '-')}.jpg`;
+                                      }}
+                                      alt={item.name}
+                                      className={`max-w-full max-h-[88px] w-auto object-contain relative z-10 transition-transform duration-500 ease-out ${isSelected ? 'scale-[1.08]' : 'group-hover:scale-[1.10]'}`}
+                                    />
+                                  </div>
+
+                                  {/* Text area */}
+                                  <div className="px-4 pb-4 pt-1.5 flex flex-col">
+                                    <h4
+                                      className="text-[15px] font-black truncate mb-0.5 leading-tight"
+                                      style={{ color: isSelected ? '#1185f4' : '#0f172a' }}
+                                    >
+                                      {item.name}
+                                    </h4>
+                                    <p className="text-[11px] text-slate-500 font-medium truncate">{item.sub}</p>
+                                  </div>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  {/* ── Trust Strip — in-flow, appears at end of page ── */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.4 }}
+                    className="w-full mt-14 mb-6"
+                  >
+                    <div className="bg-white rounded-[22px] border border-slate-100 shadow-[0_10px_30px_rgba(15,23,42,0.07)] px-5 sm:px-8 py-5">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                        {[
+                          { icon: 'verified_user', title: '100% Genuine', sub: `${selectedBrand} Approved Tyres` },
+                          { icon: 'verified', title: 'Best Price Guaranteed', sub: 'On all premium brands' },
+                          { icon: 'handyman', title: 'Free Installation', sub: '& Wheel Balancing' },
+                          { icon: 'support_agent', title: 'Best Experts Support', sub: 'Always available for you' },
+                        ].map(item => (
+                          <div key={item.title} className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                              <span className="material-symbols-outlined text-[18px] text-[#1185f4]">{item.icon}</span>
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-[12px] font-black text-slate-700 leading-snug truncate">{item.title}</span>
+                              <span className="text-[11px] text-slate-400 font-medium leading-snug truncate">{item.sub}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* ── Inline CTA (hidden on 2xl where sidebar shows) ── */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35, duration: 0.4 }}
+                    className="2xl:hidden w-full mb-6"
+                  >
+                    <button
+                      onClick={() => setStep(3)}
+                      disabled={!(selectedModel && selectedSize)}
+                      className="w-full text-white font-black py-4 rounded-[14px] flex justify-center items-center gap-3 transition-all duration-300 disabled:opacity-30 disabled:shadow-none active:scale-[0.98] group hover:-translate-y-0.5"
+                      style={{
+                        background: 'linear-gradient(135deg,#1e90ff,#0066b1)',
+                        boxShadow: (selectedModel && selectedSize) ? '0 12px 30px rgba(0,102,177,0.4)' : 'none'
+                      }}
+                    >
+                      <span className="text-[12px] tracking-[0.12em] uppercase">View Available Tyres</span>
+                      <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+                    </button>
+                  </motion.div>
+
+                </div>
+              </motion.main>
+
+
+
+              {/* ══════════════════════════════════════════════════
+                  RIGHT SUMMARY SIDEBAR
+              ══════════════════════════════════════════════════ */}
+              <motion.aside
+                initial={{ x: 360 }}
+                animate={{ x: 0 }}
+                exit={{ x: 360 }}
+                transition={{ ease: 'circOut', duration: 0.5 }}
+                className="hidden 2xl:flex fixed right-0 top-0 w-[360px] h-screen bg-white flex-col z-40 p-10 shadow-[-14px_0_40px_rgba(15,23,42,0.05)] border-l border-slate-100"
+              >
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-10">
+                  <div className="w-[3px] h-5 rounded-full bg-[#1185f4]" />
+                  <h2 className="text-[#0a1929] font-black tracking-widest uppercase text-[12px]">Summary</h2>
                 </div>
 
-                {/* Inline CTA — hidden on lg and above where sidebar shows */}
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="2xl:hidden mt-12 w-full mb-8"
-                >
+                <div className="flex flex-col flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden">
+                  <span className="text-[9px] text-[#1185f4] font-black tracking-[0.18em] uppercase mb-7">Selected Configuration</span>
+
+                  {/* Manufacturer */}
+                  <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-[15px] text-[#1185f4]">factory</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Manufacturer</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#0a1929] font-black text-[11px] uppercase tracking-tight">
+                      <img src={`/logos/${BRANDS.find(b => b.id === selectedBrand)?.image || 'default.png'}`} alt={selectedBrand} className="h-6 w-auto object-contain brightness-0" />
+                      {selectedBrand}
+                    </div>
+                  </div>
+
+                  {/* Model */}
+                  <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-[15px] text-[#1185f4]">directions_car</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Model</span>
+                    </div>
+                    <motion.span
+                      key={activeModelName}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-[#0a1929] font-black text-[11px] uppercase tracking-tight text-right"
+                    >
+                      {activeModelName || '-'}
+                    </motion.span>
+                  </div>
+
+                  {/* Body Type */}
+                  <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
+                    <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase">Body Type</span>
+                    <motion.span
+                      key={activeModelSubCat}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-[#0a1929] font-black text-[11px] uppercase tracking-tight text-right"
+                    >
+                      {activeModelSubCat || '-'}
+                    </motion.span>
+                  </div>
+
+                  {/* Wheel Diameter */}
+                  <div className="flex justify-between items-center pb-5 border-b border-slate-100 mb-8">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-[15px] text-[#1185f4]">tire_repair</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-bold tracking-[0.1em] uppercase shrink-0">Wheel Diameter</span>
+                    </div>
+                    <motion.span
+                      key={selectedSize}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-[#0a1929] font-black text-[11px] uppercase tracking-tight text-right"
+                    >
+                      {selectedSize || '-'}
+                    </motion.span>
+                  </div>
+
+                  {/* Recommendation card */}
+                  {selectedModel && selectedSize && (
+                    <motion.div
+                      key={`${selectedModel}-${selectedSize}`}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-[#f8fbff] p-5 rounded-[16px] relative overflow-hidden border border-blue-100/70 shadow-[0_8px_24px_rgba(15,23,42,0.06)]"
+                    >
+                      <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#1185f4] rounded-l-[16px]" />
+                      <h4 className="text-[10px] text-[#0a1929] font-black uppercase mb-2 flex items-center gap-2 tracking-[0.12em]">
+                        <span className="material-symbols-outlined text-[14px] text-[#1185f4]">star</span>
+                        Recommendation
+                      </h4>
+                      <p className="text-[12px] text-slate-500 font-medium leading-[1.65]">
+                        Best tyres for your <span className="font-bold text-slate-700">{selectedBrand} {activeModelName}</span> with <span className="font-bold text-slate-700">{selectedSize}</span> wheels.
+                      </p>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Bottom CTA */}
+                <div className="mt-auto flex flex-col gap-4 pt-6">
+                  <div className="flex justify-between text-[9px] text-slate-300 font-bold tracking-widest px-1">
+                    <span>REF: {selectedBrand ? selectedBrand.substring(0, 3).toUpperCase() : '---'}-{activeModelName ? activeModelName.substring(0, 3).toUpperCase() : '---'}-{selectedSize ? selectedSize.replace(/[^0-9]/g, '') : 'XX'}</span>
+                    <span>V2.1</span>
+                  </div>
                   <button
                     onClick={() => setStep(3)}
                     disabled={!(selectedModel && selectedSize)}
-                    className="w-full text-white font-black py-4 rounded-xl flex justify-center items-center gap-3 transition-all duration-300 disabled:opacity-30 disabled:shadow-none shadow-[0_8px_24px_rgba(0,0,0,0.12)] active:scale-[0.98]"
-                    style={{ backgroundColor: brandThemeColor }}
+                    className="w-full text-white font-black py-[18px] rounded-[14px] flex justify-center items-center gap-3 transition-all duration-300 disabled:opacity-30 disabled:shadow-none active:scale-[0.98] group hover:-translate-y-0.5"
+                    style={{
+                      background: 'linear-gradient(135deg,#1e90ff,#0066b1)',
+                      boxShadow: (selectedModel && selectedSize) ? '0 12px 30px rgba(0,102,177,0.4)' : 'none'
+                    }}
                   >
-                    <span className="text-[12px] tracking-[0.12em] uppercase">View Available Tyres</span>
-                    <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    <span className="text-[12px] tracking-[0.1em] uppercase">View Available Tyres</span>
+                    <span className="material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
                   </button>
-                </motion.div>
-              </div>
-            </motion.main>
-
-            <motion.aside
-              initial={{ x: 320 }}
-              animate={{ x: 0 }}
-              exit={{ x: 320 }}
-              transition={{ ease: "circOut", duration: 0.5 }}
-              className="hidden 2xl:flex fixed right-0 top-0 w-[320px] h-screen bg-white flex-col z-40 p-8 shadow-[-10px_0_30px_rgba(15,23,42,0.03)] border-l border-slate-100"
-            >
-              <div className="flex items-center gap-2.5 mb-10">
-                <div className="w-1 h-4 rounded-full" style={{ backgroundColor: brandThemeColor }}></div>
-                <h2 className="text-[#0f172a] font-black tracking-widest uppercase text-[10px]">Summary</h2>
-              </div>
-
-              <div className="flex flex-col flex-1">
-                <span className="text-[8px] text-slate-400 font-bold tracking-[0.2em] uppercase mb-6">Selected Configuration</span>
-
-                <div className="flex justify-between items-center pb-3 border-b border-slate-50 mb-4">
-                  <span className="text-[9px] text-slate-400 font-bold tracking-[0.1em] uppercase">Manufacturer</span>
-                  <div className="flex items-center gap-2 text-[#0f172a] font-black text-[11px] uppercase">
-                    <img src={`/logos/${BRANDS.find(b => b.id === selectedBrand)?.image || 'default.png'}`} alt={selectedBrand} className="h-3 object-contain brightness-0" />
-                    {selectedBrand}
-                  </div>
                 </div>
-
-                <div className="flex justify-between items-center pb-3 border-b border-slate-50 mb-4">
-                  <span className="text-[9px] text-slate-400 font-bold tracking-[0.1em] uppercase">Model</span>
-                  <span className="text-[#0f172a] font-black text-[11px] uppercase text-right">{activeModelName || '-'}</span>
-                </div>
-
-                <div className="flex justify-between items-center pb-3 border-b border-slate-50 mb-4">
-                  <span className="text-[9px] text-slate-400 font-bold tracking-[0.1em] uppercase">Body Type</span>
-                  <span className="text-[#0f172a] font-black text-[11px] uppercase text-right">{activeModelSubCat || '-'}</span>
-                </div>
-
-                <div className="flex justify-between items-center pb-3 border-b border-slate-50 mb-8">
-                  <span className="text-[9px] text-slate-400 font-bold tracking-[0.1em] uppercase">Wheel Diameter</span>
-                  <span className="text-[#0f172a] font-black text-[11px] uppercase text-right">{selectedSize || '-'}</span>
-                </div>
-
-                {selectedModel && selectedSize && (
-                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-[#f8fafc] p-4 rounded-[12px] border border-slate-100 relative overflow-hidden">
-                    <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: brandThemeColor }}></div>
-                    <h4 className="text-[9px] text-[#0f172a] font-black uppercase mb-1.5 flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-[13px]" style={{ color: brandThemeColor }}>star</span>
-                      Recommendation
-                    </h4>
-                    <p className="text-[10px] text-slate-500 font-medium leading-[1.6]">
-                      We'll show you the best tyre options for your {selectedBrand} {activeModelName} based on {selectedSize} wheel size.
-                    </p>
-                  </motion.div>
-                )}
-              </div>
-
-              <div className="mt-auto flex flex-col gap-3">
-                <div className="flex justify-between text-[8px] text-slate-400 font-bold tracking-widest px-1">
-                  <span>REF: {selectedBrand ? selectedBrand.substring(0, 3).toUpperCase() : '---'}-{activeModelName ? activeModelName.substring(0, 3).toUpperCase() : '---'}-{selectedSize ? selectedSize.replace(/[^0-9]/g, '') : 'XX'}</span>
-                  <span>V2.05</span>
-                </div>
-                <button
-                  onClick={() => setStep(3)}
-                  disabled={!(selectedModel && selectedSize)}
-                  className="w-full text-white font-black py-4 rounded-[10px] flex justify-center items-center gap-2 transition-all duration-300 disabled:opacity-30 disabled:shadow-none active:scale-[0.98]"
-                  style={{
-                    backgroundColor: brandThemeColor,
-                    boxShadow: (selectedModel && selectedSize) ? `0 6px 16px ${brandThemeColor}40` : 'none'
-                  }}
-                >
-                  <span className="text-[10px] tracking-widest uppercase">View Available Tyres</span>
-                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
-                </button>
-              </div>
-            </motion.aside>
-          </>
+              </motion.aside>
+            </>
           );
         })()}
+
+
+
 
         {step === 3 && (
           <motion.main
