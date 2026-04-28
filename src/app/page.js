@@ -194,6 +194,24 @@ const getBenefits = (tyre) => {
   ];
 };
 
+const getPerformanceRatings = (tyre) => {
+  return [
+    { label: "Fuel Efficiency", value: tyre.FuelEfficiencyRating || tyre["Fuel Efficiency"], icon: "local_gas_station", color: "#10b981" },
+    { label: "Comfort", value: tyre.ComfortRating || tyre.Comfort, icon: "airline_seat_recline_extra", color: "#8b5cf6" },
+    { label: "Grip", value: tyre.GripRating || tyre.Grip, icon: "sports_score", color: "#0ea5e9" },
+    { label: "Noise", value: tyre.NoiseRating || tyre.Noise, icon: "volume_down", color: "#f59e0b" },
+    { label: "Durability", value: tyre.DurabilityRating || tyre.Durability, icon: "verified_user", color: "#ef4444" },
+    { label: "Wet Grip", value: tyre.WetGripRating || tyre["Wet Grip"], icon: "water_drop", color: "#3b82f6" },
+    { label: "Dry Grip", value: tyre.DryGripRating || tyre["Dry Grip"], icon: "wb_sunny", color: "#eab308" },
+  ].filter(item => item.value !== undefined && item.value !== null && item.value !== "");
+};
+
+const getRatingPercent = (value) => {
+  const num = parseFloat(value);
+  if (Number.isNaN(num)) return 0;
+  return Math.max(0, Math.min(100, (num / 5) * 100));
+};
+
 export default function Home() {
   const { selectedBrand, setSelectedBrand } = useAppContext();
 
@@ -368,6 +386,14 @@ export default function Home() {
         BestFor: catMatch?.BestFor?.toString().trim() || "",
         ImageFileName: catMatch?.ImageFileName?.toString().trim() || invItem.ImageFileName?.toString().trim() || "",
         PromoBadge: invItem.PromoBadge?.toString().trim() || catMatch?.PromoBadge?.toString().trim() || "",
+        OverallRating: catMatch?.["Overall Rating"]?.toString().trim() || "",
+        FuelEfficiencyRating: catMatch?.["Fuel Efficiency"]?.toString().trim() || "",
+        ComfortRating: catMatch?.Comfort?.toString().trim() || "",
+        GripRating: catMatch?.Grip?.toString().trim() || "",
+        NoiseRating: catMatch?.Noise?.toString().trim() || "",
+        DurabilityRating: catMatch?.Durability?.toString().trim() || "",
+        WetGripRating: catMatch?.["Wet Grip"]?.toString().trim() || "",
+        DryGripRating: catMatch?.["Dry Grip"]?.toString().trim() || "",
       };
     });
   })();
@@ -1675,7 +1701,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
 
             <AnimatePresence>
               {selectedTyre && (() => {
-                const benefits = getBenefits(selectedTyre);
+                const perfRatings = getPerformanceRatings(selectedTyre);
                 return (
                   <motion.aside
                     initial={{ x: '100%', opacity: 0 }}
@@ -1745,29 +1771,49 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                           <div style={{ color: selectedSidebarTheme.primary }} className="text-3xl font-black tracking-[-0.02em] drop-shadow-sm"><AnimatedPrice price={selectedTyre.Price} /></div>
                         </div>
 
+                        {/* Overall Rating */}
+                        {(selectedTyre.OverallRating || selectedTyre["Overall Rating"] || selectedTyre.Rating) && (
+                          <div className="mb-4 flex items-center gap-3">
+                            <div className="flex items-center gap-0.5">
+                              {[1,2,3,4,5].map(s => {
+                                const rating = parseFloat(selectedTyre.OverallRating || selectedTyre["Overall Rating"] || selectedTyre.Rating || 0);
+                                return (
+                                  <span key={s} className="material-symbols-outlined text-[14px]" style={{ color: s <= Math.round(rating) ? '#f59e0b' : '#e2e8f0', fontVariationSettings: "'FILL' 1" }}>star</span>
+                                );
+                              })}
+                            </div>
+                            <span className="text-[12px] font-black text-[#0f172a]">{selectedTyre.OverallRating || selectedTyre["Overall Rating"] || selectedTyre.Rating}/5</span>
+                            <span className="text-[10px] text-slate-400 font-medium">Overall Rating</span>
+                          </div>
+                        )}
+
                         {/* Description */}
-                        <p className="text-[13px] text-slate-500 leading-[1.6] mb-8">
+                        <p className="text-[13px] text-slate-500 leading-[1.6] mb-6">
                           {selectedTyre.Description || 'Designed to provide optimal grip, enhanced handling, and a comfortable ride — the ideal match for high-performance vehicles.'}
                         </p>
 
-                        {/* Key Benefits */}
-                        <h3 className="text-[10px] font-bold text-[#00254d] uppercase tracking-[0.15em] mb-4 flex items-center gap-2">
-                          <span className="w-3 h-[2px] bg-[#00254d]/30"></span> Key Benefits
-                        </h3>
-                        <div className="flex flex-col gap-4 mb-8">
-                          {benefits.map((b, i) => (
-                            <div key={i} className="flex gap-3.5 items-start">
-                              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border"
-                                style={{ backgroundColor: `${selectedSidebarTheme.primary}08`, color: selectedSidebarTheme.primary, borderColor: `${selectedSidebarTheme.primary}20` }}>
-                                <span className="material-symbols-outlined text-[16px]">{b.icon}</span>
-                              </div>
-                              <div className="flex flex-col pt-0.5">
-                                <p className="text-[12px] font-bold text-[#0f172a] leading-tight mb-0.5">{b.title}</p>
-                                <p className="text-[11px] text-slate-500 leading-tight">{b.desc}</p>
-                              </div>
+                        {/* Performance Ratings */}
+                        {perfRatings.length > 0 && (
+                          <>
+                            <h3 className="text-[10px] font-bold text-[#00254d] uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+                              <span className="w-3 h-[2px] bg-[#00254d]/30"></span> Performance Ratings
+                            </h3>
+                            <div className="flex flex-col gap-2.5 mb-7">
+                              {perfRatings.map((item, i) => (
+                                <div key={i} className="flex items-center gap-2.5">
+                                  <div className="w-6 h-6 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: `${item.color}18` }}>
+                                    <span className="material-symbols-outlined text-[13px]" style={{ color: item.color }}>{item.icon}</span>
+                                  </div>
+                                  <span className="text-[11px] text-slate-500 font-medium w-[88px] shrink-0">{item.label}</span>
+                                  <div className="flex-1 h-[5px] rounded-full bg-slate-100 overflow-hidden">
+                                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${getRatingPercent(item.value)}%`, backgroundColor: item.color }} />
+                                  </div>
+                                  <span className="text-[11px] font-black text-[#0f172a] w-8 text-right shrink-0">{item.value}/5</span>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          </>
+                        )}
 
                         {/* Specs */}
                         <h3 className="text-[10px] font-bold text-[#00254d] uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
@@ -1846,7 +1892,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
               <div className={`grid gap-4 sm:gap-6 ${compareList.length === 2 ? 'grid-cols-1 md:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'}`}>
                 {compareList.map((tyre, idx) => {
                   const theme = getBrandTheme(tyre.TyreBrand || tyre.Brand);
-                  const benefits = getBenefits(tyre);
+                  const perfRatings = getPerformanceRatings(tyre);
 
                   return (
                     <div key={idx} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(15,23,42,0.06)] group/ccard border border-slate-100 relative h-full">
@@ -1922,25 +1968,28 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                           <p className="mb-4 text-[11px] sm:text-[12px] text-slate-500 leading-relaxed line-clamp-3">{tyre.Description}</p>
                         )}
 
-                        <div className="flex items-center gap-3 mb-4 mt-2">
-                          <span className="h-[2px] w-6" style={{ backgroundColor: theme.primary, opacity: 0.3 }}></span>
-                          <span className="text-[10px] text-[#0f172a] font-bold uppercase tracking-widest">Key Benefits</span>
-                        </div>
-
-                        <div className="flex flex-col gap-3.5 flex-1 pr-2">
-                          {benefits.slice(0, 4).map((b, i) => (
-                            <div key={i} className="flex gap-3 items-start relative z-10 w-full overflow-hidden">
-                              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shrink-0 border"
-                                style={{ backgroundColor: `${theme.primary}08`, color: theme.primary, borderColor: `${theme.primary}20` }}>
-                                <span className="material-symbols-outlined text-[13px] sm:text-[14px]">{b.icon}</span>
-                              </div>
-                              <div className="flex flex-col flex-1 min-w-0">
-                                <p className="text-[11px] sm:text-[12px] font-bold text-[#0f172a] leading-tight mb-0.5 truncate">{b.title}</p>
-                                <p className="text-[10px] sm:text-[11px] text-slate-500 leading-snug line-clamp-2">{b.desc}</p>
-                              </div>
+                        {perfRatings.length > 0 && (
+                          <>
+                            <div className="flex items-center gap-3 mb-3 mt-2">
+                              <span className="h-[2px] w-5" style={{ backgroundColor: theme.primary, opacity: 0.3 }}></span>
+                              <span className="text-[10px] text-[#0f172a] font-bold uppercase tracking-widest">Performance Ratings</span>
                             </div>
-                          ))}
-                        </div>
+                            <div className="flex flex-col gap-2 flex-1">
+                              {perfRatings.map((item, i) => (
+                                <div key={i} className="flex items-center gap-2">
+                                  <div className="w-5 h-5 rounded flex items-center justify-center shrink-0" style={{ backgroundColor: `${item.color}18` }}>
+                                    <span className="material-symbols-outlined text-[11px]" style={{ color: item.color }}>{item.icon}</span>
+                                  </div>
+                                  <span className="text-[10px] text-slate-500 font-medium w-[78px] shrink-0">{item.label}</span>
+                                  <div className="flex-1 h-[4px] rounded-full bg-slate-100 overflow-hidden">
+                                    <div className="h-full rounded-full" style={{ width: `${getRatingPercent(item.value)}%`, backgroundColor: item.color }} />
+                                  </div>
+                                  <span className="text-[10px] font-black text-[#0f172a] w-7 text-right shrink-0">{item.value}/5</span>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        )}
 
                         <div className="mt-6 pt-5 border-t border-slate-100">
                           <button
