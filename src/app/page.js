@@ -998,10 +998,10 @@ export default function Home() {
                   </div>
 
                   {/* ══════════════════════════════════════════════════
-                      HERO CARD — premium cinematic dark
+                      HERO CARD — premium light showroom
                   ══════════════════════════════════════════════════ */}
                   <div
-                    className="rounded-[28px] shadow-lg xl:shadow-[0_36px_90px_rgba(2,6,23,0.65),0_0_0_1px_rgba(255,255,255,0.08)] mb-10 flex flex-col md:flex-row min-h-[280px] md:min-h-[330px] relative overflow-hidden items-stretch"
+                    className="model-hero-card rounded-[28px] shadow-[0_18px_50px_rgba(15,23,42,0.16)] border border-white/70 mb-10 flex flex-col md:flex-row min-h-[280px] md:min-h-[330px] relative overflow-hidden items-stretch bg-slate-50"
                     style={{
                       backgroundImage: "url('/background.jpeg')",
                       backgroundSize: 'cover',
@@ -1009,60 +1009,20 @@ export default function Home() {
                       backgroundRepeat: 'no-repeat',
                     }}
                   >
-                    {/* Noise grain — removes flat digital look */}
+                    {/* Right-side readability gradient only */}
                     <div
-                      className="absolute inset-0 pointer-events-none z-[2] opacity-0 xl:opacity-[0.04] mix-blend-normal xl:mix-blend-soft-light"
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-                        backgroundSize: '180px 180px',
-                      }}
-                    />
-                    {/* Overlay 1: left→right dark scrim — car side stays bright, text side is dark */}
-                    <div
-                      className="absolute inset-0 pointer-events-none z-[3]"
-                      style={{ background: 'linear-gradient(to right, rgba(2,6,23,0.05) 0%, rgba(2,6,23,0.45) 45%, rgba(2,6,23,0.88) 100%)' }}
-                    />
-                    {/* Overlay 2: bottom fade — grounds the car into the surface */}
-                    <div
-                      className="absolute inset-x-0 bottom-0 h-[45%] pointer-events-none z-[3]"
-                      style={{ background: 'linear-gradient(to top, rgba(2,6,23,0.72) 0%, transparent 100%)' }}
+                      className="absolute inset-0 pointer-events-none z-[3] hidden md:block"
+                      style={{ background: 'linear-gradient(to right, transparent 0%, transparent 48%, rgba(2,15,34,0.45) 65%, rgba(2,15,34,0.88) 100%)' }}
                     />
                     {/* Top edge highlight */}
                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none z-[4]" />
 
                     {/* Left — Car image */}
-                    <div className="w-full md:w-[56%] flex justify-center items-end relative py-10 md:py-6 px-6 shrink-0 overflow-hidden min-h-[240px] md:min-h-0">
-                      {/* Top-left soft highlight — slightly washing over the car area to match background spotlight */}
+                    <div className="w-full md:w-[59%] flex justify-center items-end relative pt-10 pb-4 md:pt-8 md:pb-2 px-5 sm:px-6 shrink-0 overflow-hidden min-h-[240px] md:min-h-0">
+                      {/* Soft natural contact shadow under the tyres */}
                       <div
-                        className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] pointer-events-none z-[12] hidden xl:block"
-                        style={{ background: 'radial-gradient(ellipse at top left, rgba(255,255,255,0.08) 0%, rgba(100,180,255,0.03) 45%, transparent 70%)', mixBlendMode: 'screen' }}
-                      />
-
-                      {/* Subtle blue-white rim light behind the car to make it pop */}
-                      <div
-                        className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[85%] h-[75%] pointer-events-none z-[5] hidden xl:block"
-                        style={{ background: 'radial-gradient(circle, rgba(220,240,255,0.15) 0%, transparent 60%)', filter: 'blur(50px)' }}
-                      />
-
-                      {/* Floor darkening patch — anchors car to surface */}
-                      <div
-                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[28%] pointer-events-none z-[4]"
-                        style={{ background: 'radial-gradient(ellipse at center bottom, rgba(0,0,0,0.38) 0%, transparent 70%)', filter: 'blur(10px)' }}
-                      />
-                      {/* Soft ambient shadow — depth layer */}
-                      <div
-                        className="absolute bottom-[4%] left-1/2 -translate-x-1/2 pointer-events-none z-[5] hidden xl:block"
-                        style={{ width: '68%', height: '18px', background: 'radial-gradient(ellipse, rgba(0,0,0,0.40) 0%, transparent 72%)', filter: 'blur(12px)' }}
-                      />
-                      {/* Hard contact shadow — tight, sharp, directly under tyres */}
-                      <div
-                        className="absolute bottom-[4.5%] left-1/2 -translate-x-1/2 pointer-events-none z-[6]"
-                        style={{ width: '54%', height: '8px', background: 'radial-gradient(ellipse, rgba(0,0,0,0.65) 0%, transparent 68%)', filter: 'blur(5px)' }}
-                      />
-                      {/* Under-car blue glow — subtle floor bounce */}
-                      <div
-                        className="absolute bottom-[6%] left-1/2 -translate-x-1/2 w-[72%] h-[26%] pointer-events-none z-[4] hidden xl:block"
-                        style={{ background: 'radial-gradient(ellipse at center, rgba(30,100,255,0.13) 0%, transparent 68%)', filter: 'blur(24px)' }}
+                        className="absolute bottom-[5%] left-1/2 -translate-x-1/2 pointer-events-none z-[6]"
+                        style={{ width: '62%', height: '14px', background: 'radial-gradient(ellipse, rgba(15,23,42,0.30) 0%, rgba(15,23,42,0.16) 42%, transparent 72%)', filter: 'blur(7px)' }}
                       />
                       <img
                         src={`/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.webp`}
@@ -1071,36 +1031,41 @@ export default function Home() {
                           e.target.src = `/cars/${activeModelName.toLowerCase().replace(/\s+/g, '-')}.jpg`;
                         }}
                         alt={activeModelName}
-                        className="w-full max-w-[520px] h-auto object-contain z-10 relative [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.055] [@media(hover:hover)_and_(pointer:fine)]:hover:translate-y-0 translate-y-1 transition-transform duration-[0.65s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] drop-shadow-[0_10px_20px_rgba(0,0,0,0.35)] xl:drop-shadow-[0_22px_44px_rgba(0,0,0,0.45)]"
+                        className="w-full max-w-[540px] xl:max-w-[620px] h-auto object-contain z-10 relative translate-y-3 md:translate-y-5 [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.035] transition-transform duration-[0.65s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
                         style={{
-                          filter: 'brightness(1.04) contrast(1.05)',
+                          filter: 'brightness(1.03) contrast(1.02)',
                         }}
                       />
                     </div>
 
                     {/* Right — Model info + wheel sizes */}
-                    <div className="w-full md:w-[44%] flex flex-col justify-center text-left z-10 px-7 py-8 md:py-10 md:pr-10 lg:pl-5 shrink-0">
+                    <div
+                      className="w-full md:w-[41%] flex flex-col justify-center text-left z-10 px-7 py-8 md:py-10 md:pr-10 lg:pl-5 shrink-0 bg-[linear-gradient(180deg,rgba(2,15,34,0.82),rgba(2,15,34,0.92))] md:bg-none"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       <div
                         className="flex flex-col"
                       >
-                        {/* Body type label */}
-                        <p className="text-[10px] font-black text-[#60a5fa] uppercase tracking-[0.2em] mb-2">{activeModelSubCat}</p>
+
 
                         {/* Model title — bigger, tighter */}
-                        <h2 className="text-[26px] md:text-[34px] font-black text-white mb-2 tracking-[-0.03em] leading-[1.05]">
+                        <h2
+                          className="text-[26px] md:text-[34px] font-bold text-[#f8fafc] mb-2.5 tracking-[-0.02em] leading-[1.05]"
+                          style={{
+                            fontFamily: "'Satoshi', 'Inter', sans-serif",
+                            textShadow: '0 2px 12px rgba(0,0,0,0.25)',
+                          }}
+                        >
                           {selectedBrand}&nbsp;{activeModelName}
                         </h2>
 
                         {/* Thin rule */}
-                        <div className="w-10 h-[2px] rounded-full bg-gradient-to-r from-[#1e90ff] to-transparent mb-3" />
+                        <div className="w-10 h-[2px] rounded-full bg-gradient-to-r from-[#1e90ff] to-transparent mb-2.5" />
 
-                        {/* Description */}
-                        <p className="text-[13px] text-white/60 mb-5 max-w-[270px] leading-[1.65] font-normal hidden sm:block">
-                          A perfect blend of style, performance and comfort — engineered for every drive.
-                        </p>
+
 
                         {/* Wheel sizes */}
-                        <h3 className="text-[8px] font-black text-white/40 uppercase tracking-[0.22em] mb-2.5 shrink-0">Available Wheel Sizes</h3>
+                        <h3 className="text-[12px] font-semibold text-white/60 uppercase tracking-[0.08em] mb-2.5 shrink-0">Available Wheel Sizes</h3>
                         <div className="flex flex-wrap gap-2 w-full">
                           {activeModelSizes.length > 0 ? (
                             activeModelSizes.map(size => {
@@ -1155,10 +1120,10 @@ export default function Home() {
                               style={{
                                 height: '52px',
                                 background: 'linear-gradient(to right, #1185f4, #0066d6)',
-                                boxShadow: '0 10px 26px rgba(17,133,244,0.28)',
+                                boxShadow: '0 10px 25px rgba(37, 99, 235, 0.35)',
                               }}
-                              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 14px 34px rgba(17,133,244,0.34)'; }}
-                              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 10px 26px rgba(17,133,244,0.28)'; }}
+                              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 14px 34px rgba(37, 99, 235, 0.38)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 10px 25px rgba(37, 99, 235, 0.35)'; }}
                             >
                               {/* Shine sweep — outer handles slide, inner handles skew */}
                               <span
