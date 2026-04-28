@@ -249,6 +249,7 @@ export default function Home() {
   const [activeCarTypeFilter, setActiveCarTypeFilter] = useState('ALL');
 
   const [checkoutTyre, setCheckoutTyre] = useState(null);
+  const [checkoutMode, setCheckoutMode] = useState('buy');
   const [quantity, setQuantity] = useState(4);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -258,7 +259,7 @@ export default function Home() {
   const resetKiosk = () => {
     setStep(1); setSelectedBrand(null); setSelectedModel(null);
     setSelectedSize(null); setSelectedTyre(null); setCheckoutTyre(null);
-    setCompareList([]); setIsOrderComplete(false);
+    setCompareList([]); setIsOrderComplete(false); setCheckoutMode('buy');
     setCustomerName(''); setCustomerPhone(''); setVehicleReg('');
   };
 
@@ -483,44 +484,54 @@ export default function Home() {
     e.preventDefault();
     if (!customerName || customerPhone.length < 10) return alert("Please enter valid details.");
 
-    // Calculate totals
-    const totalNum = Number(String(checkoutTyre.Price).replace(/[^0-9.]/g, '')) * quantity;
+    const isQuote = checkoutMode === 'quote';
+
+    // 1. Define common variables at the top of the function
+    const pricePerUnit = Number(String(checkoutTyre.Price).replace(/[^0-9.]/g, '')) || 0;
+    const totalNum = pricePerUnit * quantity;
+
+    // Define totalStr here so it's available everywhere in this function
     const totalStr = totalNum.toLocaleString('en-IN');
+
     const vehicleFull = `${selectedBrand} ${selectedModel} ${vehicleReg ? `(${vehicleReg})` : ''}`;
     const tyreFull = `${checkoutTyre.TyreBrand || checkoutTyre.Brand} ${checkoutTyre.TyreModel || checkoutTyre.Model}`;
 
-    // 1. SILENT WEBHOOK POST TO GOOGLE SHEETS
-    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwfBcvVBPhohp2FV357_rPFq-XISou7o-6zs-y1aCWgNQ7sue2JqPyWOG1jIvJR5URx/exec"; // <-- REPLACE THIS!
-    const orderData = {
+    const now = new Date();
+    const dateTime = `${now.toLocaleDateString('en-IN')} at ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`;
+
+    // 2. WEBHOOK POST
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbx_TLPB8fZ0b396xTQfH4xW9KkQN4nxL6uwBG7j_YjVY1jWTzFCIAzdq_6Rp1cofwCCUw/exec"; // Ensure this is your latest deployed URL
+    const payload = {
+      requestType: isQuote ? "Quotation" : "Buy Now",
+      date: dateTime,
       customerName,
-      customerPhone,
+      phone: customerPhone,
       vehicle: vehicleFull,
-      tyreInfo: tyreFull,
+      tyreDetails: tyreFull,
       size: selectedSize,
       quantity,
-      total: totalNum
+      totalRevenue: totalNum,
     };
 
     try {
-      // We don't await this because we don't want to slow down the UI
-      fetch(WEBHOOK_URL, {
+      await fetch(WEBHOOK_URL, {
         method: "POST",
-        body: JSON.stringify(orderData),
-        // Using text/plain avoids CORS preflight issues with Google Apps Script
+        mode: "no-cors",
+        body: JSON.stringify(payload),
         headers: { "Content-Type": "text/plain;charset=utf-8" }
       });
     } catch (err) {
       console.error("Webhook failed:", err);
     }
 
-    // 2. WHATSAPP REDIRECT (Existing Logic)
-    const shopNumber = "918085888288";
-    const now = new Date();
-    const dateTime = `${now.toLocaleDateString('en-IN')} at ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`;
+    // 3. WHATSAPP REDIRECT
+    if (!isQuote) {
+      const shopNumber = "918085888288";
+      // Now totalStr is defined and will not throw an error
+      const message = `*ORDER RECEIPT* | ${dateTime}%0A%0A*Customer:* ${customerName}%0A*Phone:* ${customerPhone}%0A*Vehicle:* ${vehicleFull}%0A%0A*Order Details:*%0A- ${quantity}x ${tyreFull}%0A- Size: ${selectedSize}%0A- Total Estimate: ₹${totalStr}%0A%0A_Please bring the car to the service bay._`;
+      window.open(`https://wa.me/${shopNumber}?text=${message}`, '_blank');
+    }
 
-    const message = `*ORDER RECEIPT* | ${dateTime}%0A%0A*Customer:* ${customerName}%0A*Phone:* ${customerPhone}%0A*Vehicle:* ${vehicleFull}%0A%0A*Order Details:*%0A- ${quantity}x ${tyreFull}%0A- Size: ${selectedSize}%0A- Total Estimate: ₹${totalStr}%0A%0A_Please bring the car to the service bay._`;
-
-    window.open(`https://wa.me/${shopNumber}?text=${message}`, '_blank');
     setIsOrderComplete(true);
   };
 
@@ -1714,10 +1725,16 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                     <p className="text-base font-black text-[#00254d]">{selectedTyre.Price ? `₹${Number(String(selectedTyre.Price).replace(/[^0-9.]/g, '')).toLocaleString('en-IN')}` : 'POA'}</p>
                   </div>
                   <button
-                    onClick={() => setCheckoutTyre(selectedTyre)}
-                    className="shrink-0 bg-[#00254d] text-white font-black text-[11px] uppercase tracking-widest px-5 py-3 rounded-xl hover:bg-[#001a33] active:scale-[0.96] transition-all shadow-[0_4px_16px_rgba(0,37,77,0.18)]"
+                    onClick={() => { setCheckoutMode('buy'); setCheckoutTyre(selectedTyre); }}
+                    className="shrink-0 bg-[#00254d] text-white font-black text-[11px] uppercase tracking-widest px-4 py-3 rounded-xl hover:bg-[#001a33] active:scale-[0.96] transition-all shadow-[0_4px_16px_rgba(0,37,77,0.18)]"
                   >
-                    Add to Cart
+                    Buy Now
+                  </button>
+                  <button
+                    onClick={() => { setCheckoutMode('quote'); setCheckoutTyre(selectedTyre); }}
+                    className="shrink-0 border border-[#00254d] text-[#00254d] font-black text-[11px] uppercase tracking-widest px-4 py-3 rounded-xl hover:bg-[#00254d]/5 active:scale-[0.96] transition-all"
+                  >
+                    Quote
                   </button>
                 </motion.div>
               )}
@@ -1861,14 +1878,22 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                       </div>
 
                       {/* CTA */}
-                      <div className="px-5 py-4 bg-white border-t border-slate-100 shrink-0">
+                      <div className="px-5 py-4 bg-white border-t border-slate-100 shrink-0 flex flex-col gap-2">
                         <button
-                          onClick={() => setCheckoutTyre(selectedTyre)}
+                          onClick={() => { setCheckoutMode('buy'); setCheckoutTyre(selectedTyre); }}
                           style={{ backgroundColor: selectedSidebarTheme.primary }}
                           className="w-full text-white font-black py-3.5 rounded-xl text-[11.5px] tracking-[0.14em] uppercase transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-2.5 shadow-lg hover:brightness-110 hover:-translate-y-0.5"
                         >
-                          <span className="material-symbols-outlined text-[16px] leading-none">shopping_cart</span>
-                          <span>Add to Cart</span>
+                          <span className="material-symbols-outlined text-[16px] leading-none">local_mall</span>
+                          <span>Buy Now</span>
+                        </button>
+                        <button
+                          onClick={() => { setCheckoutMode('quote'); setCheckoutTyre(selectedTyre); }}
+                          style={{ color: selectedSidebarTheme.primary, borderColor: `${selectedSidebarTheme.primary}50` }}
+                          className="w-full font-black py-3 rounded-xl text-[11.5px] tracking-[0.14em] uppercase transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-2.5 border hover:bg-slate-50"
+                        >
+                          <span className="material-symbols-outlined text-[15px] leading-none">request_quote</span>
+                          <span>Get Quotation</span>
                         </button>
                       </div>
                     </div>
@@ -1902,11 +1927,10 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
             </div>
 
             <div className="flex-1 px-5 sm:px-8 md:px-12 py-6 sm:py-8 flex items-start justify-center">
-              <div className={`w-full grid gap-5 sm:gap-6 ${
-                compareList.length === 1 ? 'max-w-[520px] grid-cols-1'
+              <div className={`w-full grid gap-5 sm:gap-6 ${compareList.length === 1 ? 'max-w-[520px] grid-cols-1'
                 : compareList.length === 2 ? 'max-w-[1080px] grid-cols-1 md:grid-cols-2'
-                : 'max-w-[1440px] grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
-              }`}>
+                  : 'max-w-[1440px] grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                }`}>
                 {compareList.map((tyre, idx) => {
                   const theme = getBrandTheme(tyre.TyreBrand || tyre.Brand);
                   const perfRatings = getPerformanceRatings(tyre);
@@ -2014,15 +2038,23 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                           </>
                         )}
 
-                        <div className="mt-4 pt-4 border-t border-slate-100">
+                        <div className="mt-4 pt-4 border-t border-slate-100 flex gap-2">
                           <button
-                            onClick={(e) => { e.stopPropagation(); setCheckoutTyre(tyre); setIsCompareOpen(false); }}
-                            className="relative overflow-hidden group/cbtn w-full text-white font-black py-3 rounded-xl text-[11px] tracking-[0.14em] uppercase transition-all shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:brightness-110 active:scale-[0.97] flex items-center justify-center gap-2"
+                            onClick={(e) => { e.stopPropagation(); setCheckoutMode('buy'); setCheckoutTyre(tyre); setIsCompareOpen(false); }}
+                            className="relative overflow-hidden group/cbtn flex-1 text-white font-black py-3 rounded-xl text-[10.5px] tracking-[0.12em] uppercase transition-all shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:brightness-110 active:scale-[0.97] flex items-center justify-center gap-1.5"
                             style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})` }}
                           >
                             <div className="absolute inset-0 bg-white/15 translate-y-[100%] group-hover/cbtn:translate-y-0 transition-transform duration-300 ease-out rounded-[inherit] pointer-events-none"></div>
-                            <span className="material-symbols-outlined text-[15px] relative z-10">shopping_cart</span>
-                            <span className="relative z-10">Add to Cart</span>
+                            <span className="material-symbols-outlined text-[14px] relative z-10">local_mall</span>
+                            <span className="relative z-10">Buy Now</span>
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setCheckoutMode('quote'); setCheckoutTyre(tyre); setIsCompareOpen(false); }}
+                            className="flex-1 font-black py-3 rounded-xl text-[10.5px] tracking-[0.12em] uppercase transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 border hover:bg-slate-50"
+                            style={{ color: theme.primary, borderColor: `${theme.primary}50` }}
+                          >
+                            <span className="material-symbols-outlined text-[13px]">request_quote</span>
+                            <span>Quote</span>
                           </button>
                         </div>
                       </div>
@@ -2054,8 +2086,14 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                   <div className="w-16 h-16 rounded-full bg-[#00254d]/10 flex items-center justify-center mb-6">
                     <span className="material-symbols-outlined text-[#00254d] text-4xl">check_circle</span>
                   </div>
-                  <h2 className="text-[#0f172a] text-2xl font-black uppercase tracking-[-0.02em] mb-2">Order Sent!</h2>
-                  <p className="text-slate-500 text-sm mb-8 leading-relaxed">The receptionist has received your order via WhatsApp. Please proceed to the front desk.</p>
+                  <h2 className="text-[#0f172a] text-2xl font-black uppercase tracking-[-0.02em] mb-2">
+                    {checkoutMode === 'quote' ? 'Quote Request Sent!' : 'Order Sent!'}
+                  </h2>
+                  <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+                    {checkoutMode === 'quote'
+                      ? 'The team has received your quotation request. We will contact you with the best available price.'
+                      : 'The receptionist has received your order via WhatsApp. Please proceed to the front desk.'}
+                  </p>
                   <button onClick={resetKiosk} className="w-full bg-[#00254d] hover:bg-[#001a33] text-white font-black py-4 rounded-xl uppercase tracking-widest text-[11px] transition-all shadow-[0_4px_16px_rgba(0,37,77,0.15)] hover:shadow-[0_8px_24px_rgba(0,37,77,0.22)] active:scale-[0.97]">Start New Order</button>
                 </motion.div>
               ) : (
@@ -2073,8 +2111,12 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                     >
                       <span className="material-symbols-outlined text-[16px]">close</span>
                     </button>
-                    <p className="text-[10px] text-[#00254d] font-bold tracking-[0.25em] uppercase mb-1">Checkout</p>
-                    <h2 className="text-[#0f172a] text-xl font-black uppercase tracking-[-0.02em]">Registration</h2>
+                    <p className="text-[10px] text-[#00254d] font-bold tracking-[0.25em] uppercase mb-1">
+                      {checkoutMode === 'quote' ? 'Quotation' : 'Purchase'}
+                    </p>
+                    <h2 className="text-[#0f172a] text-xl font-black uppercase tracking-[-0.02em]">
+                      {checkoutMode === 'quote' ? 'Request Quotation' : 'Complete Purchase'}
+                    </h2>
                   </div>
 
                   <div className="flex flex-col gap-5 px-7 py-6">
@@ -2118,8 +2160,9 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                       </div>
                     </div>
 
-                    <button onClick={handleDispatch} className="w-full bg-[#00254d] hover:bg-[#001a33] text-white font-black text-base py-5 rounded-xl uppercase tracking-widest shadow-[0_4px_16px_rgba(0,37,77,0.15)] hover:shadow-[0_12px_32px_rgba(0,37,77,0.22)] transition-all active:scale-[0.97] mt-1">
-                      Send to Reception
+                    <button onClick={handleDispatch} className="w-full bg-[#00254d] hover:bg-[#001a33] text-white font-black text-base py-5 rounded-xl uppercase tracking-widest shadow-[0_4px_16px_rgba(0,37,77,0.15)] hover:shadow-[0_12px_32px_rgba(0,37,77,0.22)] transition-all active:scale-[0.97] mt-1 flex items-center justify-center gap-2">
+                      <span className="material-symbols-outlined text-[18px]">{checkoutMode === 'quote' ? 'request_quote' : 'local_mall'}</span>
+                      {checkoutMode === 'quote' ? 'Send Quote Request' : 'Send Order'}
                     </button>
                   </div>
                 </motion.div>
