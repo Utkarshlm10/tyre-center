@@ -105,25 +105,21 @@ function TyreImage({ fileName, alt, className, style }) {
 }
 
 function TyreBrandLogo({ brand, className, textClassName, imgClassName }) {
-  const [failedLogoSrc, setFailedLogoSrc] = useState(null);
-
   if (!brand) return <h4 className={textClassName}>Premium</h4>;
   const cleanBrand = brand.toString().trim().toLowerCase();
 
   const matchedKey = Object.keys(TYRE_BRAND_LOGOS).find(
     k => cleanBrand.includes(k) || k.includes(cleanBrand) || cleanBrand === k
   );
-  const logoSrc = matchedKey ? TYRE_BRAND_LOGOS[matchedKey] : null;
 
-  if (logoSrc && failedLogoSrc !== logoSrc) {
+  if (matchedKey) {
     return (
       <div className={`flex items-center ${className}`}>
         <img
-          src={logoSrc}
+          src={TYRE_BRAND_LOGOS[matchedKey]}
           alt={brand}
           className={`w-auto object-contain shrink-0 ${imgClassName || 'h-full'}`}
           style={{ filter: "contrast(1.1) brightness(1.05)" }}
-          onError={() => setFailedLogoSrc(logoSrc)}
         />
       </div>
     );
