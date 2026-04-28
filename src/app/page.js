@@ -129,18 +129,18 @@ function TyreBrandLogo({ brand, className, textClassName, imgClassName }) {
 }
 
 const BRANDS = [
-  { name: "KIA", id: "Kia", image: "kia.png" },
-  { name: "MARUTI SUZUKI", id: "Maruti Suzuki", image: "suzuki.png" },
-  { name: "HYUNDAI", id: "Hyundai", image: "hyundai.png" },
-  { name: "HONDA", id: "Honda", image: "honda.png" },
-  { name: "VOLKSWAGEN", id: "Volkswagen", image: "volkswagen.png" },
-  { name: "JEEP", id: "Jeep", image: "jeep.png" },
-  { name: "TATA MOTORS", id: "Tata Motors", image: "tata.png" },
-  { name: "AUDI", id: "Audi", image: "audi.png" },
-  { name: "BMW", id: "BMW", image: "bmw.png" },
-  { name: "MERCEDES", id: "Mercedes", image: "mercedes.png" },
-  { name: "MAHINDRA", id: "Mahindra", image: "mahindra.png" },
-  { name: "SKODA", id: "Skoda", image: "skoda.png" }
+  { name: "KIA", id: "Kia", image: "kia.webp" },
+  { name: "MARUTI SUZUKI", id: "Maruti Suzuki", image: "suzuki.webp" },
+  { name: "HYUNDAI", id: "Hyundai", image: "hyundai.webp" },
+  { name: "HONDA", id: "Honda", image: "honda.webp" },
+  { name: "VOLKSWAGEN", id: "Volkswagen", image: "volkswagen.webp" },
+  { name: "JEEP", id: "Jeep", image: "jeep.webp" },
+  { name: "TATA MOTORS", id: "Tata Motors", image: "tata.webp" },
+  { name: "AUDI", id: "Audi", image: "audi.webp" },
+  { name: "BMW", id: "BMW", image: "bmw.webp" },
+  { name: "MERCEDES", id: "Mercedes", image: "mercedes.webp" },
+  { name: "MAHINDRA", id: "Mahindra", image: "mahindra.webp" },
+  { name: "SKODA", id: "Skoda", image: "skoda.webp" }
 ];
 
 const getBrandTheme = (brand) => {
