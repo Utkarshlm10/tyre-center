@@ -746,88 +746,88 @@ export default function Home() {
             {/* ── PREMIUM HERO CARD ── */}
             <section className="w-full px-4 sm:px-6 md:px-8 xl:px-10 pt-6 sm:pt-8 xl:pt-10">
               <div className="max-w-[1320px] mx-auto">
-              <div
-                className="relative w-full rounded-2xl xl:rounded-3xl overflow-hidden"
-                style={{
-                  minHeight: "clamp(300px, 42vh, 540px)",
-                  backgroundImage: "url('/hero/hero-bg.webp')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center right",
-                  boxShadow: "0 8px 48px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.06)",
-                }}
-              >
-                {/* Left-to-right gradient overlay for text readability */}
                 <div
-                  className="absolute inset-0 z-[1]"
+                  className="relative w-full rounded-2xl xl:rounded-3xl overflow-hidden"
                   style={{
-                    background: "linear-gradient(to right, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.88) 30%, rgba(255,255,255,0.55) 55%, rgba(255,255,255,0.10) 78%, rgba(255,255,255,0.0) 100%)",
+                    minHeight: "clamp(300px, 42vh, 540px)",
+                    backgroundImage: "url('/hero/hero-bg.webp')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center right",
+                    boxShadow: "0 8px 48px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.06)",
                   }}
-                />
+                >
+                  {/* Left-to-right gradient overlay for text readability */}
+                  <div
+                    className="absolute inset-0 z-[1]"
+                    style={{
+                      background: "linear-gradient(to right, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.88) 30%, rgba(255,255,255,0.55) 55%, rgba(255,255,255,0.10) 78%, rgba(255,255,255,0.0) 100%)",
+                    }}
+                  />
 
-                {/* Hero content: text left, tyre right */}
-                <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between h-full w-full px-8 sm:px-10 md:px-14 lg:px-16 py-12 sm:py-14 md:py-16 gap-8 sm:gap-6">
+                  {/* Hero content: text left, tyre right */}
+                  <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between h-full w-full px-8 sm:px-10 md:px-14 lg:px-16 py-12 sm:py-14 md:py-16 gap-8 sm:gap-6">
 
-                  {/* LEFT — text only */}
-                  <div className="flex flex-col items-start">
+                    {/* LEFT — text only */}
+                    <div className="flex flex-col items-start">
 
-                    {/* WELCOME TO */}
-                    <span
-                      className="text-[10px] sm:text-[11px] xl:text-[12px] font-medium uppercase text-[#2563eb]/70 mb-3 font-body"
-                      style={{ letterSpacing: "0.32em" }}
-                    >
-                      Welcome to
-                    </span>
-
-                    {/* TYRE CENTRE — Clash Display, breathable */}
-                    <h1
-                      className="uppercase text-[#061735] whitespace-nowrap mb-7 font-headline"
-                      style={{ fontSize: "clamp(2.8rem, 5.4vw, 5.8rem)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: "1.05" }}
-                    >
-                      Tyre Centre
-                    </h1>
-
-                    {/* Thin accent line */}
-                    <div className="w-12 h-[2.5px] rounded-full bg-[#2563eb]/40 mb-5" />
-
-                    {/* Subheading — Inter semibold, deeper navy */}
-                    <p className="text-[17px] sm:text-[18px] xl:text-[19px] font-semibold text-[#071e3d] leading-snug mb-3 font-body">
-                      Chhattisgarh&apos;s Trusted Tyre Experts
-                    </p>
-
-                    {/* Since 1995 — Pacifico accent with elegant extending line */}
-                    <div className="flex items-center gap-4 mb-7">
+                      {/* WELCOME TO */}
                       <span
-                        className="text-[18px] sm:text-[21px] text-[#2563eb] font-accent"
-                        style={{ letterSpacing: "0.02em" }}
+                        className="text-[10px] sm:text-[11px] xl:text-[12px] font-medium uppercase text-[#2563eb]/70 mb-3 font-body"
+                        style={{ letterSpacing: "0.32em" }}
                       >
-                        Since 1995
+                        Welcome to
                       </span>
-                      <div className="h-px w-16 sm:w-24 bg-gradient-to-r from-[#2563eb]/30 to-transparent rounded-full" />
+
+                      {/* TYRE CENTRE — Clash Display, breathable */}
+                      <h1
+                        className="uppercase text-[#061735] whitespace-nowrap mb-7 font-headline"
+                        style={{ fontSize: "clamp(2.8rem, 5.4vw, 5.8rem)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: "1.05" }}
+                      >
+                        Tyre Centre
+                      </h1>
+
+                      {/* Thin accent line */}
+                      <div className="w-12 h-[2.5px] rounded-full bg-[#2563eb]/40 mb-5" />
+
+                      {/* Subheading — Inter semibold, deeper navy */}
+                      <p className="text-[17px] sm:text-[18px] xl:text-[19px] font-semibold text-[#071e3d] leading-snug mb-3 font-body">
+                        Chhattisgarh&apos;s Trusted Tyre Experts
+                      </p>
+
+                      {/* Since 1995 — Pacifico accent with elegant extending line */}
+                      <div className="flex items-center gap-4 mb-7">
+                        <span
+                          className="text-[18px] sm:text-[21px] text-[#2563eb] font-accent"
+                          style={{ letterSpacing: "0.02em" }}
+                        >
+                          Since 1995
+                        </span>
+                        <div className="h-px w-16 sm:w-24 bg-gradient-to-r from-[#2563eb]/30 to-transparent rounded-full" />
+                      </div>
+
+                      {/* Description — Inter regular, readable contrast */}
+                      <p className="text-[14px] sm:text-[15px] xl:text-[16px] text-[#4b5563] leading-relaxed max-w-[300px] sm:max-w-[340px] xl:max-w-[360px] font-body font-normal">
+                        Premium tyres, expert fitment and trusted service in Bilaspur.
+                      </p>
+
                     </div>
 
-                    {/* Description — Inter regular, readable contrast */}
-                    <p className="text-[14px] sm:text-[15px] xl:text-[16px] text-[#4b5563] leading-relaxed max-w-[300px] sm:max-w-[340px] xl:max-w-[360px] font-body font-normal">
-                      Premium tyres, expert fitment and trusted service in Bilaspur.
-                    </p>
+                    {/* RIGHT — tyre image, shifted slightly right & grounded */}
+                    <div className="flex items-end justify-center shrink-0 w-[240px] sm:w-[320px] md:w-[400px] lg:w-[440px] xl:w-[480px] self-end pr-2 xl:pr-6">
+                      <img
+                        src="/hero/hero-tyre.webp"
+                        alt="Premium Tyre"
+                        draggable="false"
+                        className="hero-tyre-float select-none w-full h-auto object-contain"
+                        style={{
+                          filter: "drop-shadow(0 32px 24px rgba(15,23,42,0.22)) drop-shadow(0 8px 16px rgba(15,23,42,0.10))",
+                          maxHeight: "clamp(220px, 36vh, 460px)",
+                        }}
+                      />
+                    </div>
 
                   </div>
-
-                  {/* RIGHT — tyre image, shifted slightly right & grounded */}
-                  <div className="flex items-end justify-center shrink-0 w-[240px] sm:w-[320px] md:w-[400px] lg:w-[440px] xl:w-[480px] self-end pr-2 xl:pr-6">
-                    <img
-                      src="/hero/hero-tyre.webp"
-                      alt="Premium Tyre"
-                      draggable="false"
-                      className="hero-tyre-float select-none w-full h-auto object-contain"
-                      style={{
-                        filter: "drop-shadow(0 32px 24px rgba(15,23,42,0.22)) drop-shadow(0 8px 16px rgba(15,23,42,0.10))",
-                        maxHeight: "clamp(220px, 36vh, 460px)",
-                      }}
-                    />
-                  </div>
-
                 </div>
-              </div>
               </div>
             </section>
 
