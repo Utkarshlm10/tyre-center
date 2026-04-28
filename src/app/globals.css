@@ -10,7 +10,7 @@
   --font-body: var(--font-inter), sans-serif;
   --font-label: var(--font-inter), sans-serif;
   --font-accent: var(--font-pacifico), cursive;
-  
+
   --color-secondary-fixed-dim: #afcbd8;
   --color-on-primary-container: #9bbdff;
   --color-tertiary: #5f2200;
@@ -73,6 +73,21 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.model-hero-card .model-hero-kicker {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* remove the line under SUV */
+.model-hero-card .model-hero-kicker::after {
+  content: none;
+}
+
+
 /* Headline font applied selectively via .font-headline class — not globally */
 
 p {
@@ -99,29 +114,62 @@ p {
 
 /* ── Keyframes ── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.97) translateY(4px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideInRight {
-  from { opacity: 0; transform: translateX(20px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes fadeInFast {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* ── Hero tyre float animation ── */
 @keyframes tyrFloat {
-  0%, 100% { transform: translateY(0px)  scale(1);    }
-  50%       { transform: translateY(-6px) scale(1.01); }
+
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+
+  50% {
+    transform: translateY(-6px) scale(1.01);
+  }
 }
 
 .hero-tyre-float {
@@ -137,8 +185,14 @@ p {
 }
 
 /* ── Premium Scrollbar Handling ── */
-.hide-scrollbar::-webkit-scrollbar { display: none; }
-.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 /* Global scrollbar — thin and premium */
 ::-webkit-scrollbar {
@@ -179,16 +233,21 @@ aside .sidebar-nav-item:not(.sidebar-nav-active):hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22) !important;
 }
+
 aside .sidebar-nav-item:not(.sidebar-nav-active):hover .sidebar-nav-icon {
   color: rgba(255, 255, 255, 0.92) !important;
 }
+
 aside .sidebar-util-link:hover {
   color: rgba(255, 255, 255, 0.78) !important;
   background: rgba(255, 255, 255, 0.04) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

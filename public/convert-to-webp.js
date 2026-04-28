@@ -7,6 +7,7 @@ const directories = [
     path.join(__dirname, 'hero'),
     path.join(__dirname, 'logos'),
     path.join(__dirname, 'tyre-brands'),
+    path.join(__dirname, 'tyres'),
     __dirname // Also process images in the public root
 ];
 

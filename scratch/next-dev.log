@@ -1,0 +1,23 @@
+
+> tyre-center@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.2 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.29.44:3000
+✓ Ready in 415ms
+
+ GET / 200 in 294ms (next.js: 134ms, application-code: 160ms)
+ GET /tyre-brands/bridgestone.png 404 in 102ms (next.js: 18ms, application-code: 84ms)
+ GET /tyre-brands/apollo.png 404 in 106ms (next.js: 35ms, application-code: 71ms)
+ GET /tyre-brands/michelin.png 404 in 104ms (next.js: 46ms, application-code: 58ms)
+✓ Compiled in 74ms
+✓ Compiled in 48ms
+ GET / 200 in 93ms (next.js: 30ms, application-code: 62ms)
+ GET / 200 in 31ms (next.js: 4ms, application-code: 28ms)
+ GET / 200 in 27ms (next.js: 1993µs, application-code: 25ms)
+ GET /tyres/apollo-amazer-4g.webp 404 in 87ms (next.js: 8ms, application-code: 79ms)
+ GET /tyres/ceat-milaze.webp 404 in 87ms (next.js: 29ms, application-code: 58ms)
+ GET /tyres/mrf-zvtv.webp 404 in 86ms (next.js: 39ms, application-code: 47ms)
+ GET / 200 in 25ms (next.js: 2ms, application-code: 23ms)
+ GET / 200 in 29ms (next.js: 1860µs, application-code: 27ms)

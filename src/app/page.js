@@ -41,12 +41,12 @@ function AnimatedPrice({ price }) {
 }
 
 const TYRE_BRAND_LOGOS = {
-  apollo: "/tyre-brands/apollo.png",
-  ceat: "/tyre-brands/ceat.png",
-  bridgestone: "/tyre-brands/bridgestone.png",
-  michelin: "/tyre-brands/michelin.png",
-  mrf: "/tyre-brands/mrf.png",
-  goodyear: "/tyre-brands/goodyear.png",
+  apollo: "/tyre-brands/apollo.webp",
+  ceat: "/tyre-brands/ceat.webp",
+  bridgestone: "/tyre-brands/bridgestone.webp",
+  michelin: "/tyre-brands/michelin.webp",
+  mrf: "/tyre-brands/mrf.webp",
+  goodyear: "/tyre-brands/goodyear.webp",
 };
 
 const getTyreImageCandidates = (fileName) => {
@@ -105,21 +105,25 @@ function TyreImage({ fileName, alt, className, style }) {
 }
 
 function TyreBrandLogo({ brand, className, textClassName, imgClassName }) {
+  const [failedLogoSrc, setFailedLogoSrc] = useState(null);
+
   if (!brand) return <h4 className={textClassName}>Premium</h4>;
   const cleanBrand = brand.toString().trim().toLowerCase();
 
   const matchedKey = Object.keys(TYRE_BRAND_LOGOS).find(
     k => cleanBrand.includes(k) || k.includes(cleanBrand) || cleanBrand === k
   );
+  const logoSrc = matchedKey ? TYRE_BRAND_LOGOS[matchedKey] : null;
 
-  if (matchedKey) {
+  if (logoSrc && failedLogoSrc !== logoSrc) {
     return (
       <div className={`flex items-center ${className}`}>
         <img
-          src={TYRE_BRAND_LOGOS[matchedKey]}
+          src={logoSrc}
           alt={brand}
           className={`w-auto object-contain shrink-0 ${imgClassName || 'h-full'}`}
           style={{ filter: "contrast(1.1) brightness(1.05)" }}
+          onError={() => setFailedLogoSrc(logoSrc)}
         />
       </div>
     );
