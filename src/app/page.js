@@ -196,14 +196,32 @@ const getBenefits = (tyre) => {
 
 const getPerformanceRatings = (tyre) => {
   return [
-    { label: "Fuel Efficiency", value: tyre.FuelEfficiencyRating || tyre["Fuel Efficiency"], icon: "local_gas_station", color: "#10b981" },
-    { label: "Comfort", value: tyre.ComfortRating || tyre.Comfort, icon: "airline_seat_recline_extra", color: "#8b5cf6" },
-    { label: "Grip", value: tyre.GripRating || tyre.Grip, icon: "sports_score", color: "#0ea5e9" },
-    { label: "Noise", value: tyre.NoiseRating || tyre.Noise, icon: "volume_down", color: "#f59e0b" },
-    { label: "Durability", value: tyre.DurabilityRating || tyre.Durability, icon: "verified_user", color: "#ef4444" },
-    { label: "Wet Grip", value: tyre.WetGripRating || tyre["Wet Grip"], icon: "water_drop", color: "#3b82f6" },
-    { label: "Dry Grip", value: tyre.DryGripRating || tyre["Dry Grip"], icon: "wb_sunny", color: "#eab308" },
+    { label: "Fuel Efficiency", value: tyre.FuelEfficiencyRating || tyre["Fuel Efficiency"], icon: "local_gas_station" },
+    { label: "Comfort", value: tyre.ComfortRating || tyre.Comfort, icon: "airline_seat_recline_extra" },
+    { label: "Grip", value: tyre.GripRating || tyre.Grip, icon: "sports_score" },
+    { label: "Noise", value: tyre.NoiseRating || tyre.Noise, icon: "volume_down" },
+    { label: "Durability", value: tyre.DurabilityRating || tyre.Durability, icon: "verified_user" },
+    { label: "Wet Grip", value: tyre.WetGripRating || tyre["Wet Grip"], icon: "water_drop" },
+    { label: "Dry Grip", value: tyre.DryGripRating || tyre["Dry Grip"], icon: "wb_sunny" },
   ].filter(item => item.value !== undefined && item.value !== null && item.value !== "");
+};
+
+const renderStars = (ratingVal, size = 14) => {
+  const rating = parseFloat(ratingVal) || 0;
+  return [1, 2, 3, 4, 5].map(s => (
+    <span
+      key={s}
+      className="material-symbols-outlined"
+      style={{
+        fontSize: size,
+        color: s <= Math.round(rating) ? '#f5b800' : '#dde3ec',
+        fontVariationSettings: "'FILL' 1",
+        lineHeight: 1,
+        display: 'inline-block',
+        filter: s <= Math.round(rating) ? 'drop-shadow(0 0 3px rgba(245,184,0,0.55))' : 'none',
+      }}
+    >star</span>
+  ));
 };
 
 const getRatingPercent = (value) => {
@@ -1490,7 +1508,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                 })()}
               </AnimatePresence>
 
-              <div className="px-4 sm:px-6 md:px-8 xl:px-12 py-4 sm:py-5 md:py-6 pb-24 xl:pb-8 relative">
+              <div className="px-4 sm:px-6 md:px-8 xl:px-12 py-4 sm:py-5 md:py-6 pb-32 xl:pb-10 relative">
                 {displayedTyres.length > 0 ? (
                   <>
                     <h3 className="text-[11px] sm:text-xs font-bold text-slate-400 mb-3 sm:mb-4 px-1 uppercase tracking-widest">Top picks for your {selectedBrand} {selectedModel}</h3>
@@ -1519,7 +1537,7 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                               '--brand-secondary': theme.secondary,
                             }}
                             className={`cursor-pointer flex flex-col group overflow-hidden transition-all duration-300 text-left w-full relative active:scale-[0.98] bg-white rounded-2xl min-h-[220px] ${isSelected
-                              ? 'ring-2 ring-[var(--brand-primary)] ring-offset-2 shadow-[0_4px_24px_rgba(0,0,0,0.12)] -translate-y-0.5'
+                              ? 'ring-[2.5px] ring-[var(--brand-primary)] ring-offset-[3px] shadow-[0_8px_32px_rgba(0,0,0,0.13)] -translate-y-1'
                               : 'shadow-sm xl:shadow-[0_4px_16px_rgba(15,23,42,0.04)] [@media(hover:hover)_and_(pointer:fine)]:hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1'
                               }`}
                           >
@@ -1609,15 +1627,21 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                                   imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100 drop-shadow-sm"
                                   textClassName="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1.5 truncate"
                                 />
-                                <h3 className="text-sm sm:text-base font-black text-[#0f172a] leading-tight line-clamp-3 pr-2 shadow-white/50 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
+                                <h3 className="text-sm sm:text-base font-black text-[#0d1829] leading-tight line-clamp-3 pr-2 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
                                   {tyre.TyreModel || tyre.ModelID}
                                 </h3>
+                                {(tyre.OverallRating || tyre["Overall Rating"]) && (
+                                  <div className="flex items-center gap-[5px] mt-1.5">
+                                    <div className="flex items-center gap-[2px]">{renderStars(tyre.OverallRating || tyre["Overall Rating"], 12)}</div>
+                                    <span className="text-[11px] font-extrabold text-[#1a2840]" style={{ letterSpacing: '-0.01em' }}>{tyre.OverallRating || tyre["Overall Rating"]}</span>
+                                  </div>
+                                )}
                               </div>
 
                               {/* Bottom Left: Price */}
-                              <div className="mt-auto pt-4 relative z-20">
-                                <p className="text-[7.5px] sm:text-[8px] text-[#64748b] font-extrabold uppercase tracking-widest mb-0.5">Per Tyre</p>
-                                <p className="text-lg sm:text-xl font-black text-[var(--brand-primary)] leading-none tracking-tight">
+                              <div className="mt-auto pt-3 relative z-20">
+                                <p className="text-[8px] text-slate-500 font-extrabold uppercase tracking-[0.12em] mb-0.5">Per Tyre</p>
+                                <p className="text-lg sm:text-xl font-black text-[var(--brand-primary)] leading-none tracking-[-0.02em]">
                                   {tyre.Price ? `₹${Number(String(tyre.Price).replace(/[^0-9.]/g, '')).toLocaleString('en-IN')}` : 'POA'}
                                 </p>
                               </div>
@@ -1747,68 +1771,57 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                         <TyreImage
                           fileName={selectedTyre.ImageFileName}
                           alt={selectedTyre.TyreModel || 'Tyre'}
-                          className="w-[75%] h-auto max-h-[220px] object-contain relative z-20 transition-transform duration-500 hover:scale-[1.03]"
+                          className="w-[65%] h-auto max-h-[180px] object-contain relative z-20 transition-transform duration-500 hover:scale-[1.03]"
                           style={{ opacity: 0, animation: 'fadeIn 0.6s ease forwards' }}
                         />
                       </div>
 
-                      <div className="flex-1 overflow-y-auto px-7 py-2 flex flex-col hide-scrollbar">
+                      <div className="flex-1 overflow-y-auto px-6 py-3 flex flex-col hide-scrollbar">
                         {/* Brand & Model */}
-                        <div className="mb-4">
-                          <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-2" imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 hover:opacity-100" textClassName="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1.5 flex-wrap" />
-                          <h1 className="text-[26px] text-[#0f172a] font-black tracking-[-0.02em] leading-tight mb-2">{selectedTyre.TyreModel || selectedTyre.ModelID}</h1>
+                        <div className="mb-3">
+                          <TyreBrandLogo brand={selectedTyre.TyreBrand} className="mb-1.5" imgClassName="h-6 w-auto object-contain object-left opacity-90" textClassName="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-500 mb-1" />
+                          <h1 className="text-[21px] text-[#0d1829] font-black tracking-[-0.025em] leading-tight mb-1.5">{selectedTyre.TyreModel || selectedTyre.ModelID}</h1>
                           {selectedTyre.BestFor && (
-                            <span className="inline-block px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded shadow-sm border"
-                              style={{ backgroundColor: `${selectedSidebarTheme.primary}10`, color: selectedSidebarTheme.primary, borderColor: `${selectedSidebarTheme.primary}40` }}>
-                              FOR: {selectedTyre.BestFor}
+                            <span className="inline-block px-2.5 py-[3px] text-[9px] font-bold uppercase tracking-[0.1em] rounded-md border mb-2"
+                              style={{ backgroundColor: `${selectedSidebarTheme.primary}0c`, color: selectedSidebarTheme.primary, borderColor: `${selectedSidebarTheme.primary}35` }}>
+                              {selectedTyre.BestFor}
                             </span>
+                          )}
+                          {(selectedTyre.OverallRating || selectedTyre["Overall Rating"] || selectedTyre.Rating) && (
+                            <div className="flex items-center gap-[6px] mt-1.5">
+                              <div className="flex items-center gap-[2px]">{renderStars(selectedTyre.OverallRating || selectedTyre["Overall Rating"] || selectedTyre.Rating, 14, '#f59e0b')}</div>
+                              <span className="text-[12px] font-extrabold text-[#0d1829]">{selectedTyre.OverallRating || selectedTyre["Overall Rating"] || selectedTyre.Rating}<span className="text-[10px] font-semibold text-slate-400">/5</span></span>
+                              <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Overall</span>
+                            </div>
                           )}
                         </div>
 
-                        {/* Price */}
-                        <div className="mb-6 pt-3 pb-6 border-b border-slate-100">
-                          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1">Price per tyre</p>
-                          <div style={{ color: selectedSidebarTheme.primary }} className="text-3xl font-black tracking-[-0.02em] drop-shadow-sm"><AnimatedPrice price={selectedTyre.Price} /></div>
-                        </div>
-
-                        {/* Overall Rating */}
-                        {(selectedTyre.OverallRating || selectedTyre["Overall Rating"] || selectedTyre.Rating) && (
-                          <div className="mb-4 flex items-center gap-3">
-                            <div className="flex items-center gap-0.5">
-                              {[1,2,3,4,5].map(s => {
-                                const rating = parseFloat(selectedTyre.OverallRating || selectedTyre["Overall Rating"] || selectedTyre.Rating || 0);
-                                return (
-                                  <span key={s} className="material-symbols-outlined text-[14px]" style={{ color: s <= Math.round(rating) ? '#f59e0b' : '#e2e8f0', fontVariationSettings: "'FILL' 1" }}>star</span>
-                                );
-                              })}
-                            </div>
-                            <span className="text-[12px] font-black text-[#0f172a]">{selectedTyre.OverallRating || selectedTyre["Overall Rating"] || selectedTyre.Rating}/5</span>
-                            <span className="text-[10px] text-slate-400 font-medium">Overall Rating</span>
-                          </div>
-                        )}
-
                         {/* Description */}
-                        <p className="text-[13px] text-slate-500 leading-[1.6] mb-6">
+                        <p className="text-[12px] text-[#3d4f66] leading-[1.6] mb-3.5">
                           {selectedTyre.Description || 'Designed to provide optimal grip, enhanced handling, and a comfortable ride — the ideal match for high-performance vehicles.'}
                         </p>
+
+                        {/* Price */}
+                        <div className="mb-3.5 pb-3.5 border-b border-[#edf0f4]">
+                          <p className="text-[8.5px] text-slate-400 font-bold uppercase tracking-[0.14em] mb-0.5">Price per tyre</p>
+                          <div style={{ color: selectedSidebarTheme.primary }} className="text-[27px] font-black tracking-[-0.02em] leading-none"><AnimatedPrice price={selectedTyre.Price} /></div>
+                        </div>
 
                         {/* Performance Ratings */}
                         {perfRatings.length > 0 && (
                           <>
-                            <h3 className="text-[10px] font-bold text-[#00254d] uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
-                              <span className="w-3 h-[2px] bg-[#00254d]/30"></span> Performance Ratings
-                            </h3>
-                            <div className="flex flex-col gap-2.5 mb-7">
+                            <p className="text-[8.5px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5">
+                              <span className="w-4 h-px bg-slate-200 inline-block"></span>Performance Ratings
+                            </p>
+                            <div className="flex flex-col gap-[7px] mb-4">
                               {perfRatings.map((item, i) => (
-                                <div key={i} className="flex items-center gap-2.5">
-                                  <div className="w-6 h-6 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: `${item.color}18` }}>
-                                    <span className="material-symbols-outlined text-[13px]" style={{ color: item.color }}>{item.icon}</span>
+                                <div key={i} className="flex items-center gap-2">
+                                  <span className="material-symbols-outlined text-[12px] text-[#7b8fa8] w-4 shrink-0">{item.icon}</span>
+                                  <span className="text-[10px] text-[#4a5d75] font-medium w-[84px] shrink-0">{item.label}</span>
+                                  <div className="flex-1 h-[4px] rounded-full bg-[#eef1f5] overflow-hidden">
+                                    <div className="h-full rounded-full" style={{ width: `${getRatingPercent(item.value)}%`, background: 'linear-gradient(90deg,#2a4d8f,#00254d)' }} />
                                   </div>
-                                  <span className="text-[11px] text-slate-500 font-medium w-[88px] shrink-0">{item.label}</span>
-                                  <div className="flex-1 h-[5px] rounded-full bg-slate-100 overflow-hidden">
-                                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${getRatingPercent(item.value)}%`, backgroundColor: item.color }} />
-                                  </div>
-                                  <span className="text-[11px] font-black text-[#0f172a] w-8 text-right shrink-0">{item.value}/5</span>
+                                  <span className="text-[10px] font-extrabold text-[#0d1829] w-7 text-right shrink-0">{item.value}/5</span>
                                 </div>
                               ))}
                             </div>
@@ -1816,46 +1829,46 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                         )}
 
                         {/* Specs */}
-                        <h3 className="text-[10px] font-bold text-[#00254d] uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
-                          <span className="w-3 h-[2px] bg-[#00254d]/30"></span> Specifications
-                        </h3>
+                        <p className="text-[8.5px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5">
+                          <span className="w-4 h-px bg-slate-200 inline-block"></span>Specifications
+                        </p>
                         <div className="flex flex-col mb-4">
                           {selectedTyre.Warranty && (
-                            <div className="flex items-center justify-between py-2.5 border-b border-slate-50">
-                              <span className="text-[11px] text-slate-500 font-medium">Warranty</span>
-                              <span className="text-[10px] text-[#0f172a] font-bold bg-slate-100 border border-slate-200/60 px-2.5 py-1 rounded-md">{selectedTyre.Warranty}</span>
+                            <div className="flex items-center justify-between py-2 border-b border-[#f1f4f8]">
+                              <span className="text-[11px] text-[#4a5d75] font-medium">Warranty</span>
+                              <span className="text-[10px] text-[#0d1829] font-bold bg-[#f4f6fa] border border-slate-200/70 px-2.5 py-[3px] rounded-md">{selectedTyre.Warranty}</span>
                             </div>
                           )}
                           {selectedTyre.BestFor && (
-                            <div className="flex items-center justify-between py-2.5 border-b border-slate-50">
-                              <span className="text-[11px] text-slate-500 font-medium">Best For</span>
-                              <span className="text-[10px] text-[#0f172a] font-bold bg-slate-100 border border-slate-200/60 px-2.5 py-1 rounded-md">{selectedTyre.BestFor}</span>
+                            <div className="flex items-center justify-between py-2 border-b border-[#f1f4f8]">
+                              <span className="text-[11px] text-[#4a5d75] font-medium">Best For</span>
+                              <span className="text-[10px] text-[#0d1829] font-bold bg-[#f4f6fa] border border-slate-200/70 px-2.5 py-[3px] rounded-md">{selectedTyre.BestFor}</span>
                             </div>
                           )}
                           {selectedTyre.SpeedRating && (
-                            <div className="flex items-center justify-between py-2.5 border-b border-slate-50">
-                              <span className="text-[11px] text-slate-500 font-medium">Speed Rating</span>
-                              <span className="text-[10px] text-[#0f172a] font-bold bg-slate-100 border border-slate-200/60 px-2.5 py-1 rounded-md">{selectedTyre.SpeedRating}</span>
+                            <div className="flex items-center justify-between py-2 border-b border-[#f1f4f8]">
+                              <span className="text-[11px] text-[#4a5d75] font-medium">Speed Rating</span>
+                              <span className="text-[10px] text-[#0d1829] font-bold bg-[#f4f6fa] border border-slate-200/70 px-2.5 py-[3px] rounded-md">{selectedTyre.SpeedRating}</span>
                             </div>
                           )}
                           {selectedTyre.LoadIndex && (
-                            <div className="flex items-center justify-between py-2.5 border-b border-slate-50">
-                              <span className="text-[11px] text-slate-500 font-medium">Load Index</span>
-                              <span className="text-[10px] text-[#0f172a] font-bold bg-slate-100 border border-slate-200/60 px-2.5 py-1 rounded-md">{selectedTyre.LoadIndex}</span>
+                            <div className="flex items-center justify-between py-2 border-b border-[#f1f4f8]">
+                              <span className="text-[11px] text-[#4a5d75] font-medium">Load Index</span>
+                              <span className="text-[10px] text-[#0d1829] font-bold bg-[#f4f6fa] border border-slate-200/70 px-2.5 py-[3px] rounded-md">{selectedTyre.LoadIndex}</span>
                             </div>
                           )}
                         </div>
                       </div>
 
                       {/* CTA */}
-                      <div className="p-5 bg-white border-t border-slate-100 shrink-0">
+                      <div className="px-5 py-4 bg-white border-t border-slate-100 shrink-0">
                         <button
                           onClick={() => setCheckoutTyre(selectedTyre)}
                           style={{ backgroundColor: selectedSidebarTheme.primary }}
-                          className="w-full text-white font-black py-4 rounded-xl text-[12px] tracking-[0.12em] uppercase transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                          className="w-full text-white font-black py-3.5 rounded-xl text-[11.5px] tracking-[0.14em] uppercase transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-2.5 shadow-lg hover:brightness-110 hover:-translate-y-0.5"
                         >
-                          <span className="material-symbols-outlined text-[16px]">shopping_cart</span>
-                          Add {selectedTyre.TyreModel || 'Tyre'} to Cart
+                          <span className="material-symbols-outlined text-[16px] leading-none">shopping_cart</span>
+                          <span>Add to Cart</span>
                         </button>
                       </div>
                     </div>
@@ -1888,16 +1901,20 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
               </button>
             </div>
 
-            <div className="flex-1 px-5 sm:px-8 md:px-12 py-6 sm:py-8 md:py-12">
-              <div className={`grid gap-4 sm:gap-6 ${compareList.length === 2 ? 'grid-cols-1 md:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'}`}>
+            <div className="flex-1 px-5 sm:px-8 md:px-12 py-6 sm:py-8 flex items-start justify-center">
+              <div className={`w-full grid gap-5 sm:gap-6 ${
+                compareList.length === 1 ? 'max-w-[520px] grid-cols-1'
+                : compareList.length === 2 ? 'max-w-[1080px] grid-cols-1 md:grid-cols-2'
+                : 'max-w-[1440px] grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+              }`}>
                 {compareList.map((tyre, idx) => {
                   const theme = getBrandTheme(tyre.TyreBrand || tyre.Brand);
                   const perfRatings = getPerformanceRatings(tyre);
 
                   return (
-                    <div key={idx} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(15,23,42,0.06)] group/ccard border border-slate-100 relative h-full">
+                    <div key={idx} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(15,23,42,0.07)] group/ccard border border-slate-100/80 relative h-full">
                       {/* Top Hero Section */}
-                      <div className="relative w-full shrink-0 flex p-5 sm:p-7 min-h-[250px] sm:min-h-[300px]">
+                      <div className="relative w-full shrink-0 flex p-5 sm:p-6 min-h-[230px] sm:min-h-[270px]">
                         {/* Background Curves */}
                         <div className="absolute top-0 right-0 bottom-0 w-[60%] sm:w-[55%] pointer-events-none overflow-hidden rounded-tr-2xl z-0">
                           <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover/ccard:scale-[1.03]">
@@ -1929,9 +1946,15 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
 
                         {/* Content Front Layer */}
                         <div className="relative z-10 w-[55%] sm:w-[50%] flex flex-col justify-center">
-                          <TyreBrandLogo brand={tyre.TyreBrand || tyre.Brand} className="mb-2" imgClassName="h-6 sm:h-8 w-auto object-contain object-left opacity-90 transition-opacity duration-300 group-hover/ccard:opacity-100" textClassName="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-slate-700 mb-1.5" />
-                          <h3 className="text-xl sm:text-2xl font-black text-[#0f172a] uppercase tracking-[-0.02em] leading-tight mb-2 pr-2 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">{tyre.TyreModel || tyre.ModelID}</h3>
-                          <div className="text-2xl sm:text-3xl font-black tracking-tight mb-4 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]" style={{ color: theme.primary }}>
+                          <TyreBrandLogo brand={tyre.TyreBrand || tyre.Brand} className="mb-1.5" imgClassName="h-6 sm:h-7 w-auto object-contain object-left opacity-90 transition-opacity duration-300 group-hover/ccard:opacity-100" textClassName="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.1em] text-slate-500 mb-1" />
+                          <h3 className="text-lg sm:text-xl font-black text-[#0d1829] uppercase tracking-[-0.02em] leading-tight mb-1 pr-2 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">{tyre.TyreModel || tyre.ModelID}</h3>
+                          {(tyre.OverallRating || tyre["Overall Rating"]) && (
+                            <div className="flex items-center gap-[5px] mb-2">
+                              <div className="flex items-center gap-[2px]">{renderStars(tyre.OverallRating || tyre["Overall Rating"], 12)}</div>
+                              <span className="text-[11px] font-extrabold text-[#1a2840]">{tyre.OverallRating || tyre["Overall Rating"]}<span className="text-[9px] font-semibold text-slate-400">/5</span></span>
+                            </div>
+                          )}
+                          <div className="text-xl sm:text-2xl font-black tracking-tight mb-3 drop-shadow-[0_1px_1px_rgba(255,255,255,1)]" style={{ color: theme.primary }}>
                             {tyre.Price ? `₹${Number(String(tyre.Price).replace(/[^0-9.]/g, '')).toLocaleString('en-IN')}` : 'POA'}
                           </div>
 
@@ -1963,43 +1986,43 @@ linear-gradient(135deg, #020617 0%, #020617 30%, #0a2540 70%, #020617 100%)
                       </div>
 
                       {/* Bottom Details Section */}
-                      <div className="relative z-20 flex-1 bg-[#ffffff] p-5 sm:p-7 pt-0 flex flex-col">
+                      <div className="relative z-20 flex-1 bg-white px-5 sm:px-6 pt-4 pb-5 flex flex-col">
                         {tyre.Description && (
-                          <p className="mb-4 text-[11px] sm:text-[12px] text-slate-500 leading-relaxed line-clamp-3">{tyre.Description}</p>
+                          <p className="mb-3 text-[11px] text-[#3d4f66] leading-relaxed line-clamp-2">{tyre.Description}</p>
                         )}
 
                         {perfRatings.length > 0 && (
                           <>
-                            <div className="flex items-center gap-3 mb-3 mt-2">
-                              <span className="h-[2px] w-5" style={{ backgroundColor: theme.primary, opacity: 0.3 }}></span>
-                              <span className="text-[10px] text-[#0f172a] font-bold uppercase tracking-widest">Performance Ratings</span>
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="h-px w-4 bg-slate-200 shrink-0"></span>
+                              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.18em]">Performance Ratings</span>
                             </div>
-                            <div className="flex flex-col gap-2 flex-1">
+                            <div className="flex flex-col gap-[5px]">
                               {perfRatings.map((item, i) => (
-                                <div key={i} className="flex items-center gap-2">
-                                  <div className="w-5 h-5 rounded flex items-center justify-center shrink-0" style={{ backgroundColor: `${item.color}18` }}>
-                                    <span className="material-symbols-outlined text-[11px]" style={{ color: item.color }}>{item.icon}</span>
+                                <div key={i} style={{ display: 'grid', gridTemplateColumns: '18px 1fr auto', alignItems: 'center', gap: '0 8px' }}>
+                                  <span className="material-symbols-outlined text-[12px] text-[#7b8fa8]" style={{ lineHeight: 1 }}>{item.icon}</span>
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'minmax(68px,80px) 1fr 28px', alignItems: 'center', gap: '0 6px' }}>
+                                    <span className="text-[9.5px] text-[#4a5d75] font-medium truncate">{item.label}</span>
+                                    <div className="h-[3.5px] rounded-full bg-[#eef1f5] overflow-hidden">
+                                      <div className="h-full rounded-full" style={{ width: `${getRatingPercent(item.value)}%`, background: 'linear-gradient(90deg,#2a4d8f,#00254d)' }} />
+                                    </div>
+                                    <span className="text-[9.5px] font-extrabold text-[#0d1829] text-right">{item.value}/5</span>
                                   </div>
-                                  <span className="text-[10px] text-slate-500 font-medium w-[78px] shrink-0">{item.label}</span>
-                                  <div className="flex-1 h-[4px] rounded-full bg-slate-100 overflow-hidden">
-                                    <div className="h-full rounded-full" style={{ width: `${getRatingPercent(item.value)}%`, backgroundColor: item.color }} />
-                                  </div>
-                                  <span className="text-[10px] font-black text-[#0f172a] w-7 text-right shrink-0">{item.value}/5</span>
                                 </div>
                               ))}
                             </div>
                           </>
                         )}
 
-                        <div className="mt-6 pt-5 border-t border-slate-100">
+                        <div className="mt-4 pt-4 border-t border-slate-100">
                           <button
                             onClick={(e) => { e.stopPropagation(); setCheckoutTyre(tyre); setIsCompareOpen(false); }}
-                            className="relative overflow-hidden group w-full text-white font-black py-3.5 sm:py-4 rounded-xl text-[11px] sm:text-[12px] tracking-[0.12em] uppercase transition-all shadow-[0_4px_16px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.22)] active:scale-[0.97] flex items-center justify-center gap-2"
+                            className="relative overflow-hidden group/cbtn w-full text-white font-black py-3 rounded-xl text-[11px] tracking-[0.14em] uppercase transition-all shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:brightness-110 active:scale-[0.97] flex items-center justify-center gap-2"
                             style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})` }}
                           >
-                            <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out rounded-[inherit] pointer-events-none"></div>
-                            <span className="material-symbols-outlined text-[16px] sm:text-[18px] relative z-10 transition-transform group-hover:-translate-y-0.5 ease-out">shopping_cart</span>
-                            <span className="relative z-10 transition-transform group-hover:-translate-y-0.5 ease-out delay-75">Add to Cart</span>
+                            <div className="absolute inset-0 bg-white/15 translate-y-[100%] group-hover/cbtn:translate-y-0 transition-transform duration-300 ease-out rounded-[inherit] pointer-events-none"></div>
+                            <span className="material-symbols-outlined text-[15px] relative z-10">shopping_cart</span>
+                            <span className="relative z-10">Add to Cart</span>
                           </button>
                         </div>
                       </div>
