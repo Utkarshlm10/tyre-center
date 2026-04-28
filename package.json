@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "remove-bg": "node scripts/remove-bg.mjs"
   },
   "dependencies": {
+    "@imgly/background-removal": "^1.7.0",
+    "@imgly/background-removal-node": "^1.4.5",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.11.0",
     "next": "16.2.2",

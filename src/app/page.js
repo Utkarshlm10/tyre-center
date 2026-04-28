@@ -56,10 +56,10 @@ const getTyreImageCandidates = (fileName) => {
   if (hasExt) return [`/tyres/${clean}`];
 
   return [
+    `/tyres/${clean}.webp`,
     `/tyres/${clean}.png`,
     `/tyres/${clean}.jpg`,
     `/tyres/${clean}.jpeg`,
-    `/tyres/${clean}.webp`,
   ];
 };
 
@@ -575,7 +575,7 @@ export default function Home() {
 
             {/* Logo */}
             <img
-              src="/logo.png"
+              src="/logo.webp"
               alt="Tyre Centre"
               className="relative h-16 w-16 object-contain mb-3 rounded-full transition-transform duration-300 group-active:scale-95 group-hover:scale-105"
               style={{
@@ -1003,7 +1003,7 @@ export default function Home() {
                   <div
                     className="model-hero-card rounded-[28px] shadow-[0_18px_50px_rgba(15,23,42,0.16)] border border-white/70 mb-10 flex flex-col md:flex-row min-h-[280px] md:min-h-[330px] relative overflow-hidden items-stretch bg-slate-50"
                     style={{
-                      backgroundImage: "url('/background.jpeg')",
+                      backgroundImage: "url('/background.webp')",
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       backgroundRepeat: 'no-repeat',

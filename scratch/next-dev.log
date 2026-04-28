@@ -21,3 +21,24 @@
  GET /tyres/mrf-zvtv.webp 404 in 86ms (next.js: 39ms, application-code: 47ms)
  GET / 200 in 25ms (next.js: 2ms, application-code: 23ms)
  GET / 200 in 29ms (next.js: 1860µs, application-code: 27ms)
+✓ Compiled in 142ms
+✓ Compiled in 83ms
+ GET / 200 in 220ms (next.js: 70ms, application-code: 150ms)
+✓ Compiled in 65ms
+ GET / 200 in 139ms (next.js: 47ms, application-code: 91ms)
+ GET /logo.png 404 in 37ms (next.js: 5ms, application-code: 32ms)
+ GET /background.jpeg 404 in 32ms (next.js: 2ms, application-code: 29ms)
+ GET /background.jpeg 404 in 33ms (next.js: 4ms, application-code: 30ms)
+ GET /background.jpeg 404 in 30ms (next.js: 4ms, application-code: 26ms)
+ GET /background.jpeg 404 in 25ms (next.js: 2ms, application-code: 23ms)
+ GET /background.jpeg 404 in 34ms (next.js: 6ms, application-code: 27ms)
+ GET /background.jpeg 404 in 24ms (next.js: 2ms, application-code: 22ms)
+ GET /background.jpeg 404 in 26ms (next.js: 1971µs, application-code: 24ms)
+ GET /background.jpeg 404 in 28ms (next.js: 2ms, application-code: 26ms)
+ GET /background.jpeg 404 in 26ms (next.js: 2ms, application-code: 24ms)
+ GET /background.jpeg 404 in 42ms (next.js: 4ms, application-code: 38ms)
+ GET /background.jpeg 404 in 27ms (next.js: 2ms, application-code: 25ms)
+ GET /background.jpeg 404 in 28ms (next.js: 1977µs, application-code: 26ms)
+✓ Compiled in 60ms
+ GET / 200 in 134ms (next.js: 45ms, application-code: 90ms)
+ GET /logo.png 404 in 35ms (next.js: 5ms, application-code: 31ms)
