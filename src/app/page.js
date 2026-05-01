@@ -140,6 +140,8 @@ const BRANDS = [
   { name: "BMW", id: "BMW", image: "bmw.webp" },
   { name: "MERCEDES", id: "Mercedes", image: "mercedes.webp" },
   { name: "MAHINDRA", id: "Mahindra", image: "mahindra.webp" },
+  { name: "TOYOTA", id: "Toyota", image: "toyota.webp" },
+  { name: "MG", id: "MG", image: "mg.webp" },
   { name: "SKODA", id: "Skoda", image: "skoda.webp" }
 ];
 

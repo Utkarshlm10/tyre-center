@@ -2,12 +2,12 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-// Target directories to process
 const directories = [
     path.join(__dirname, 'hero'),
     path.join(__dirname, 'logos'),
     path.join(__dirname, 'tyre-brands'),
     path.join(__dirname, 'tyres'),
+    path.join(__dirname, 'cars'),
     __dirname // Also process images in the public root
 ];
 
@@ -31,7 +31,9 @@ directories.forEach(directoryPath => {
                 const inputPath = path.join(directoryPath, file);
 
                 // Remove the old extension and add .webp
-                const fileNameWithoutExt = path.parse(file).name;
+                let fileNameWithoutExt = path.parse(file).name;
+                fileNameWithoutExt = fileNameWithoutExt.replace(/\.(jpg|jpeg|png)$/i, '');
+                fileNameWithoutExt = fileNameWithoutExt.toLowerCase().replace(/\s+/g, '-');
                 const outputPath = path.join(directoryPath, `${fileNameWithoutExt}.webp`);
 
                 // Compress and convert to WebP using sharp
